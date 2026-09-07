@@ -3,9 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { API_BASE_URL } from '../../../shared/http/api-config';
+import { Admin } from '../../admins/models/admin.model';
 import { AdminLoginRequest, AdminLoginResponse } from '../models/auth.model';
 
 const TOKEN_KEY = 'faztudo_bo_access_token';
+const USER_KEY = 'faztudo_bo_user';
 
 /**
  * Autenticação do backoffice.
@@ -27,19 +29,25 @@ export class AuthService {
   private readonly authenticated = signal(this.isBrowser && !!localStorage.getItem(TOKEN_KEY));
   readonly isAuthenticated = this.authenticated.asReadonly();
 
+  /** Administrador autenticado, inicializado a partir do que ficou persistido. */
+  private readonly user = signal<Admin | null>(this.readStoredUser());
+  readonly currentUser = this.user.asReadonly();
+
   /** `POST /admin/login` — autentica um administrador do backoffice. */
   login(body: AdminLoginRequest): Observable<AdminLoginResponse> {
     return this.http
       .post<AdminLoginResponse>(`${this.baseUrl}/admin/login`, body)
-      .pipe(tap((response) => this.setSession(response.access_token)));
+      .pipe(tap((response) => this.setSession(response.access_token, response.user)));
   }
 
   /** Termina a sessão do administrador atual. */
   logout(): void {
     if (this.isBrowser) {
       localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USER_KEY);
     }
     this.authenticated.set(false);
+    this.user.set(null);
   }
 
   /** Token JWT da sessão atual, se existir. */
@@ -47,10 +55,20 @@ export class AuthService {
     return this.isBrowser ? localStorage.getItem(TOKEN_KEY) : null;
   }
 
-  private setSession(token: string): void {
+  private setSession(token: string, user: Admin): void {
     if (this.isBrowser) {
       localStorage.setItem(TOKEN_KEY, token);
+      localStorage.setItem(USER_KEY, JSON.stringify(user));
     }
     this.authenticated.set(true);
+    this.user.set(user);
+  }
+
+  private readStoredUser(): Admin | null {
+    if (!this.isBrowser) {
+      return null;
+    }
+    const stored = localStorage.getItem(USER_KEY);
+    return stored ? (JSON.parse(stored) as Admin) : null;
   }
 }

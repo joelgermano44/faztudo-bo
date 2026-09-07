@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
+import { authGuard } from '../core/guard/auth.guard';
 import { guestGuard } from '../core/guard/guest.guard';
+import { Home } from './pages/backoffice/dashboard/home';
 import { Landing } from './pages/landing/landing';
 import { Layout } from './pages/layout/layout';
 import { Login } from './pages/login/login';
-import { Dashboard } from './pages/dashboard/dashboard';
-import { Home } from './pages/dashboard/home/home';
-import { authGuard } from '../core/guard/auth.guard';
+import { Dashboard } from './pages/layout/dashboard/dashboard';
 
 export const routes: Routes = [
   {

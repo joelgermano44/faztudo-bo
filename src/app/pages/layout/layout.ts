@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Header } from './components/header/header';
-import { Footer } from './components/footer/footer';
+import { Header } from './landing/components/header/header';
+import { Footer } from './landing/components/footer/footer';
 
 @Component({
   imports: [RouterOutlet, Header, Footer],
