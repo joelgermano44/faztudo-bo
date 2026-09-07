@@ -3,6 +3,17 @@ import { App } from './app';
 
 describe('App', () => {
   beforeEach(async () => {
+    window.matchMedia ??= ((query: string) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => false,
+    })) as unknown as typeof window.matchMedia;
+
     await TestBed.configureTestingModule({
       imports: [App],
     }).compileComponents();
@@ -18,6 +29,6 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, mesafa-bo-v2');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, faztudo-bo-v2');
   });
 });

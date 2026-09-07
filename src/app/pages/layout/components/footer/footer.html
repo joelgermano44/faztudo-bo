@@ -1,0 +1,38 @@
+<footer
+  class="bg-linear-to-b from-[#001A18] to-[#00312E] w-full h-98.75 flex flex-col justify-center items-center py-20 px-5"
+>
+  <div class="max-w-300 w-full flex flex-col justify-between gap-5">
+    <ul class="flex w-full gap-6 justify-between mb-8">
+      <li class="flex flex-col gap-3 max-w-72.5">
+        <img src="/logos/logo-white.svg" class="w-29.25" />
+        <p class="text-[#E1E3E4B2] text-xs">
+          A ponte perfeita entre quem precisa e quem sabe fazer.
+        </p>
+      </li>
+
+      @for (item of footerItems; track item.title) {
+        <li class="flex flex-col gap-3 text-[#E1E3E4B2]">
+          <h1 class="font-normal text-primary">{{ item.title }}</h1>
+
+          @for (subItem of item.subItems; track subItem.title) {
+            <a
+              [href]="subItem.link"
+              class="cursor-pointer transition-all duration-300 hover:scale-105"
+              >{{ subItem.title }}</a
+            >
+          }
+        </li>
+      }
+    </ul>
+
+    <hr class="border-white/10" />
+
+    <div class="mt-8 flex items-center justify-between w-full text-xs text-cinza-2/70">
+      <p class="font-medium text-xs">
+        © {{ year }} Faz Tudo. Todos os direitos reservados. Óptima acção em Angola.
+      </p>
+
+      <a routerLink="/login" class="hover:scale-105 transition-all duration-300">Área Reservada</a>
+    </div>
+  </div>
+</footer>

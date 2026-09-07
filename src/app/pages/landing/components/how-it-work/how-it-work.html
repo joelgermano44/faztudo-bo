@@ -1,0 +1,40 @@
+<section class="bg-tertiary flex justify-center items-center px-10 py-20 font-raleway">
+  <div class="max-w-300 w-full flex flex-col items-center gap-12">
+    <div class="flex flex-col items-center justify-center text-center gap-4 max-w-163.5 w-full">
+      <h1 class="text-3xl font-extrabold text-dark-green">
+        Como Funciona a <span class="text-secondary">Acção</span>
+      </h1>
+      <p class="font-normal">
+        Um processo simples e transparente para encontrar a solução ideal ou os clientes certos para
+        a sua actividade.
+      </p>
+    </div>
+
+    <ul class="w-full flex items-center gap-6 justify-center">
+      @for (item of stepItems; track item.step) {
+        <li
+          class="hover:scale-105 transition-all duration-300 cursor-default border border-white/30 flex flex-col items-center justify-center gap-6 max-w-92 w-full h-60.5 p-6 rounded-3xl bg-white backdrop-blur-2xl shadow-lg shadow-secondary/8 relative"
+        >
+          <div
+            class="font-normal rounded-full h-8 w-8 bg-[#EDEEEF] flex items-center justify-center absolute top-4 right-4"
+          >
+            {{ item.step }}
+          </div>
+
+          <img
+            [src]="item.icon"
+            alt=""
+            class="shadow-lg shadow-[#00312E]/20 w-16 h-16 rounded-full"
+          />
+
+          <div class="flex flex-col items-center text-center justify-center gap-2">
+            <h2 class="font-normal">{{ item.title }}</h2>
+            <p class="font-normal">
+              {{ item.description }}
+            </p>
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+</section>

@@ -1,0 +1,51 @@
+<section class="px-16 py-20 flex justify-center items-center w-full bg-tertiary font-raleway">
+  <div class="max-w-300 w-full flex flex-col gap-12">
+    <div class="w-full flex justify-between items-end">
+      <div class="flex flex-col gap-2">
+        <h1 class="text-3xl font-extrabold">Serviços Populares</h1>
+        <p class="font-normal text-[#404847]">
+          As categorias mais procuradas na nossa plataforma hoje.
+        </p>
+      </div>
+
+      <a
+        href=""
+        class="flex items-center gap-2 text-secondary font-normal hover:scale-105 transition-all duration-300"
+      >
+        Ver todos
+
+        <img src="/icons/arrow-right.svg" alt="" />
+      </a>
+    </div>
+
+    <ul class="w-full flex items-center gap-6">
+      @for (item of services; track item.id) {
+        <li
+          class="flex flex-col max-w-67 relative hover:scale-105 duration-300 transition-all w-full rounded-3xl bg-white hover:bg-white/80 border border-[#C0C8C6]/20 shadow-sm shadow-[#000000]/5"
+        >
+          @if (item.popular) {
+            <span
+              class="bg-primary absolute top-4 left-4 px-3 py-1 rounded-full text-[#121900] font-normal"
+            >
+              Popular
+            </span>
+          }
+
+          <img [src]="item.imageUrl" alt="" class="h-48 object-cover object-top rounded-t-3xl" />
+
+          <div class="p-4 flex flex-col h-33 rounded-b-3xl gap-2">
+            <p class="text-green-2 font-semibold flex items-center gap-2">
+              <img src="/icons/landing/category.svg" alt="" /> {{ item.category }}
+            </p>
+            <div>
+              <h2 class="font-normal text-[#191C1D]">{{ item.name }}</h2>
+              <p class="font-normal text-[#404847] text-sm">
+                {{ item.description.slice(0, 50) + '...' }}
+              </p>
+            </div>
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+</section>

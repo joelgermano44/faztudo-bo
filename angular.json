@@ -2,11 +2,12 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "npm",
+    "analytics": "e965a16f-b8e5-4565-9731-4956f45cb473"
   },
   "newProjectRoot": "projects",
   "projects": {
-    "mesafa-bo-v2": {
+    "faztudo-bo-v2": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -24,9 +25,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.css"
-            ],
+            "styles": ["src/styles.css"],
             "server": "src/main.server.ts",
             "outputMode": "server",
             "security": {
@@ -64,10 +63,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "mesafa-bo-v2:build:production"
+              "buildTarget": "faztudo-bo-v2:build:production"
             },
             "development": {
-              "buildTarget": "mesafa-bo-v2:build:development"
+              "buildTarget": "faztudo-bo-v2:build:development"
             }
           },
           "defaultConfiguration": "development"
