@@ -1,0 +1,72 @@
+<div class="flex flex-col font-raleway">
+  <div class="flex items-start justify-between gap-4">
+    <app-title-header
+      title="Central de Notificações"
+      description="Gerencie alertas, mensagens do sistema e atualizações operacionais."
+    ></app-title-header>
+  </div>
+
+  @if (unreadCount() > 0) {
+    <div class="w-full flex justify-end">
+      <button
+        type="button"
+        (click)="markAllAsRead()"
+        class="flex items-center gap-2 px-4 py-2 my-4 w-fit group rounded-lg bg-tertiary border border-[#C2C8BE] text-sm font-medium text-[#41493D] hover:bg-[#094908] hover:text-white transition-all duration-300 cursor-pointer shrink-0"
+      >
+        <img
+          src="/icons/notifications/check.svg"
+          alt=""
+          width="14"
+          height="14"
+          class="group-hover:invert"
+        />
+        Marcar todas como lidas
+      </button>
+    </div>
+  }
+
+  <ul class="flex flex-wrap w-full gap-3 mt-6">
+    @for (filter of filters; track filter) {
+      <li
+        (click)="setFilter(filter)"
+        [class]="
+          (activeFilter() === filter ? 'bg-[#094908] text-white' : 'bg-white text-[#41493D]') +
+          ' flex gap-2 items-center rounded-3xl font-semibold w-fit px-4 py-1 border border-[#C2C8BE] hover:bg-[#094908] hover:text-white transition-all duration-300 cursor-pointer'
+        "
+      >
+        {{ filter }}
+      </li>
+    }
+  </ul>
+
+  <div class="flex flex-col gap-4 mt-6">
+    @for (notification of filteredNotifications(); track notification.id) {
+      <button
+        type="button"
+        (click)="markAsRead(notification.id)"
+        [class]="
+          'flex items-start gap-4 bg-white rounded-xl p-5 pb-9 border text-left cursor-pointer hover:shadow-sm transition-shadow ' +
+          (notification.read_at ? 'border-gray-100' : 'border-gray-100 border-l-4 border-l-primary')
+        "
+      >
+        <div class="w-10 h-10 rounded-full bg-[#E6E9E8] flex items-center justify-center shrink-0">
+          <img [src]="icon(notification.event_type)" alt="" class="w-4 h-4" />
+        </div>
+
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between gap-4">
+            <h3 class="font-semibold text-[#191C1D]">{{ notification.title }}</h3>
+            <span class="text-xs text-[#6C7A99] whitespace-nowrap">
+              {{ timestamp(notification.created_at) }}
+            </span>
+          </div>
+          <p class="text-sm text-gray-500 mt-1">{{ notification.body }}</p>
+        </div>
+      </button>
+    } @empty {
+      <div class="bg-white rounded-xl border border-gray-100 p-8 text-center text-gray-500">
+        Nenhuma notificação encontrada.
+      </div>
+    }
+  </div>
+</div>

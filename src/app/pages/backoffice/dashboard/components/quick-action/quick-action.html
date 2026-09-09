@@ -1,0 +1,20 @@
+<div
+  class="bg-white border flex flex-col gap-4 border-[#C2C8BE33] rounded-xl p-6 pb-11 shadow-sm shadow-[#002E130D] w-full h-full"
+>
+  <h2 class="text-lg font-semibold">Ações Rápidas</h2>
+
+  <div class="grid grid-cols-3 gap-5 h-31.5">
+    @for (action of actions; track action.title) {
+      <button
+        type="button"
+        class="bg-white border hover:bg-white/80 w-full border-[#C2C8BE66] rounded-lg p-4 flex flex-col gap-4 items-center justify-center cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-sm"
+      >
+        <div class="w-10 h-10 rounded-full bg-[#edf5f0] flex items-center justify-center">
+          <img [src]="action.iconSvg" alt="" class="" />
+        </div>
+
+        <span class="text-sm font-medium text-[#191C1D] text-center">{{ action.title }}</span>
+      </button>
+    }
+  </div>
+</div>

@@ -1,11 +1,16 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '../core/guard/auth.guard';
 import { guestGuard } from '../core/guard/guest.guard';
-import { Home } from './pages/backoffice/dashboard/home';
 import { Landing } from './pages/landing/landing';
 import { Layout } from './pages/layout/layout';
 import { Login } from './pages/login/login';
-import { Dashboard } from './pages/layout/dashboard/dashboard';
+import { BackOffice } from './pages/layout/backoffice/backoffice';
+import { Dashboard } from './pages/backoffice/dashboard/dashboard';
+import { Orders } from './pages/backoffice/orders/orders';
+import { OrderDetail } from './pages/backoffice/orders/order-detail/order-detail';
+import { Administrators } from './pages/backoffice/administrators/administrators';
+import { Notifications } from './pages/backoffice/notifications/notifications';
+import { Services } from './pages/backoffice/services/services';
 
 export const routes: Routes = [
   {
@@ -26,12 +31,32 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    component: Dashboard,
+    component: BackOffice,
     canActivate: [authGuard],
     children: [
       {
         path: '',
-        component: Home,
+        component: Dashboard,
+      },
+      {
+        path: 'orders',
+        component: Orders,
+      },
+      {
+        path: 'orders/:id',
+        component: OrderDetail,
+      },
+      {
+        path: 'administrators',
+        component: Administrators,
+      },
+      {
+        path: 'notifications',
+        component: Notifications,
+      },
+      {
+        path: 'services',
+        component: Services,
       },
     ],
   },

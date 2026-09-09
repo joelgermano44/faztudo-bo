@@ -1,0 +1,73 @@
+<div
+  class="bg-white rounded-xl border h-full border-[#C2C8BE33] shadow-sm overflow-hidden flex flex-col hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+>
+  <!-- Capa -->
+  <div class="relative h-36 bg-[#E6E9E8]">
+    @if (image()) {
+      <img [src]="image()" [alt]="name()" class="w-full h-full object-cover" />
+    } @else {
+      <div class="w-full h-full flex items-center justify-center">
+        <img
+          src="/icons/dashboard/dashcard/servicos.svg"
+          alt=""
+          class="w-8 h-8 opacity-40"
+        />
+      </div>
+    }
+
+    <span
+      class="absolute top-3 right-3 px-3 py-1 rounded-full text-[11px] font-semibold uppercase shadow-sm {{ statusBadge() }}"
+    >
+      {{ status() }}
+    </span>
+
+    @if (gallery().length > 0) {
+      <span
+        class="absolute bottom-3 right-3 flex items-center gap-1 px-2 py-1 rounded-full bg-black/55 text-white text-[11px] font-medium"
+      >
+        <img src="/icons/services/gallery.svg" alt="" width="12" height="12" />
+        +{{ gallery().length }}
+      </span>
+    }
+  </div>
+
+  <div class="p-5 flex flex-col gap-3 flex-1">
+    <div>
+      <p class="text-[11px] uppercase text-emerald-700 font-semibold tracking-wide">
+        {{ category() }}
+      </p>
+      <h3 class="font-semibold text-[#191C1D] leading-snug mt-0.5">{{ name() }}</h3>
+      <p class="text-sm text-gray-500 mt-1 line-clamp-2">{{ description() }}</p>
+    </div>
+
+    @if (gallery().length > 0) {
+      <div class="flex items-center gap-1.5">
+        @for (thumb of gallery().slice(0, 4); track $index) {
+          <img
+            [src]="thumb"
+            alt=""
+            class="w-7 h-7 rounded-md object-cover border border-white shadow-sm"
+          />
+        }
+        @if (gallery().length > 4) {
+          <span class="text-xs text-gray-400 font-medium ml-1">+{{ gallery().length - 4 }}</span>
+        }
+      </div>
+    }
+
+    <div class="flex items-center justify-end gap-1 mt-auto pt-2 border-t border-gray-50">
+      <button
+        type="button"
+        class="p-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+      >
+        <img src="/icons/services/pencil.svg" alt="Editar" width="16" height="16" />
+      </button>
+      <button
+        type="button"
+        class="p-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+      >
+        <img src="/icons/services/eye.svg" alt="Ver" width="16" height="16" />
+      </button>
+    </div>
+  </div>
+</div>

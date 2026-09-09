@@ -1,0 +1,84 @@
+<div
+  class="w-full min-w-65 h-full flex-col overflow-y-auto gap-5 flex py-8.5 bg-[#094908] text-white border-b border-[#C0C8C6]/40"
+>
+  <div class="pb-4 border-b border-white/20 w-fit h-fit ml-4">
+    <img src="/logos/logo-horizontal.svg" alt="" class="" />
+  </div>
+  @for (item of navItems; track item.title) {
+    <div class="flex flex-col gap-5">
+      <button
+        type="button"
+        (click)="toggleGroup(item.title)"
+        class="flex items-center justify-between gap-2 mr-4 ml-4 cursor-pointer"
+      >
+        <h1 class="text-[15px] font-bold">{{ item.title }}</h1>
+
+        <svg
+          [class.rotate-90]="!isGroupOpen(item.title)"
+          class="transition-transform"
+          width="12"
+          height="12"
+          viewBox="0 0 12 12"
+          fill="none"
+        >
+          <path
+            d="M2.5 4.5L6 8L9.5 4.5"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+
+      @if (isGroupOpen(item.title)) {
+        <ul class="flex flex-col gap-2">
+          @for (subItem of item.items; track subItem.route) {
+            <li class="max-w-58 w-full">
+              <a
+                routerLinkActive="border-r-4 border-primary bg-[#F8F9FA5C]"
+                [routerLinkActiveOptions]="{ exact: subItem.route === '/dashboard' }"
+                #rla="routerLinkActive"
+                [routerLink]="subItem.route"
+                class="pl-8 pr-16 py-3 rounded-r-full w-full flex gap-3 text-[13px] items-center hover:border-r-4 border-primary hover:bg-[#F8F9FA5C] cursor-pointer transition-colors"
+              >
+                <img [src]="subItem.icon" alt="" class="" />
+                <span class="font-medium">{{ subItem.label }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  }
+
+  <div class="flex flex-col gap-5">
+    <h1 class="text-[15px] font-bold ml-4">Configurações</h1>
+
+    <ul class="flex flex-col gap-3">
+      <li class="">
+        <a
+          routerLinkActive="border-r-4 border-primary bg-[#F8F9FA5C]"
+          [routerLinkActiveOptions]="{ exact: true }"
+          #rla="routerLinkActive"
+          routerLink="/settings"
+          class="pl-8 pr-16 py-3 rounded-r-full w-fit flex gap-3 text-[13px] items-center hover:border-r-4 border-primary hover:bg-[#F8F9FA5C] cursor-pointer transition-colors"
+        >
+          <img src="/icons/dashboard/sidebar/settings.svg" alt="" class="" />
+          <span class="font-medium">Configurações</span>
+        </a>
+      </li>
+
+      <li>
+        <button
+          type="button"
+          (click)="logout()"
+          class="flex items-center pl-8 pr-16 py-3 gap-3 text-sm font-semibold text-white rounded-r-full hover:bg-[#F8F9FA5C] cursor-pointer transition-colors"
+        >
+          <img src="/icons/dashboard/sidebar/logout.svg" alt="" class="" />
+          <span class="font-medium">Sair</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>

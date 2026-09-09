@@ -1,0 +1,32 @@
+<div
+  class="bg-white rounded-xl p-6 flex flex-col gap-4 shadow-sm border border-[#C2C8BE33] w-full h-full"
+>
+  <div class="flex items-center justify-between">
+    <h2 class="text-lg font-semibold text-[#191C1D]">Atividades Recentes</h2>
+
+    <button
+      class="text-sm text-[#0B2E13] hover:scale-105 font-medium transition-colors cursor-pointer"
+    >
+      Ver todas as atividades
+    </button>
+  </div>
+
+  <div class="overflow-y-auto h-full flex flex-col gap-4">
+    @for (activity of activities; track activity.title) {
+      <div
+        class="flex items-start gap-3.5 hover:bg-gray-100 p-1 rounded-sm transition-all duration-300"
+      >
+        <span [class]="'w-2.5 h-2.5 rounded-full mt-2 shrink-0 ' + activity.colorClass"></span>
+
+        <div class="flex flex-col">
+          <span class="text-[#191C1D] font-medium text-sm">
+            {{ activity.title }}
+          </span>
+          <span class="text-[#727970] text-xs">
+            {{ activity.time }}
+          </span>
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,37 @@
+<div
+  class="bg-white rounded-xl border border-[#C2C8BE33] shadow-sm shadow-[#002E130D] w-full flex flex-col h-full"
+>
+  <div class="flex items-center justify-between py-7.25 px-6">
+    <h2 class="text-lg font-semibold text-[#191C1D]">Fluxo de Pedidos</h2>
+
+    <div
+      class="bg-[#E7E8E9] p-1 text-[#191C1D] rounded-full flex items-center relative text-sm font-medium"
+    >
+      <button
+        (click)="setPeriod('monthly')"
+        [class.text-gray-900]="period() === 'monthly'"
+        [class.text-gray-500]="period() !== 'monthly'"
+        class="relative z-10 px-4 py-1.5 rounded-full transition-colors duration-200 focus:outline-none"
+      >
+        Mensal
+      </button>
+      <button
+        (click)="setPeriod('annual')"
+        [class.text-gray-900]="period() === 'annual'"
+        [class.text-gray-500]="period() !== 'annual'"
+        class="relative z-10 px-4 py-1.5 rounded-full transition-colors duration-200 focus:outline-none"
+      >
+        Anual
+      </button>
+
+      <div
+        class="absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white rounded-full shadow-sm transition-all duration-200 ease-out"
+        [style.left.px]="period() === 'monthly' ? 4 : 80"
+      ></div>
+    </div>
+  </div>
+
+  <hr class="border-[#E7E8E9]" />
+
+  <div #chartContainer class="w-full h-full p-12"></div>
+</div>

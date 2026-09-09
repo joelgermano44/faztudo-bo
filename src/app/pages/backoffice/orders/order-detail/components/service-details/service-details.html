@@ -1,0 +1,30 @@
+<div class="bg-white rounded-xl border border-[#C2C8BE33] shadow-sm p-6 flex flex-col gap-4">
+  <h2 class="text-xl font-semibold text-[#191C1D] flex items-center gap-2">
+    <img src="/icons/orders/info-circle.svg" alt="" width="20" height="20" />
+    Detalhes do Serviço
+  </h2>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <p class="text-xs uppercase text-[#424841] font-semibold">Modalidade</p>
+      <p class="text-base text-[#191C1D] flex items-center gap-2">
+        <img src="/icons/orders/home.svg" alt="" width="12" height="14" />
+        {{ modalityLabel() }}
+      </p>
+    </div>
+    <div>
+      <p class="text-xs uppercase text-[#424841] font-semibold">Data / Hora Agendada</p>
+      <p class="text-base text-[#191C1D] flex items-center gap-2">
+        <img src="/icons/orders/calendar.svg" alt="" width="14" height="15" />
+        {{ scheduledDate() }}
+      </p>
+    </div>
+  </div>
+
+  <div>
+    <p class="text-xs uppercase text-[#424841] font-semibold">Descrição da Solicitação</p>
+    <p class="text-sm text-[#41493D] mt-2 bg-[#F2F4F3] rounded-lg p-4 border border-[#E2E8F0]">
+      {{ description() || 'Sem descrição.' }}
+    </p>
+  </div>
+</div>

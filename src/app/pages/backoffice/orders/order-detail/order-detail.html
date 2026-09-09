@@ -1,0 +1,79 @@
+@if (loading()) {
+  <div class="flex flex-col font-raleway py-12 text-center text-gray-500">
+    A carregar contrato...
+  </div>
+} @else if (error() || !order()) {
+  <div class="flex flex-col font-raleway py-12 text-center text-gray-500">
+    {{ error() || 'Contrato não encontrado.' }}
+    <a
+      routerLink="/dashboard/orders"
+      class="text-base inline-block text-emerald-800 font-medium underline"
+    >
+      Voltar aos Contratos
+    </a>
+  </div>
+} @else {
+  @let currentOrder = order()!;
+  @let status = statusStyle(currentOrder.status);
+  @let currentPayment = payment();
+  @let currentPayout = payout();
+
+  <div class="flex flex-col font-raleway gap-6">
+    <app-order-header
+      [orderId]="currentOrder.id"
+      [statusLabel]="status.label"
+      [statusBadgeClass]="status.badge"
+      [serviceName]="currentOrder.service.name"
+      [canCancel]="canCancel()"
+      [canPayProfessional]="canPayProfessional()"
+      [actionError]="actionError()"
+      (cancel)="cancelOrder()"
+      (payProfessional)="payProfessional()"
+    ></app-order-header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+      <!-- Coluna principal -->
+      <div class="lg:col-span-2 flex flex-col gap-6">
+        <app-service-details
+          [modalityLabel]="modalityLabel()"
+          [scheduledDate]="formatDate(currentOrder.created_at)"
+          [description]="currentOrder.description || ''"
+        ></app-service-details>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <app-order-client-card
+            [name]="currentOrder.client.name"
+            [avatar]="clientAvatar()"
+            [since]="clientSince()"
+            [phone]="currentOrder.client.phone"
+            [location]="clientLocation()"
+          ></app-order-client-card>
+
+          <app-order-professional-card
+            [name]="currentOrder.professional.name"
+            [avatar]="professionalAvatar()"
+            [profession]="professionalProfession()"
+            [rating]="currentOrder.professional.average_rating"
+            [phone]="currentOrder.professional.phone"
+          ></app-order-professional-card>
+        </div>
+      </div>
+
+      <!-- Coluna lateral -->
+      <div class="flex flex-col gap-6">
+        <app-order-financial-summary
+          [baseAmount]="currentPayout ? formatMoney(currentPayout.amount) : '—'"
+          [commissionPercent]="currentPayout?.commission_percent ?? null"
+          [commissionAmount]="
+            currentPayout?.commission_amount ? formatMoney(currentPayout!.commission_amount!) : '—'
+          "
+          [totalAmount]="currentPayment ? formatMoney(currentPayment.amount) : '—'"
+          [paymentStatusLabel]="currentPayment ? paymentStatusLabel(currentPayment.status) : null"
+          [paymentReference]="currentPayment?.reference ?? null"
+        ></app-order-financial-summary>
+
+        <app-contract-timeline [items]="timelineEntries()"></app-contract-timeline>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,45 @@
+<div class="bg-white rounded-xl border border-[#C2C8BE33] shadow-sm p-6 flex flex-col gap-4">
+  <h2 class="text-xl font-semibold text-[#191C1D] flex items-center gap-2">
+    <img src="/icons/orders/wallet.svg" alt="" width="22" height="16" />
+
+    Resumo Financeiro
+  </h2>
+
+  <div class="flex items-center justify-between text-sm pb-4 border-b border-[#E2E8F0]">
+    <span class="text-[#424841]">Preço Base (Prestador)</span>
+    <span class="font-semibold text-[#191C1D]">{{ baseAmount() }}</span>
+  </div>
+
+  <div class="flex items-center justify-between text-sm">
+    <span class="text-[#424841]">
+      Comissão Plataforma
+      @if (commissionPercent()) {
+        ({{ commissionPercent() }}%)
+      }
+    </span>
+    <span class="font-medium text-[#191C1D]">{{ commissionAmount() }}</span>
+  </div>
+
+  <hr class="border-[#E7E8E9]" />
+
+  <div class="flex items-center justify-between">
+    <span class="text-base text-black font-bold">Valor Total Cliente</span>
+    <span class="text-2xl font-bold text-black">{{ totalAmount() }}</span>
+  </div>
+
+  <div class="rounded-lg bg-[#F2F4F3] border border-[#E2E8F0] p-4">
+    <p class="text-xs uppercase text-[#424841] font-semibold">Estado do Pagamento</p>
+    @if (paymentStatusLabel()) {
+      <p class="text-sm font-semibold text-[#094908] mt-1 flex gap-2">
+        <img src="/icons/orders/check-circle.svg" alt="" width="20" height="20" />
+
+        {{ paymentStatusLabel() }}
+        @if (paymentReference()) {
+          ({{ paymentReference() }})
+        }
+      </p>
+    } @else {
+      <p class="text-sm text-[#424841] mt-1">Sem pagamento registado</p>
+    }
+  </div>
+</div>

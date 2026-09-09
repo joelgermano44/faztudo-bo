@@ -1,0 +1,46 @@
+<div class="flex flex-col font-raleway">
+  <app-title-header
+    title="Dashboard"
+    description="Visão geral do desempenho operacional, contratos e métricas financeiras da plataforma."
+  ></app-title-header>
+
+  <ul class="flex items-center gap-6 text-xs mt-6.75 text-[#434654]">
+    <li class="flex items-center gap-2">
+      <img src="/icons/admin.svg" alt="" />
+      Administrador: {{ currentUser()?.name }}
+    </li>
+    <li class="flex items-center gap-2">
+      <img src="/icons/role.svg" alt="" />
+      Cargo: {{ roleLabel() }}
+    </li>
+  </ul>
+
+  <app-monthly-report></app-monthly-report>
+
+  <ul class="flex w-full gap-6.75 mt-8">
+    @for (item of dashcardItems(); track item.title) {
+      <app-dashcard
+        class="w-full"
+        [indicator]="item.indicator"
+        [icon]="item.icon"
+        [money]="item.money"
+        [title]="item.title"
+        [stat]="item.stat"
+      ></app-dashcard>
+    }
+  </ul>
+
+  <div class="flex gap-6 mt-6 h-125">
+    <app-order-flow class="w-full h-full" [data]="ordersFlow()"></app-order-flow>
+
+    <div class="min-w-80 flex flex-col gap-6 h-full">
+      <app-payment-summary class="h-full"></app-payment-summary>
+      <app-professional-status class="h-full"></app-professional-status>
+    </div>
+  </div>
+</div>
+
+<div class="flex mt-8 w-full gap-6 h-65">
+  <app-quick-action class="w-full h-full"></app-quick-action>
+  <app-recent-activities class="w-full h-full"></app-recent-activities>
+</div>

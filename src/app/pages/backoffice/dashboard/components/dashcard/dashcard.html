@@ -1,0 +1,30 @@
+<li
+  class="rounded-xl bg-white flex flex-col shadow-sm shadow-[#00312E0D] min-w-53.75 w-full gap-4 h-41 p-6 hover:scale-105 hover:bg-white/50 transition-all duration-300"
+>
+  <div class="flex justify-between w-full">
+    <div class="bg-[#E6E9E8] rounded-full h-12 w-12 flex items-center justify-center">
+      <img [src]="icon()" alt="" />
+    </div>
+
+    <div
+      class="px-2 h-fit py-1 text-xs text-[#094908] bg-[#96D78633] flex gap-1 items-center rounded-full font-semibold w-fit"
+      [class.hidden]="!stat()"
+    >
+      <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M0.816667 7L0 6.18333L4.31667 1.8375L6.65 4.17083L9.68333 1.16667H8.16667V0H11.6667V3.5H10.5V1.98333L6.65 5.83333L4.31667 3.5L0.816667 7Z"
+          fill="#094908"
+        />
+      </svg>
+
+      {{ stat() }}
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <h1 class="uppercase text-xs text-[#41493D] font-semibold">{{ title() }}</h1>
+    <p class="text-2xl font-semibold text-[#094908] font-radio-canada uppercase">
+      {{ indicator() }} <span [class.hidden]="!money()">KZ</span>
+    </p>
+  </div>
+</li>

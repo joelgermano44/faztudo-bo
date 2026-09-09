@@ -1,0 +1,54 @@
+<div>
+  <a
+    routerLink="/dashboard/orders"
+    class="flex items-center gap-1 text-base text-black hover:text-gray-700 w-fit hover:scale-105 transition-all duration-300"
+  >
+    <img src="/icons/orders/back-arrow.svg" alt="" width="11" height="11" />
+    Voltar aos Contratos
+  </a>
+
+  <div class="flex flex-wrap items-end justify-between gap-4 mt-2">
+    <div class="flex items-center gap-3">
+      <h1 class="text-3xl font-bold text-[#0B2E13]">CTR-{{ orderId() }}</h1>
+      <span class="px-3 py-2 rounded-full text-base font-medium {{ statusBadgeClass() }}">
+        {{ statusLabel() }}
+      </span>
+    </div>
+
+    <div class="flex items-center gap-2">
+      @if (canCancel()) {
+        <button
+          type="button"
+          (click)="cancel.emit()"
+          class="flex gap-2 items-center text-base text-black font-normal px-4 py-2 border rounded-3xl bg-[#F8FAF9] border-[#292D3299] hover:bg-gray-100 hover:scale-105 transition-all duration-300 cursor-pointer"
+        >
+          <img src="/icons/orders/cancel.svg" alt="" width="15" height="15" />
+          Cancelar
+        </button>
+      }
+      <button
+        type="button"
+        class="flex gap-2 items-center text-base text-black font-normal px-4 py-2 border rounded-3xl bg-[#F8FAF9] border-[#292D3299] hover:bg-gray-100 hover:scale-105 transition-all duration-300 cursor-pointer"
+      >
+        <img src="/icons/orders/chat.svg" alt="" width="15" height="15" />
+        Contactar
+      </button>
+      @if (canPayProfessional()) {
+        <button
+          type="button"
+          (click)="payProfessional.emit()"
+          class="px-4 py-2 rounded-full flex items-center gap-2 bg-[#094908] text-white text-base font-medium border-[#292D3299] hover:scale-105 transition-all duration-300 cursor-pointer"
+        >
+          <img src="/icons/orders/pay.svg" alt="" width="17" height="12" />
+          Pagar Prestador
+        </button>
+      }
+    </div>
+  </div>
+
+  <p class="text-black font-normal text-xl">{{ serviceName() }}</p>
+
+  @if (actionError()) {
+    <p class="text-red-600 text-sm mt-2">{{ actionError() }}</p>
+  }
+</div>

@@ -1,0 +1,96 @@
+<div class="flex flex-col font-raleway">
+  <app-title-header
+    title="Serviços"
+    description="Gerencie o catálogo de serviços oferecidos pela plataforma."
+  ></app-title-header>
+
+  <div
+    class="mt-6 flex items-center flex-wrap gap-4 py-6 px-4 rounded-lg bg-white shadow-sm shadow-[#0B2E130D] justify-between"
+  >
+    <div class="flex items-center gap-2 text-sm font-semibold text-[#41493D] uppercase">
+      <img src="/icons/services/filter.svg" alt="" width="16" height="14" />
+      Filtros
+    </div>
+
+    <div class="flex items-center gap-3">
+      <!-- Status -->
+      <div class="relative">
+        <button
+          type="button"
+          (click)="toggleStatusMenu()"
+          class="flex items-center gap-2 rounded-3xl px-4 py-2 bg-tertiary border border-[#C2C8BE] text-sm text-[#41493D] hover:bg-gray-100 transition-all duration-300 cursor-pointer"
+        >
+          {{ statusFilter() }}
+          <img src="/icons/dropdown.svg" alt="" width="10" height="7" />
+        </button>
+
+        @if (isStatusMenuOpen()) {
+          <div
+            class="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-[#0000001A] overflow-hidden z-10"
+          >
+            @for (status of statusFilters; track status) {
+              <button
+                type="button"
+                (click)="setStatusFilter(status)"
+                [class]="
+                  'w-full text-left px-4 py-2.5 text-sm hover:bg-tertiary/80 transition-colors cursor-pointer ' +
+                  (statusFilter() === status ? 'font-semibold text-[#094908]' : 'text-[#41493D]')
+                "
+              >
+                {{ status }}
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Categoria -->
+      <div class="relative">
+        <button
+          type="button"
+          (click)="toggleCategoryMenu()"
+          class="flex items-center gap-2 rounded-3xl px-4 py-2 bg-tertiary border border-[#C2C8BE] text-sm text-[#41493D] hover:bg-gray-100 transition-all duration-300 cursor-pointer"
+        >
+          {{ categoryFilter() }}
+          <img src="/icons/dropdown.svg" alt="" width="10" height="7" />
+        </button>
+
+        @if (isCategoryMenuOpen()) {
+          <div
+            class="absolute right-0 top-full mt-2 w-56 max-h-72 overflow-y-auto bg-white rounded-lg shadow-lg border border-[#0000001A] z-10"
+          >
+            @for (category of categoryFilters(); track category) {
+              <button
+                type="button"
+                (click)="setCategoryFilter(category)"
+                [class]="
+                  'w-full text-left px-4 py-2.5 text-sm hover:bg-tertiary/80 transition-colors cursor-pointer ' +
+                  (categoryFilter() === category ? 'font-semibold text-[#094908]' : 'text-[#41493D]')
+                "
+              >
+                {{ category }}
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 mt-8 h-40">
+    @for (service of filteredServices(); track service.id) {
+      <app-service-card class="h-full"
+        [name]="service.name"
+        [description]="service.description"
+        [image]="service.image"
+        [gallery]="service.gallery"
+        [category]="service.category"
+        [status]="service.status"
+      ></app-service-card>
+    } @empty {
+      <div class="col-span-full bg-white rounded-xl border border-gray-100 p-8 text-center text-gray-500">
+        Nenhum serviço encontrado.
+      </div>
+    }
+  </div>
+</div>

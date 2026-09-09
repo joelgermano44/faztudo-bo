@@ -8,9 +8,9 @@ import { InjectionToken } from '@angular/core';
  * diretamente a seguir a este endereço.
  *
  * Fornecer um valor concreto na app root, por exemplo:
- * `{ provide: API_BASE_URL, useValue: 'https://apimesafa.evofenix.it.ao/' }`
+ * `{ provide: API_BASE_URL, useValue: 'https://apimesafa.evofenix.it.ao/' || 'http://192.168.1.56' }`
  */
-export const API_BASE_URL = new InjectionToken<string>('https://apimesafa.evofenix.it.ao/', {
+export const API_BASE_URL = new InjectionToken<string>('http://192.168.1.56:3000', {
   providedIn: 'root',
   factory: () => '',
 });
