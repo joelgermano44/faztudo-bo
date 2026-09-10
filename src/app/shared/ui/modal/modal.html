@@ -1,0 +1,45 @@
+@if (rendered()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 font-raleway">
+    <div
+      class="absolute inset-0 bg-[#0B2E13]/50 backdrop-blur-sm transition-opacity duration-200"
+      [class.opacity-100]="visible()"
+      [class.opacity-0]="!visible()"
+      (click)="requestClose()"
+    ></div>
+
+    <div
+      class="relative w-full max-h-[90vh] flex flex-col bg-white rounded-2xl shadow-2xl transition-all duration-200"
+      [class]="sizeClass()"
+      [class.opacity-100]="visible()"
+      [class.scale-100]="visible()"
+      [class.opacity-0]="!visible()"
+      [class.scale-95]="!visible()"
+    >
+      <div class="flex items-center justify-between gap-4 px-6 py-5 border-b border-[#0B2E130D]">
+        <h2 class="text-lg font-bold text-[#062406]">{{ title() }}</h2>
+
+        @if (closeable()) {
+          <button
+            type="button"
+            (click)="requestClose()"
+            aria-label="Fechar"
+            class="flex items-center justify-center h-9 w-9 rounded-full text-[#41493D] bg-[#F2F4F3] hover:bg-gray-200 hover:scale-105 transition-all duration-300 cursor-pointer shrink-0"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path
+                d="M1 1L13 13M13 1L1 13"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+        }
+      </div>
+
+      <div class="overflow-y-auto px-6 py-6">
+        <ng-content></ng-content>
+      </div>
+    </div>
+  </div>
+}

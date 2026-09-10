@@ -29,7 +29,7 @@ export class Sidebar {
           activeIcon: '/icons/dashboard/sidebar/active/chat.svg',
         },
         {
-          label: 'Admnistradores',
+          label: 'Administradores',
           route: '/dashboard/administrators',
           icon: '/icons/dashboard/sidebar/admin.svg',
           activeIcon: '/icons/dashboard/sidebar/active/admin.svg',

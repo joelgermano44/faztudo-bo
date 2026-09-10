@@ -1,0 +1,84 @@
+@if (rendered()) {
+  <div class="fixed inset-0 z-[70] flex items-center justify-center p-6 font-raleway">
+    <div
+      class="absolute inset-0 bg-black/90 backdrop-blur-sm transition-opacity duration-200"
+      [class.opacity-100]="visible()"
+      [class.opacity-0]="!visible()"
+      (click)="requestClose()"
+    ></div>
+
+    <button
+      type="button"
+      (click)="requestClose()"
+      aria-label="Fechar"
+      class="absolute top-5 right-5 flex items-center justify-center h-10 w-10 rounded-full text-white bg-white/10 hover:bg-white/20 hover:scale-105 transition-all duration-300 cursor-pointer"
+    >
+      <svg width="16" height="16" viewBox="0 0 14 14" fill="none">
+        <path
+          d="M1 1L13 13M13 1L1 13"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+        />
+      </svg>
+    </button>
+
+    @if (images().length > 1) {
+      <button
+        type="button"
+        (click)="previous(); $event.stopPropagation()"
+        aria-label="Imagem anterior"
+        class="absolute left-4 top-1/2 -translate-y-1/2 flex items-center justify-center h-11 w-11 rounded-full text-white bg-white/10 hover:bg-white/20 hover:scale-105 transition-all duration-300 cursor-pointer"
+      >
+        <svg width="10" height="16" viewBox="0 0 10 16" fill="none">
+          <path
+            d="M9 1L2 8L9 15"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        (click)="next(); $event.stopPropagation()"
+        aria-label="Próxima imagem"
+        class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center h-11 w-11 rounded-full text-white bg-white/10 hover:bg-white/20 hover:scale-105 transition-all duration-300 cursor-pointer"
+      >
+        <svg width="10" height="16" viewBox="0 0 10 16" fill="none">
+          <path
+            d="M1 1L8 8L1 15"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+    }
+
+    <div
+      class="relative max-w-5xl max-h-[85vh] transition-all duration-200"
+      [class.opacity-100]="visible()"
+      [class.scale-100]="visible()"
+      [class.opacity-0]="!visible()"
+      [class.scale-95]="!visible()"
+    >
+      <img
+        [src]="images()[index()]"
+        [alt]="alt()"
+        class="max-w-full max-h-[85vh] rounded-xl object-contain shadow-2xl"
+      />
+
+      @if (images().length > 1) {
+        <span
+          class="absolute -bottom-9 left-1/2 -translate-x-1/2 text-sm text-white/80 font-medium"
+        >
+          {{ index() + 1 }} / {{ images().length }}
+        </span>
+      }
+    </div>
+  </div>
+}

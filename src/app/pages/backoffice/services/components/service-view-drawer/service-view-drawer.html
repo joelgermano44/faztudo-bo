@@ -1,0 +1,112 @@
+<app-drawer
+  [open]="open()"
+  title="Detalhes do serviço"
+  size="lg"
+  class="w-full"
+  (closed)="requestClose()"
+>
+  @if (service(); as service) {
+    <div class="flex flex-col gap-6">
+      <!-- Capa -->
+      <button
+        type="button"
+        (click)="openLightbox(0)"
+        [disabled]="!cover()"
+        class="group relative h-56 w-full overflow-hidden rounded-2xl bg-[#E6E9E8] disabled:cursor-default"
+      >
+        @if (cover()) {
+          <img [src]="cover()" [alt]="service.name" class="h-full w-full object-cover" />
+          <div
+            class="absolute inset-0 flex items-center justify-center bg-black/0 text-transparent transition-all duration-300 group-hover:bg-black/40 group-hover:text-white"
+          >
+            <span class="text-sm font-semibold">Ver imagem</span>
+          </div>
+        } @else {
+          <div class="flex h-full w-full items-center justify-center">
+            <img src="/icons/dashboard/dashcard/servicos.svg" alt="" class="h-8 w-8 opacity-40" />
+          </div>
+        }
+
+        <span
+          class="absolute top-3 right-3 flex items-center justify-center rounded-full px-3 py-1 text-[10px] font-bold uppercase shadow-sm {{
+            statusBadgeClass()
+          }}"
+        >
+          {{ isActive() ? 'Activo' : 'Inactivo' }}
+        </span>
+      </button>
+
+      <!-- Info principal -->
+      <div class="flex flex-col gap-1">
+        <p class="text-[11px] font-semibold uppercase tracking-wide text-emerald-700">
+          {{ service.category.name }}
+        </p>
+        <h3 class="text-xl font-bold text-[#062406]">{{ service.name }}</h3>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <span class="text-sm font-semibold text-[#001A18]">Descrição</span>
+        <p class="text-sm leading-relaxed text-[#41493D]">{{ service.description }}</p>
+      </div>
+
+      <!-- Galeria -->
+      @if (gallery().length > 0) {
+        <div class="flex flex-col gap-2">
+          <span class="text-sm font-semibold text-[#001A18]">Galeria ({{ gallery().length }})</span>
+
+          <div class="grid grid-cols-3 gap-2">
+            @for (image of gallery(); track image; let i = $index) {
+              <button
+                type="button"
+                (click)="openLightbox(i + 1)"
+                class="group relative h-24 overflow-hidden rounded-xl border border-[#0000001A]"
+              >
+                <img [src]="image" alt="" class="h-full w-full object-cover" />
+                <div
+                  class="absolute inset-0 bg-black/0 transition-all duration-300 group-hover:bg-black/30"
+                ></div>
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Meta -->
+      <div class="grid grid-cols-2 gap-4 border-t border-[#0B2E130D] pt-5">
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Criado em</span>
+          <span class="text-sm text-[#41493D]">{{ formatDate(service.created_at) }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Atualizado em</span>
+          <span class="text-sm text-[#41493D]">{{ formatDate(service.updated_at) }}</span>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        (click)="requestDelete()"
+        class="flex items-center justify-center gap-2 rounded-full border border-red-200 px-6 py-3 text-sm font-semibold text-red-600 transition-all duration-300 hover:bg-red-50 cursor-pointer"
+      >
+        <svg width="15" height="16" viewBox="0 0 15 16" fill="none">
+          <path
+            d="M1.5 4H13.5M5.83333 7.33333V11.3333M9.16667 7.33333V11.3333M2.33333 4L3 13.3333C3 13.7754 3.17559 14.1993 3.48816 14.5118C3.80072 14.8244 4.22464 15 4.66667 15H10.3333C10.7754 15 11.1993 14.8244 11.5118 14.5118C11.8244 14.1993 12 13.7754 12 13.3333L12.6667 4M5.33333 4V1.83333C5.33333 1.61232 5.42113 1.40036 5.57741 1.24408C5.73369 1.0878 5.94565 1 6.16667 1H8.83333C9.05435 1 9.26631 1.0878 9.42259 1.24408C9.57887 1.40036 9.66667 1.61232 9.66667 1.83333V4"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        Eliminar serviço
+      </button>
+    </div>
+  }
+</app-drawer>
+
+<app-image-viewer
+  [open]="lightboxOpen()"
+  [images]="allImages()"
+  [startIndex]="lightboxIndex()"
+  [alt]="service()?.name ?? ''"
+  (closed)="closeLightbox()"
+></app-image-viewer>
