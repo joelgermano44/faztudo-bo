@@ -1,5 +1,7 @@
 import { InjectionToken } from '@angular/core';
 
+import { environment } from '../../../environments/environment';
+
 /**
  * Endereço base da API FazTudo (sem barra final).
  *
@@ -7,10 +9,11 @@ import { InjectionToken } from '@angular/core';
  * todas as rotas documentadas no backend (`/clients`, `/orders`, ...) ficam
  * diretamente a seguir a este endereço.
  *
- * Fornecer um valor concreto na app root, por exemplo:
- * `{ provide: API_BASE_URL, useValue: 'https://apimesafa.evofenix.it.ao/' || 'http://192.168.1.56' }`
+ * O valor vem de `src/environments/environment.ts` (dev) e é substituído por
+ * `src/environments/environment.prod.ts` (prod) no build de produção via
+ * `fileReplacements` (angular.json).
  */
-export const API_BASE_URL = new InjectionToken<string>('http://192.168.1.56:3000', {
+export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL', {
   providedIn: 'root',
-  factory: () => '',
+  factory: () => environment.apiBaseUrl,
 });
