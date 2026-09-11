@@ -1,0 +1,88 @@
+<app-drawer [open]="open()" title="Detalhes da morada" size="md" (closed)="requestClose()">
+  @if (address(); as address) {
+    <div class="flex flex-col gap-6">
+      <!-- Cabeçalho -->
+      <div class="flex items-start justify-between gap-3">
+        <div class="flex flex-col gap-1">
+          <h3 class="text-xl font-bold text-[#062406]">{{ address.address || 'Sem endereço' }}</h3>
+          <p class="text-sm text-[#41493D]">{{ address.municiple }}, {{ address.province }}</p>
+        </div>
+        <span
+          class="w-fit shrink-0 rounded-full px-3 py-1 text-[10px] font-bold uppercase {{
+            statusBadgeClass()
+          }}"
+        >
+          {{ isActive() ? 'Ativa' : 'Inativa' }}
+        </span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 border-t border-[#0B2E130D] pt-5">
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">ID</span>
+          <span class="text-sm text-[#41493D]">#END-{{ address.id }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Coordenadas</span>
+          <span class="text-sm text-[#41493D]">
+            @if (address.lat_lng) {
+              {{ address.lat_lng.lat }}, {{ address.lat_lng.lng }}
+            } @else {
+              —
+            }
+          </span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Criada em</span>
+          <span class="text-sm text-[#41493D]">{{ formatDate(address.createdAt) }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Atualizada em</span>
+          <span class="text-sm text-[#41493D]">{{ formatDate(address.updatedAt) }}</span>
+        </div>
+      </div>
+
+      @if (mapsUrl(); as mapsUrl) {
+        <a
+          [href]="mapsUrl"
+          target="_blank"
+          rel="noopener"
+          class="flex w-fit items-center gap-2 text-sm font-semibold text-secondary underline hover:text-[#0B2E13] transition-colors"
+        >
+          Abrir no Google Maps
+        </a>
+      }
+
+      <!-- Vínculos -->
+      <div class="flex flex-col gap-3 border-t border-[#0B2E130D] pt-5">
+        <span class="text-sm font-semibold text-[#001A18]"
+          >Vínculos ({{ totalUsages() }})</span
+        >
+
+        @if (totalUsages() === 0) {
+          <p class="text-sm text-gray-500">Esta morada não está associada a nenhum registo.</p>
+        } @else {
+          <ul class="flex flex-col gap-2">
+            @if (clientsCount() > 0) {
+              <li class="flex items-center justify-between rounded-lg bg-[#F8F9FA] px-3 py-2.5">
+                <span class="text-sm text-[#41493D]">Clientes</span>
+                <span class="text-sm font-semibold text-[#062406]">{{ clientsCount() }}</span>
+              </li>
+            }
+            @if (professionalsCount() > 0) {
+              <li class="flex items-center justify-between rounded-lg bg-[#F8F9FA] px-3 py-2.5">
+                <span class="text-sm text-[#41493D]">Profissionais</span>
+                <span class="text-sm font-semibold text-[#062406]">{{ professionalsCount() }}</span>
+              </li>
+            }
+            @if (ordersCount() > 0) {
+              <li class="flex items-center justify-between rounded-lg bg-[#F8F9FA] px-3 py-2.5">
+                <span class="text-sm text-[#41493D]">Pedidos</span>
+                <span class="text-sm font-semibold text-[#062406]">{{ ordersCount() }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    </div>
+  }
+</app-drawer>

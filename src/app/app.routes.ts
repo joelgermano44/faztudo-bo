@@ -17,6 +17,7 @@ import { Payments } from './pages/backoffice/payments/payments';
 import { Advertisements } from './pages/backoffice/advertisements/advertisements';
 import { Categories } from './pages/backoffice/categories/categories';
 import { Clients } from './pages/backoffice/clients/clients';
+import { Addresses } from './pages/backoffice/addresses/addresses';
 
 export const routes: Routes = [
   {
@@ -87,6 +88,10 @@ export const routes: Routes = [
       {
         path: 'clients-users',
         component: Clients,
+      },
+      {
+        path: 'addresses',
+        component: Addresses,
       },
     ],
   },
