@@ -1,4 +1,5 @@
 import { Component, computed, ElementRef, HostListener, inject, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { toast } from 'ngx-sonner';
 import { TitleHeader } from '../../layout/backoffice/components/title-header/title-header';
 import { CategoriesTable, CategoryRow, CategoryStatus } from './components/categories-table/categories-table';
@@ -49,6 +50,7 @@ function toCategoryRow(category: CategoryWithServices): CategoryRow {
 export class Categories {
   private readonly categoryService = inject(CategoryService);
   private readonly elementRef = inject(ElementRef);
+  private readonly route = inject(ActivatedRoute);
 
   readonly filters: StatusFilter[] = ['Todas', 'Ativa', 'Inativa'];
   readonly filterLabels: Record<StatusFilter, string> = {
@@ -90,6 +92,10 @@ export class Categories {
 
   constructor() {
     this.loadCategories();
+    const query = this.route.snapshot.queryParamMap.get('q');
+    if (query) {
+      this.searchTerm.set(query);
+    }
   }
 
   private loadCategories(): void {

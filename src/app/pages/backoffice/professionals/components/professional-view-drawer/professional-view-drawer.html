@@ -109,7 +109,7 @@
 
       <!-- Perfil -->
       <div [hidden]="activeTab() !== 'perfil'" class="flex flex-col gap-6">
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
           <div class="flex flex-col gap-1">
             <span class="text-xs font-semibold uppercase text-[#8C9492]">Telefone</span>
             <span class="text-sm text-[#41493D]">{{ professional.phone }}</span>
@@ -341,7 +341,7 @@
           <span class="text-sm text-[#8C9492]">A carregar...</span>
         } @else {
           @if (walletSummary(); as summary) {
-            <div class="grid grid-cols-3 gap-3">
+            <div class="grid grid-cols-3 gap-3 max-sm:grid-cols-1">
               <div class="flex flex-col gap-1 rounded-xl bg-[#F8F9FA] p-3">
                 <span class="text-[10px] font-semibold uppercase text-[#8C9492]">A Receber</span>
                 <span class="text-lg font-bold text-[#062406]">{{ formatMoney(summary.to_receive) }}</span>
@@ -491,7 +491,7 @@
       </div>
 
       <!-- Ações -->
-      <div class="flex items-center gap-3 border-t border-[#0B2E130D] pt-5">
+      <div class="flex items-center gap-3 border-t border-[#0B2E130D] pt-5 max-lg:flex-wrap">
         <button
           type="button"
           (click)="requestEdit()"

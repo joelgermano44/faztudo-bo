@@ -78,7 +78,7 @@
       <button
         type="button"
         (click)="exportCsv()"
-        class="flex items-center gap-2 rounded-3xl px-5 py-3 bg-primary text-[#0B2E13] text-sm font-semibold hover:scale-105 transition-all duration-300 cursor-pointer"
+        class="flex items-center gap-2 rounded-3xl px-5 py-3 bg-primary text-[#0B2E13] text-sm font-semibold hover:scale-105 transition-all duration-300 cursor-pointer whitespace-nowrap max-sm:w-full max-sm:justify-center"
       >
         <svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -91,7 +91,7 @@
     </div>
   </div>
 
-  <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 h-66.5">
+  <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:h-66.5">
     <app-flow-stat-card
       class="h-full"
       icon="/icons/payments/completed.svg"

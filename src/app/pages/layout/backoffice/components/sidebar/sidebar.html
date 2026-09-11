@@ -1,8 +1,32 @@
+@if (isOpen()) {
+  <div
+    (click)="close()"
+    class="hidden max-lg:block max-lg:fixed max-lg:inset-0 max-lg:z-40 max-lg:bg-black/40"
+  ></div>
+}
+
 <div
-  class="sidebar-scroll w-full min-w-65 h-full flex-col overflow-y-auto gap-5 flex py-8.5 bg-[#094908] text-white border-b border-[#C0C8C6]/40"
+  [class.max-lg:translate-x-0]="isOpen()"
+  class="sidebar-scroll w-full min-w-65 h-full flex-col overflow-y-auto gap-5 flex py-8.5 bg-[#094908] text-white border-b border-[#C0C8C6]/40 max-lg:w-72 max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:z-50 max-lg:-translate-x-full max-lg:transition-transform max-lg:duration-300"
 >
-  <div class="pb-4 border-b border-white/20 w-fit h-fit ml-4">
+  <div class="pb-4 border-b border-white/20 w-fit h-fit ml-4 flex items-center justify-between max-lg:w-full max-lg:pr-4">
     <img src="/logos/logo-horizontal.svg" alt="" class="" />
+
+    <button
+      type="button"
+      (click)="close()"
+      aria-label="Fechar menu"
+      class="hidden max-lg:flex items-center justify-center h-8 w-8 rounded-full hover:bg-white/10 cursor-pointer transition-colors"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M6 6L18 18M18 6L6 18"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+        />
+      </svg>
+    </button>
   </div>
   @for (item of navItems; track item.title) {
     <div class="flex flex-col gap-5">
@@ -40,6 +64,7 @@
                 [routerLinkActiveOptions]="{ exact: subItem.route === '/dashboard' }"
                 #rla="routerLinkActive"
                 [routerLink]="subItem.route"
+                (click)="close()"
                 class="pl-8 pr-16 py-3 rounded-r-full w-full flex gap-3 text-[13px] items-center hover:border-r-4 border-primary hover:bg-[#F8F9FA5C] cursor-pointer transition-colors"
               >
                 <img [src]="subItem.icon" alt="" class="" />
@@ -62,6 +87,7 @@
           [routerLinkActiveOptions]="{ exact: true }"
           #rla="routerLinkActive"
           routerLink="/dashboard/profile"
+          (click)="close()"
           class="pl-8 pr-16 py-3 rounded-r-full w-fit flex gap-3 text-[13px] items-center hover:border-r-4 border-primary hover:bg-[#F8F9FA5C] cursor-pointer transition-colors"
         >
           <img src="/icons/settings/profile.svg" alt="" class="" />

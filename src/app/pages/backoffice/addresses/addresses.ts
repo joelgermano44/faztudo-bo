@@ -1,4 +1,5 @@
 import { Component, computed, ElementRef, HostListener, inject, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { toast } from 'ngx-sonner';
 import { TitleHeader } from '../../layout/backoffice/components/title-header/title-header';
@@ -68,6 +69,7 @@ export class Addresses {
   private readonly professionalService = inject(ProfessionalService);
   private readonly orderService = inject(OrderService);
   private readonly elementRef = inject(ElementRef);
+  private readonly route = inject(ActivatedRoute);
 
   readonly filters: StatusFilter[] = ['Todas', 'Ativa', 'Inativa'];
   readonly filterLabels: Record<StatusFilter, string> = {
@@ -126,6 +128,10 @@ export class Addresses {
 
   constructor() {
     this.loadAddresses();
+    const query = this.route.snapshot.queryParamMap.get('q');
+    if (query) {
+      this.searchTerm.set(query);
+    }
   }
 
   private loadAddresses(): void {

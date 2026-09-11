@@ -69,24 +69,26 @@ export class OrderFlow implements AfterViewInit, OnDestroy {
     this.updateChartData();
   }
 
-  private monthlyPoints(): { label: string; done: number; canceledOrRejected: number }[] {
+  private monthlyPoints(): { label: string; done: number; canceledOrRejected: number; inProgress: number }[] {
     return [...this.data()]
       .sort((a, b) => a.month.localeCompare(b.month))
       .map((point) => ({
         label: MONTH_LABELS[Number(point.month.split('-')[1]) - 1] ?? point.month,
         done: point.done,
         canceledOrRejected: point.canceledOrRejected,
+        inProgress: point.inProgress,
       }));
   }
 
-  private annualPoints(): { label: string; done: number; canceledOrRejected: number }[] {
-    const byYear = new Map<string, { done: number; canceledOrRejected: number }>();
+  private annualPoints(): { label: string; done: number; canceledOrRejected: number; inProgress: number }[] {
+    const byYear = new Map<string, { done: number; canceledOrRejected: number; inProgress: number }>();
 
     for (const point of this.data()) {
       const year = point.month.split('-')[0];
-      const current = byYear.get(year) ?? { done: 0, canceledOrRejected: 0 };
+      const current = byYear.get(year) ?? { done: 0, canceledOrRejected: 0, inProgress: 0 };
       current.done += point.done;
       current.canceledOrRejected += point.canceledOrRejected;
+      current.inProgress += point.inProgress;
       byYear.set(year, current);
     }
 
@@ -130,6 +132,16 @@ export class OrderFlow implements AfterViewInit, OnDestroy {
           barWidth: '35%',
         },
         {
+          name: 'Em curso',
+          data: points.map((point) => point.inProgress),
+          type: 'bar',
+          itemStyle: {
+            borderRadius: [12, 12, 0, 0],
+            color: '#96D786',
+          },
+          barWidth: '35%',
+        },
+        {
           name: 'Cancelados/Rejeitados',
           data: points.map((point) => point.canceledOrRejected),
           type: 'bar',
@@ -146,8 +158,8 @@ export class OrderFlow implements AfterViewInit, OnDestroy {
           type: 'none',
         },
         formatter: (params: any) => {
-          const [done, canceled] = params;
-          return `<b>${done.axisValue}</b><br/>Concluídos: ${done.value}<br/>Cancelados/Rejeitados: ${canceled.value}`;
+          const [done, inProgress, canceled] = params;
+          return `<b>${done.axisValue}</b><br/>Concluídos: ${done.value}<br/>Em curso: ${inProgress.value}<br/>Cancelados/Rejeitados: ${canceled.value}`;
         },
       },
     };

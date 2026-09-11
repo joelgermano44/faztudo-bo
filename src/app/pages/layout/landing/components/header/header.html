@@ -1,17 +1,22 @@
-<header class="h-20 w-full bg-[#F8F9FA] py-2 px-24 flex items-center justify-center">
+<header
+  class="h-20 w-full bg-[#F8F9FA] py-2 px-24 flex items-center justify-center relative max-lg:px-6 max-sm:px-4"
+>
   <div class="flex items-center justify-between w-full max-w-300">
-    <a routerLink="/" class="cursor-pointer hover:scale-105 transition-all duration-300">
+    <a
+      href="/"
+      (click)="$event.preventDefault(); scrollToSection(null)"
+      class="cursor-pointer hover:scale-105 transition-all duration-300"
+    >
       <img src="/logos/logo.png" alt="" class="object-contain" />
     </a>
 
-    <ul class="flex items-center gap-12 text-sm font-bold text-[#404847]">
+    <ul class="flex items-center gap-12 text-sm font-bold text-[#404847] max-lg:hidden">
       @for (item of navItems; track item.label) {
         <li class="hover:cursor-pointer hover:scale-105 transition-all duration-300">
           <a
-            [routerLink]="item.route"
+            [href]="item.sectionId ? '#' + item.sectionId : '/'"
+            (click)="$event.preventDefault(); scrollToSection(item.sectionId)"
             class="hover:scale-105 transition-all duration-300 hover:font-bold py-1"
-            routerLinkActive="border-b-2 border-secondary font-bold py-1 text-secondary"
-            [routerLinkActiveOptions]="{ exact: item.exactMatch ?? false }"
           >
             {{ item.label }}
           </a>
@@ -20,7 +25,7 @@
     </ul>
 
     <button
-      class="flex items-center text-cinza-1 font-semibold cursor-pointer shadow-xs shadow-black/10 bg-primary hover:bg-primary/80 hover:scale-105 transition-all duration-300 px-6 py-3 rounded-full gap-2"
+      class="flex items-center text-cinza-1 font-semibold cursor-pointer shadow-xs shadow-black/10 bg-primary hover:bg-primary/80 hover:scale-105 transition-all duration-300 px-6 py-3 rounded-full gap-2 max-lg:hidden"
     >
       Download da App
 
@@ -37,5 +42,56 @@
         />
       </svg>
     </button>
+
+    <button
+      type="button"
+      (click)="toggleMobileMenu()"
+      aria-label="Abrir menu"
+      class="hidden max-lg:flex items-center justify-center h-10 w-10 rounded-lg hover:bg-black/5 transition-all cursor-pointer"
+    >
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M3 6H21M3 12H21M3 18H21"
+          stroke="#404847"
+          stroke-width="1.8"
+          stroke-linecap="round"
+        />
+      </svg>
+    </button>
   </div>
+
+  @if (isMobileMenuOpen()) {
+    <div
+      class="hidden max-lg:flex absolute left-0 top-full w-full flex-col gap-1 bg-[#F8F9FA] border-t border-black/5 shadow-lg px-6 py-4 z-30"
+    >
+      @for (item of navItems; track item.label) {
+        <a
+          [href]="item.sectionId ? '#' + item.sectionId : '/'"
+          (click)="$event.preventDefault(); scrollToSection(item.sectionId)"
+          class="text-sm font-bold text-[#404847] py-2.5"
+        >
+          {{ item.label }}
+        </a>
+      }
+
+      <button
+        class="flex items-center justify-center text-cinza-1 font-semibold cursor-pointer shadow-xs shadow-black/10 bg-primary hover:bg-primary/80 transition-all duration-300 px-6 py-3 rounded-full gap-2 mt-2 w-fit"
+      >
+        Download da App
+
+        <svg
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M4.66667 7L1.75 4.08333L2.56667 3.2375L4.08333 4.75417V0H5.25V4.75417L6.76667 3.2375L7.58333 4.08333L4.66667 7ZM1.16667 9.33333C0.845833 9.33333 0.571181 9.2191 0.342708 8.99063C0.114236 8.76215 0 8.4875 0 8.16667V6.41667H1.16667V8.16667H8.16667V6.41667H9.33333V8.16667C9.33333 8.4875 9.2191 8.76215 8.99063 8.99063C8.76215 9.2191 8.4875 9.33333 8.16667 9.33333H1.16667Z"
+            fill="#030400"
+          />
+        </svg>
+      </button>
+    </div>
+  }
 </header>

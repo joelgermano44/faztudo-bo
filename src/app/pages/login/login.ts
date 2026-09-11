@@ -38,9 +38,6 @@ export class Login {
 
     this.authService.login(this.form.getRawValue()).subscribe({
       next: () => {
-        toast.success('Sessão iniciada com sucesso', {
-          description: 'A redireccionar para o painel...',
-        });
         this.router.navigateByUrl('/dashboard');
       },
       error: (error) => {

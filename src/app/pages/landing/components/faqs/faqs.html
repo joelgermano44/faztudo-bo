@@ -1,4 +1,7 @@
-<section class="py-20 px-24 flex flex-col items-center justify-between font-raleway">
+<section
+  id="faqs"
+  class="py-20 px-24 flex flex-col items-center justify-between font-raleway max-lg:px-6 max-sm:px-4"
+>
   <div class="max-w-3xl w-full flex flex-col gap-12">
     <div class="flex flex-col gap-2 items-center text-center">
       <span class="uppercase text-[#121900] bg-[#E7E8E9] rounded-full px-3 py-1">Suporte</span>
@@ -13,13 +16,13 @@
         <li class="flex flex-col gap-3">
           <div
             (click)="toggle(item)"
-            class="flex w-full justify-between p-6 rounded-3xl bg-tertiary border border-[#C0C8C6]/20 hover:bg-cinza-3/20 transition-all duration-300 cursor-pointer"
+            class="flex w-full justify-between gap-3 p-6 rounded-3xl bg-tertiary border border-[#C0C8C6]/20 hover:bg-cinza-3/20 transition-all duration-300 cursor-pointer max-sm:p-4"
           >
             {{ item.question }}
             <img
               src="/icons/dropdown.svg"
               alt=""
-              class="transition-transform duration-300"
+              class="transition-transform duration-300 shrink-0"
               [class.rotate-180]="item.open"
             />
           </div>

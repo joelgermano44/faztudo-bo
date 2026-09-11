@@ -1,5 +1,5 @@
 @if (rendered()) {
-  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 font-raleway">
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 max-sm:p-3 font-raleway">
     <div
       class="absolute inset-0 bg-[#0B2E13]/50 backdrop-blur-sm transition-opacity duration-200"
       [class.opacity-100]="visible()"
@@ -15,7 +15,9 @@
       [class.opacity-0]="!visible()"
       [class.scale-95]="!visible()"
     >
-      <div class="flex items-center justify-between gap-4 px-6 py-5 border-b border-[#0B2E130D]">
+      <div
+        class="flex items-center justify-between gap-4 px-6 py-5 border-b border-[#0B2E130D] max-sm:px-4 max-sm:py-4"
+      >
         <h2 class="text-lg font-bold text-[#062406]">{{ title() }}</h2>
 
         @if (closeable()) {
@@ -37,7 +39,7 @@
         }
       </div>
 
-      <div class="overflow-y-auto px-6 py-6">
+      <div class="overflow-y-auto px-6 py-6 max-sm:px-4 max-sm:py-4">
         <ng-content></ng-content>
       </div>
     </div>

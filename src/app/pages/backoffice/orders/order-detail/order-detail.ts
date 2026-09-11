@@ -151,8 +151,32 @@ export class OrderDetail {
   readonly chatHasMore = signal(false);
 
   constructor() {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.load(id);
+    this.route.paramMap.subscribe((params) => {
+      const id = Number(params.get('id'));
+      this.resetForNewOrder();
+      this.load(id);
+    });
+  }
+
+  /**
+   * O componente é reutilizado ao navegar entre `/dashboard/orders/:id` com
+   * ids diferentes (mesma rota, só o parâmetro muda) — sem isto, o estado do
+   * contrato anterior (separador da conversa, mensagens, ação pendente)
+   * ficaria visível por cima dos dados do novo contrato.
+   */
+  private resetForNewOrder(): void {
+    this.activeTab.set('details');
+    this.chatLoaded.set(false);
+    this.chatLoading.set(false);
+    this.chatConversation.set(null);
+    this.chatMessages.set([]);
+    this.chatNextCursor.set(null);
+    this.chatHasMore.set(false);
+    this.pendingAction.set(null);
+    this.rejectReason.set('');
+    this.payment.set(null);
+    this.payout.set(null);
+    this.timeline.set([]);
   }
 
   private load(id: number): void {

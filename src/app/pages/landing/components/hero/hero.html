@@ -1,18 +1,20 @@
-<section class="w-full min-h-screen h-196.5 relative overflow-x-hidden font-raleway">
+<section id="hero" class="w-full min-h-screen h-196.5 relative overflow-x-hidden font-raleway">
   <img src="/landing/bg-hero.png" alt="" class="object-cover w-full h-full" />
 
-  <div class="w-full h-full max-w-300 absolute inset-0 mx-auto flex flex-col justify-center">
-    <div class="z-20 flex flex-col gap-9.5">
+  <div
+    class="w-full h-full max-w-300 absolute inset-0 mx-auto flex flex-col justify-center px-6 max-lg:px-10 max-sm:px-5"
+  >
+    <div class="z-20 flex flex-col gap-9.5 max-lg:max-w-125">
       <div class="flex flex-col text-white gap-6">
         <div
-          class="bg-white/10 border border-white/20 rounded-full px-4 py-2 flex items-center gap-2 w-fit"
+          class="bg-white/10 border border-white/20 rounded-full px-4 py-2 flex items-center gap-2 w-fit max-sm:text-sm"
         >
-          <span class="bg-primary h-2 w-2 rounded-full animate-pulse"></span>
+          <span class="bg-primary h-2 w-2 rounded-full animate-pulse shrink-0"></span>
 
           Os serviços nunca estiveram tão fáceis
         </div>
 
-        <h1 class="font-extrabold text-5xl max-w-200">
+        <h1 class="font-extrabold text-5xl max-w-200 max-lg:text-4xl max-sm:text-3xl">
           Conectamos clientes a prestadores de serviços
           <span class="text-primary animate-pulse">independentes.</span>
         </h1>
@@ -23,7 +25,7 @@
         </p>
       </div>
 
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-4 max-sm:flex-wrap">
         <a href="#" class="hover:scale-105 transition-all duration-300 cursor-pointer">
           <img src="/app-store.svg" alt="" class="" />
         </a>
@@ -34,10 +36,10 @@
       </div>
     </div>
 
-    <hr class="w-full border-white/10 mt-10" />
+    <hr class="w-full border-white/10 mt-10 max-lg:max-w-125" />
 
-    <div class="flex items-center gap-4 mt-6">
-      <div class="flex items-center justify-center">
+    <div class="flex items-center gap-4 mt-6 max-lg:max-w-125 max-sm:flex-wrap">
+      <div class="flex items-center justify-center shrink-0">
         @for (user of users.slice(0, 3); track user.id; let i = $index) {
           <div
             class="relative w-10 h-10 rounded-full overflow-hidden border-4 border-[#063B2B]"
@@ -53,6 +55,10 @@
       <p class="font-normal text-cinza-3">Junte-se a +10.000 utilizadores satisfeitos</p>
     </div>
 
-    <img src="/landing/Mockup-FazTudo.svg" alt="" class="absolute -right-22 bottom-24 z-10" />
+    <img
+      src="/landing/Mockup-FazTudo.svg"
+      alt=""
+      class="absolute -right-22 bottom-24 z-10 max-lg:hidden"
+    />
   </div>
 </section>

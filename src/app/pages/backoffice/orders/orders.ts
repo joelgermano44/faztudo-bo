@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
 import { toast } from 'ngx-sonner';
 import { TitleHeader } from '../../layout/backoffice/components/title-header/title-header';
@@ -84,6 +85,7 @@ function toOrderRow(order: Order, baseUrl: string): OrderRow {
 export class Orders {
   private readonly orderService = inject(OrderService);
   private readonly baseUrl = inject(API_BASE_URL);
+  private readonly route = inject(ActivatedRoute);
 
   readonly filters: StatusFilter[] = ['Todos', 'Ativo', 'Pendente', 'Finalizado', 'Cancelado'];
   readonly filterLabels: Record<StatusFilter, string> = {
@@ -125,6 +127,11 @@ export class Orders {
   });
 
   constructor() {
+    const filter = this.route.snapshot.queryParamMap.get('filter');
+    if (this.filters.includes(filter as StatusFilter)) {
+      this.activeFilter.set(filter as StatusFilter);
+    }
+
     this.orderService
       .findAll()
       .pipe(

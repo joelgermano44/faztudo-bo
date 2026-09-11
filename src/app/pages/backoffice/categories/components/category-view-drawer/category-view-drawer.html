@@ -2,7 +2,7 @@
   @if (category(); as category) {
     <div class="flex flex-col gap-6">
       <!-- Cabeçalho -->
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between flex-wrap gap-2">
         <h3 class="text-xl font-bold text-[#062406]">{{ category.name }}</h3>
         <span
           class="w-fit rounded-full px-3 py-1 text-[10px] font-bold uppercase {{
@@ -13,7 +13,7 @@
         </span>
       </div>
 
-      <div class="grid grid-cols-2 gap-4 border-t border-[#0B2E130D] pt-5">
+      <div class="grid grid-cols-2 gap-4 border-t border-[#0B2E130D] pt-5 max-sm:grid-cols-1">
         <div class="flex flex-col gap-1">
           <span class="text-xs font-semibold uppercase text-[#8C9492]">ID</span>
           <span class="text-sm text-[#41493D]">#CAT-{{ category.id }}</span>

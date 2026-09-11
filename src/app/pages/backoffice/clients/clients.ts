@@ -1,4 +1,5 @@
 import { Component, computed, ElementRef, HostListener, inject, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { toast } from 'ngx-sonner';
@@ -61,6 +62,7 @@ export class Clients {
   private readonly supportChatService = inject(SupportChatService);
   private readonly baseUrl = inject(API_BASE_URL);
   private readonly elementRef = inject(ElementRef);
+  private readonly route = inject(ActivatedRoute);
 
   readonly filters: StatusFilter[] = ['Todos', 'Ativo', 'Inativo'];
   readonly filterLabels: Record<StatusFilter, string> = {
@@ -127,6 +129,10 @@ export class Clients {
 
   constructor() {
     this.loadClients();
+    const query = this.route.snapshot.queryParamMap.get('q');
+    if (query) {
+      this.searchTerm.set(query);
+    }
   }
 
   private loadClients(): void {

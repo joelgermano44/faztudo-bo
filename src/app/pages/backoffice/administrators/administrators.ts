@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { TitleHeader } from '../../layout/backoffice/components/title-header/title-header';
 import {
   AdministratorsTable,
@@ -57,6 +58,7 @@ function toAdminRow(admin: Admin, baseUrl: string): AdminRow {
 })
 export class Administrators {
   private readonly adminService = inject(AdminService);
+  private readonly route = inject(ActivatedRoute);
   private readonly baseUrl = inject(API_BASE_URL);
 
   readonly filters: StatusFilter[] = ['Todos', 'Ativo', 'Inativo'];
@@ -105,6 +107,10 @@ export class Administrators {
 
   constructor() {
     this.loadAdmins();
+    const query = this.route.snapshot.queryParamMap.get('q');
+    if (query) {
+      this.searchTerm.set(query);
+    }
   }
 
   private loadAdmins(): void {

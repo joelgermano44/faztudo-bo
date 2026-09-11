@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { toast } from 'ngx-sonner';
 import { TitleHeader } from '../../layout/backoffice/components/title-header/title-header';
 import {
@@ -22,6 +23,7 @@ import {
 })
 export class SupportChat {
   private readonly supportChatService = inject(SupportChatService);
+  private readonly route = inject(ActivatedRoute);
 
   private readonly conversations = signal<SupportInboxItem[]>([]);
   readonly conversationsNextCursor = signal<number | null>(null);
@@ -60,10 +62,16 @@ export class SupportChat {
   });
 
   constructor() {
+    const query = this.route.snapshot.queryParamMap.get('q');
+    if (query) {
+      this.searchTerm.set(query);
+      this.loadConversations(undefined, true);
+      return;
+    }
     this.loadConversations();
   }
 
-  private loadConversations(before?: number): void {
+  private loadConversations(before?: number, autoSelectFirst = false): void {
     this.conversationsLoading.set(true);
     const query: { search?: string; before?: number } = {};
     if (this.searchTerm()) {
@@ -81,6 +89,9 @@ export class SupportChat {
           );
           this.conversationsNextCursor.set(page.next_cursor);
           this.conversationsHasMore.set(page.has_more);
+          if (autoSelectFirst && page.data.length > 0) {
+            this.selectConversation(page.data[0].id);
+          }
         },
         error: (err) => {
           this.conversationsLoading.set(false);

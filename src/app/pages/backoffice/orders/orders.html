@@ -5,9 +5,9 @@
   ></app-title-header>
 
   <div
-    class="mt-6 flex items-center py-6 px-4 rounded-lg bg-white shadow-sm shadow-[#0B2E130D] justify-between"
+    class="mt-6 flex items-center flex-wrap gap-4 py-6 px-4 rounded-lg bg-white shadow-sm shadow-[#0B2E130D] justify-between"
   >
-    <ul class="flex max-w-125 w-full gap-3">
+    <ul class="flex flex-wrap max-w-125 w-full gap-3">
       @for (filter of filters; track filter) {
         <li
           (click)="setFilter(filter)"
@@ -21,7 +21,7 @@
       }
     </ul>
 
-    <div class="flex gap-2 items-center rounded-3xl px-4 py-3 bg-tertiary border border-[#C2C8BE]">
+    <div class="flex gap-2 items-center rounded-3xl px-4 py-3 bg-tertiary border border-[#C2C8BE] max-sm:w-full">
       <img src="/icons/dashboard/search-v2.svg" alt="" />
       <input
         type="text"

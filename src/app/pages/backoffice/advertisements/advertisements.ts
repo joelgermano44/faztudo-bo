@@ -1,4 +1,5 @@
 import { Component, computed, ElementRef, HostListener, inject, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { toast } from 'ngx-sonner';
 import { TitleHeader } from '../../layout/backoffice/components/title-header/title-header';
 import { AdStatCard } from './components/ad-stat-card/ad-stat-card';
@@ -76,6 +77,7 @@ export class Advertisements {
   private readonly advertisementService = inject(AdvertisementService);
   private readonly baseUrl = inject(API_BASE_URL);
   private readonly elementRef = inject(ElementRef);
+  private readonly route = inject(ActivatedRoute);
 
   readonly filters: StatusFilter[] = ['Todos os Status', 'Ativas', 'Pausadas'];
 
@@ -152,6 +154,10 @@ export class Advertisements {
 
   constructor() {
     this.loadAdvertisements();
+    const query = this.route.snapshot.queryParamMap.get('q');
+    if (query) {
+      this.searchTerm.set(query);
+    }
   }
 
   private loadAdvertisements(): void {

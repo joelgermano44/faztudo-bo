@@ -1,6 +1,9 @@
-<section class="px-16 py-20 flex justify-center items-center w-full bg-tertiary font-raleway">
+<section
+  id="servicos"
+  class="px-16 py-20 flex justify-center items-center w-full bg-tertiary font-raleway max-lg:px-6 max-sm:px-4"
+>
   <div class="max-w-300 w-full flex flex-col gap-12">
-    <div class="w-full flex justify-between items-end">
+    <div class="w-full flex justify-between items-end max-sm:flex-col max-sm:items-start max-sm:gap-4">
       <div class="flex flex-col gap-2">
         <h1 class="text-3xl font-extrabold">Serviços Populares</h1>
         <p class="font-normal text-[#404847]">
@@ -8,30 +11,52 @@
         </p>
       </div>
 
-      <a
-        href=""
-        class="flex items-center gap-2 text-secondary font-normal hover:scale-105 transition-all duration-300"
-      >
-        Ver todos
+      <div class="flex items-center gap-6 max-sm:w-full max-sm:justify-end">
+        <div class="flex items-center gap-3">
+          <button
+            type="button"
+            (click)="scrollPrev()"
+            [disabled]="!canScrollPrev()"
+            aria-label="Serviços anteriores"
+            class="flex h-11 w-11 items-center justify-center rounded-full bg-white border border-[#C0C8C6]/40 shadow-sm shadow-[#000000]/5 transition-all duration-300 hover:scale-105 hover:border-secondary disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer"
+          >
+            <img src="/icons/arrow-right.svg" alt="" class="rotate-180" />
+          </button>
 
-        <img src="/icons/arrow-right.svg" alt="" />
-      </a>
+          <button
+            type="button"
+            (click)="scrollNext()"
+            [disabled]="!canScrollNext()"
+            aria-label="Próximos serviços"
+            class="flex h-11 w-11 items-center justify-center rounded-full bg-white border border-[#C0C8C6]/40 shadow-sm shadow-[#000000]/5 transition-all duration-300 hover:scale-105 hover:border-secondary disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer"
+          >
+            <img src="/icons/arrow-right.svg" alt="" />
+          </button>
+        </div>
+      </div>
     </div>
 
-    <ul class="w-full flex items-center gap-6">
-      @for (item of services; track item.id) {
+    <ul
+      #track
+      (scroll)="onTrackScroll()"
+      class="w-full flex items-stretch gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 [scrollbar-width:none]! [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden!"
+    >
+      @for (item of services(); track item.id) {
         <li
-          class="flex flex-col max-w-67 relative hover:scale-105 duration-300 transition-all w-full rounded-3xl bg-white hover:bg-white/80 border border-[#C0C8C6]/20 shadow-sm shadow-[#000000]/5"
+          data-service-card
+          class="flex flex-col max-w-67 min-w-67 relative snap-start shrink-0 hover:scale-105 duration-300 transition-all w-full rounded-3xl bg-white hover:bg-white/80 border border-[#C0C8C6]/20 shadow-sm shadow-[#000000]/5"
         >
-          @if (item.popular) {
-            <span
-              class="bg-primary absolute top-4 left-4 px-3 py-1 rounded-full text-[#121900] font-normal"
-            >
-              Popular
-            </span>
+          @if (item.imageUrl) {
+            <img [src]="item.imageUrl" alt="" class="h-48 object-cover object-top rounded-t-3xl" />
+          } @else {
+            <div class="h-48 rounded-t-3xl bg-[#E6E9E8] flex items-center justify-center">
+              <img
+                src="/icons/dashboard/dashcard/servicos.svg"
+                alt=""
+                class="w-10 h-10 opacity-40"
+              />
+            </div>
           }
-
-          <img [src]="item.imageUrl" alt="" class="h-48 object-cover object-top rounded-t-3xl" />
 
           <div class="p-4 flex flex-col h-33 rounded-b-3xl gap-2">
             <p class="text-green-2 font-semibold flex items-center gap-2">
@@ -40,7 +65,7 @@
             <div>
               <h2 class="font-normal text-[#191C1D]">{{ item.name }}</h2>
               <p class="font-normal text-[#404847] text-sm">
-                {{ item.description.slice(0, 50) + '...' }}
+                {{ truncate(item.description) }}
               </p>
             </div>
           </div>

@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { toast } from 'ngx-sonner';
 import { TitleHeader } from '../../layout/backoffice/components/title-header/title-header';
 import {
@@ -41,6 +42,7 @@ function toApplicationRow(application: ProfessionalApplication, baseUrl: string)
 export class ProfessionalApplications {
   private readonly applicationService = inject(ProfessionalApplicationService);
   private readonly baseUrl = inject(API_BASE_URL);
+  private readonly route = inject(ActivatedRoute);
 
   readonly filters: StatusFilter[] = [
     'Todos',
@@ -102,6 +104,14 @@ export class ProfessionalApplications {
 
   constructor() {
     this.loadApplications();
+    const query = this.route.snapshot.queryParamMap.get('q');
+    if (query) {
+      this.searchTerm.set(query);
+    }
+    const filter = this.route.snapshot.queryParamMap.get('filter');
+    if (this.filters.includes(filter as StatusFilter)) {
+      this.activeFilter.set(filter as StatusFilter);
+    }
   }
 
   private loadApplications(): void {

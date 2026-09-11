@@ -12,7 +12,7 @@
       Filtros
     </div>
 
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3 max-sm:flex-wrap">
       <!-- Status -->
       <div class="relative">
         <button
@@ -77,10 +77,23 @@
         }
       </div>
 
+      <div
+        class="flex gap-2 items-center rounded-3xl px-4 py-3 bg-tertiary border border-[#C2C8BE] max-sm:w-full"
+      >
+        <img src="/icons/dashboard/search-v2.svg" alt="" />
+        <input
+          type="text"
+          placeholder="Buscar serviços..."
+          class="outline-none text-sm"
+          [value]="searchTerm()"
+          (input)="onSearch($any($event.target).value)"
+        />
+      </div>
+
       <button
         type="button"
         (click)="openCreateModal()"
-        class="flex items-center gap-2 rounded-3xl px-5 py-3 bg-primary text-[#0B2E13] text-sm font-semibold hover:scale-105 transition-all duration-300 cursor-pointer"
+        class="flex items-center gap-2 rounded-3xl px-5 py-3 bg-primary text-[#0B2E13] text-sm font-semibold hover:scale-105 transition-all duration-300 cursor-pointer whitespace-nowrap max-sm:w-full max-sm:justify-center"
       >
         <svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -94,7 +107,7 @@
   </div>
 
   <div
-    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 mt-8 h-40"
+    class="grid gap-6 mt-8 h-40 min-[1700px]:grid-cols-5 min-[1446px]:max-[1700px]:grid-cols-4 min-[1150px]:max-[1446px]:grid-cols-3 min-[640px]:max-[1150px]:grid-cols-2 max-[640px]:grid-cols-1"
   >
     @for (service of filteredServices(); track service.id) {
       <app-service-card

@@ -5,28 +5,28 @@
         <tr
           class="bg-[#F8F9FA80] border-b border-[#C2C8BE4D] text-xs font-semibold text-[#727970] uppercase"
         >
-          <th class="py-4 px-6">Categoria</th>
-          <th class="py-4 px-6">ID</th>
-          <th class="py-4 px-6">Serviços</th>
-          <th class="py-4 px-6">Criada em</th>
-          <th class="py-4 px-6">Estado</th>
-          <th class="py-4 px-6 text-right">Ações</th>
+          <th class="py-4 px-6 max-2xl:px-3">Categoria</th>
+          <th class="py-4 px-6 max-2xl:px-3">ID</th>
+          <th class="py-4 px-6 max-2xl:px-3">Serviços</th>
+          <th class="py-4 px-6 max-2xl:px-3">Criada em</th>
+          <th class="py-4 px-6 max-2xl:px-3">Estado</th>
+          <th class="py-4 px-6 max-2xl:px-3 text-right">Ações</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-50 text-sm">
         @for (category of pagedCategories(); track category.id) {
           <tr class="hover:bg-gray-50/50 transition-colors">
-            <td class="py-4 px-6 font-semibold text-[#0B2E13] whitespace-nowrap">
+            <td class="py-4 px-6 max-2xl:px-3 font-semibold text-[#0B2E13] whitespace-nowrap">
               {{ category.name }}
             </td>
 
-            <td class="py-4 px-6 text-gray-600 whitespace-nowrap">#CAT-{{ category.id }}</td>
+            <td class="py-4 px-6 max-2xl:px-3 text-gray-600 whitespace-nowrap">#CAT-{{ category.id }}</td>
 
-            <td class="py-4 px-6 text-gray-600 whitespace-nowrap">{{ category.servicesCount }}</td>
+            <td class="py-4 px-6 max-2xl:px-3 text-gray-600 whitespace-nowrap">{{ category.servicesCount }}</td>
 
-            <td class="py-4 px-6 text-gray-500 whitespace-nowrap">{{ category.createdAt }}</td>
+            <td class="py-4 px-6 max-2xl:px-3 text-gray-500 whitespace-nowrap">{{ category.createdAt }}</td>
 
-            <td class="py-4 px-6 whitespace-nowrap">
+            <td class="py-4 px-6 max-2xl:px-3 whitespace-nowrap">
               <span
                 class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {{
                   statusBadge(category.status)
@@ -36,7 +36,7 @@
               </span>
             </td>
 
-            <td class="py-4 px-6 text-right whitespace-nowrap">
+            <td class="py-4 px-6 max-2xl:px-3 text-right whitespace-nowrap">
               <div class="flex items-center justify-end gap-1">
                 <button
                   type="button"
@@ -75,7 +75,7 @@
           </tr>
         } @empty {
           <tr>
-            <td colspan="6" class="py-8 px-6 text-center text-gray-500">
+            <td colspan="6" class="py-8 px-6 max-2xl:px-3 text-center text-gray-500">
               Nenhuma categoria encontrada
             </td>
           </tr>
@@ -85,7 +85,7 @@
   </div>
 
   <div
-    class="flex items-center justify-between px-6 py-4 border-t border-gray-100 text-sm text-gray-500"
+    class="flex items-center justify-between px-6 max-2xl:px-3 py-4 border-t border-gray-100 text-sm text-gray-500 max-sm:flex-col max-sm:items-start max-sm:gap-3"
   >
     <div>
       @if (categories().length === 0) {

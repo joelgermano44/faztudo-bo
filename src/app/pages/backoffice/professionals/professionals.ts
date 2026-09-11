@@ -1,4 +1,5 @@
 import { Component, computed, ElementRef, HostListener, inject, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { toast } from 'ngx-sonner';
 import { TitleHeader } from '../../layout/backoffice/components/title-header/title-header';
 import { ProfessionalRow, ProfessionalsTable } from './components/professionals-table/professionals-table';
@@ -63,6 +64,7 @@ export class Professionals {
   private readonly professionalService = inject(ProfessionalService);
   private readonly baseUrl = inject(API_BASE_URL);
   private readonly elementRef = inject(ElementRef);
+  private readonly route = inject(ActivatedRoute);
 
   readonly filters: StatusFilter[] = [
     'Todos',
@@ -127,6 +129,10 @@ export class Professionals {
 
   constructor() {
     this.loadProfessionals();
+    const query = this.route.snapshot.queryParamMap.get('q');
+    if (query) {
+      this.searchTerm.set(query);
+    }
   }
 
   private loadProfessionals(): void {

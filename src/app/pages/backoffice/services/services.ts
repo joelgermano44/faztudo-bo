@@ -1,4 +1,5 @@
 import { Component, computed, ElementRef, HostListener, inject, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { toast } from 'ngx-sonner';
 import { TitleHeader } from '../../layout/backoffice/components/title-header/title-header';
 import { ServiceCard, ServiceCardStatus } from './components/service-card/service-card';
@@ -44,6 +45,7 @@ export class Services {
   private readonly serviceCatalogService = inject(ServiceCatalogService);
   private readonly baseUrl = inject(API_BASE_URL);
   private readonly elementRef = inject(ElementRef);
+  private readonly route = inject(ActivatedRoute);
 
   readonly statusFilters: StatusFilter[] = ['Todos os Status', 'Activo', 'Inactivo'];
   readonly statusFilter = signal<StatusFilter>('Todos os Status');
@@ -51,6 +53,8 @@ export class Services {
 
   readonly categoryFilter = signal<string>('Todas as Categorias');
   readonly isCategoryMenuOpen = signal(false);
+
+  readonly searchTerm = signal('');
 
   private readonly services = signal<Service[]>([]);
 
@@ -72,15 +76,25 @@ export class Services {
   readonly filteredServices = computed<ServiceRow[]>(() => {
     const status = this.statusFilter();
     const category = this.categoryFilter();
+    const term = this.searchTerm().trim().toLowerCase();
 
     return this.services()
       .map((service) => toServiceRow(service, this.baseUrl))
       .filter((service) => status === 'Todos os Status' || service.status === status)
-      .filter((service) => category === 'Todas as Categorias' || service.category === category);
+      .filter((service) => category === 'Todas as Categorias' || service.category === category)
+      .filter((service) => !term || service.name.toLowerCase().includes(term));
   });
 
   constructor() {
     this.loadServices();
+    const query = this.route.snapshot.queryParamMap.get('q');
+    if (query) {
+      this.searchTerm.set(query);
+    }
+  }
+
+  onSearch(term: string): void {
+    this.searchTerm.set(term);
   }
 
   private loadServices(): void {

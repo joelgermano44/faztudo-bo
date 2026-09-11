@@ -1,8 +1,8 @@
 <div
-  class="bg-white rounded-xl border h-100 border-[#C2C8BE33] shadow-sm overflow-hidden flex flex-col hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+  class="bg-white rounded-xl border h-125 border-[#C2C8BE33] shadow-sm overflow-hidden flex flex-col hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
 >
   <!-- Capa -->
-  <div class="relative h-50 bg-[#E6E9E8]">
+  <div class="relative h-60 bg-[#E6E9E8]">
     @if (image()) {
       <img [src]="image()" [alt]="name()" class="w-full h-full object-cover" />
     } @else {
@@ -29,7 +29,7 @@
     }
   </div>
 
-  <div class="p-5 flex flex-col gap-3 h-50 justify-between">
+  <div class="p-5 flex flex-col gap-3 h-60 justify-between">
     <div>
       <p class="text-[11px] uppercase text-emerald-700 font-semibold tracking-wide">
         {{ category() }}

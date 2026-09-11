@@ -1,4 +1,5 @@
 import { Component, computed, ElementRef, HostListener, inject, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { TitleHeader } from '../../layout/backoffice/components/title-header/title-header';
 import { FlowStatCard } from './components/flow-stat-card/flow-stat-card';
@@ -49,6 +50,7 @@ export class Payments {
   private readonly walletService = inject(WalletService);
   private readonly baseUrl = inject(API_BASE_URL);
   private readonly elementRef = inject(ElementRef);
+  private readonly route = inject(ActivatedRoute);
 
   readonly filters: StatusFilter[] = ['Todos', ProfessionalPayoutStatus.PENDING, ProfessionalPayoutStatus.PAID];
 
@@ -201,6 +203,11 @@ export class Payments {
   });
 
   constructor() {
+    const filter = this.route.snapshot.queryParamMap.get('filter');
+    if (this.filters.includes(filter as StatusFilter)) {
+      this.activeFilter.set(filter as StatusFilter);
+      this.periodFilter.set('all');
+    }
     this.loadData();
   }
 

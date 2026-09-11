@@ -17,7 +17,7 @@
 
   <app-monthly-report></app-monthly-report>
 
-  <ul class="flex w-full gap-6.75 mt-8">
+  <ul class="flex w-full gap-6.75 mt-8 max-lg:grid max-lg:grid-cols-2 max-sm:grid-cols-1">
     @for (item of dashcardItems(); track item.title) {
       <app-dashcard
         class="w-full"
@@ -30,17 +30,17 @@
     }
   </ul>
 
-  <div class="flex gap-6 mt-6 h-125">
-    <app-order-flow class="w-full h-full" [data]="ordersFlow()"></app-order-flow>
+  <div class="flex gap-6 mt-6 h-125 max-lg:flex-col max-lg:h-auto">
+    <app-order-flow class="w-full h-full max-lg:h-100" [data]="ordersFlow()"></app-order-flow>
 
-    <div class="min-w-80 flex flex-col gap-6 h-full">
+    <div class="min-w-80 flex flex-col gap-6 h-full max-lg:min-w-0 max-lg:w-full">
       <app-payment-summary class="h-full"></app-payment-summary>
       <app-professional-status class="h-full"></app-professional-status>
     </div>
   </div>
 </div>
 
-<div class="flex mt-8 w-full gap-6 h-65">
+<div class="flex mt-8 w-full gap-6 h-65 max-lg:flex-col max-lg:h-auto">
   <app-quick-action class="w-full h-full"></app-quick-action>
-  <app-recent-activities class="w-full h-full"></app-recent-activities>
+  <app-recent-activities class="w-full h-full max-lg:h-80"></app-recent-activities>
 </div>

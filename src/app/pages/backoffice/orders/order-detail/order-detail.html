@@ -86,6 +86,7 @@
             [avatar]="clientAvatar()"
             [since]="clientSince()"
             [phone]="currentOrder.client.phone"
+            [email]="currentOrder.client.email"
             [location]="clientLocation()"
           ></app-order-client-card>
 
@@ -95,6 +96,7 @@
             [profession]="professionalProfession()"
             [rating]="currentOrder.professional.average_rating"
             [phone]="currentOrder.professional.phone"
+            [email]="currentOrder.professional.email"
           ></app-order-professional-card>
         </div>
       </div>

@@ -4,13 +4,13 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
-import { authInterceptor } from '../core/shared/http/auth.interceptor';
+import { authInterceptor, sessionExpiredInterceptor } from '../core/shared/http/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideClientHydration(),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, sessionExpiredInterceptor])),
   ],
 };

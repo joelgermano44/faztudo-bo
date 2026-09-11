@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { TitleHeader } from '../../layout/backoffice/components/title-header/title-header';
 import { NotificationService } from '../../../../core/features/notifications/services/notification.service';
 import {
@@ -8,6 +9,7 @@ import {
 import {
   formatNotificationTimestamp,
   notificationIcon,
+  notificationTarget,
 } from '../../../../core/features/notifications/notification.util';
 
 type NotificationFilter = 'Todas' | 'Não lidas' | 'Profissionais';
@@ -20,6 +22,7 @@ type NotificationFilter = 'Todas' | 'Não lidas' | 'Profissionais';
 })
 export class Notifications {
   private readonly notificationService = inject(NotificationService);
+  private readonly router = inject(Router);
 
   readonly filters: NotificationFilter[] = ['Todas', 'Não lidas', 'Profissionais'];
 
@@ -49,8 +52,10 @@ export class Notifications {
     this.notificationService.markAllAsRead();
   }
 
-  markAsRead(id: number): void {
-    this.notificationService.markAsRead(id);
+  markAsRead(notification: AdminNotification): void {
+    this.notificationService.markAsRead(notification.id);
+    const target = notificationTarget(notification);
+    this.router.navigate(target.commands, { queryParams: target.queryParams });
   }
 
   icon(eventType: string): string {

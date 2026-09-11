@@ -43,7 +43,7 @@
     @for (notification of filteredNotifications(); track notification.id) {
       <button
         type="button"
-        (click)="markAsRead(notification.id)"
+        (click)="markAsRead(notification)"
         [class]="
           'flex items-start gap-4 bg-white rounded-xl p-5 pb-9 border text-left cursor-pointer hover:shadow-sm transition-shadow ' +
           (notification.read_at ? 'border-gray-100' : 'border-gray-100 border-l-4 border-l-primary')

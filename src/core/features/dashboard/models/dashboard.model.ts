@@ -1,4 +1,4 @@
-/** Um ponto do fluxo mensal de pedidos concluídos vs. cancelados/rejeitados. */
+/** Um ponto do fluxo mensal de pedidos: concluídos vs. cancelados/rejeitados vs. em curso. */
 export interface OrderFlowPoint {
   /** Mês de referência, no formato `YYYY-MM`. */
   month: string;
@@ -6,6 +6,8 @@ export interface OrderFlowPoint {
   done: number;
   /** Número de pedidos cancelados (`CANCELED`) ou rejeitados (`REJECTED`) neste mês. */
   canceledOrRejected: number;
+  /** Número de pedidos ainda em curso (`REQUESTED`, `ACCEPTED` ou `IN_PROGRESS`) neste mês. */
+  inProgress: number;
 }
 
 /** Resposta de `GET /admin/dashboard`. */

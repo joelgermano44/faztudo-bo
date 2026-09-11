@@ -1,4 +1,7 @@
-<section class="bg-tertiary flex justify-center items-center px-10 py-20 font-raleway">
+<section
+  id="como-funciona"
+  class="bg-tertiary flex justify-center items-center px-10 py-20 font-raleway max-lg:px-6 max-sm:px-4"
+>
   <div class="max-w-300 w-full flex flex-col items-center gap-12">
     <div class="flex flex-col items-center justify-center text-center gap-4 max-w-163.5 w-full">
       <h1 class="text-3xl font-extrabold text-dark-green">
@@ -10,7 +13,7 @@
       </p>
     </div>
 
-    <ul class="w-full flex items-center gap-6 justify-center">
+    <ul class="w-full flex items-center gap-6 justify-center max-lg:flex-wrap">
       @for (item of stepItems; track item.step) {
         <li
           class="hover:scale-105 transition-all duration-300 cursor-default border border-white/30 flex flex-col items-center justify-center gap-6 max-w-92 w-full h-60.5 p-6 rounded-3xl bg-white backdrop-blur-2xl shadow-lg shadow-secondary/8 relative"

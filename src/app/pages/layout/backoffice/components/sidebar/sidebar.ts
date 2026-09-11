@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, input, output, signal } from '@angular/core';
 import { AuthService } from '../../../../../../core/features/auth/services/auth.service';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
@@ -11,6 +11,14 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 export class Sidebar {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+
+  /** Controla a visibilidade do menu em ecrãs pequenos (max-lg). Não afeta o desktop. */
+  readonly isOpen = input(false);
+  readonly closeRequested = output<void>();
+
+  close(): void {
+    this.closeRequested.emit();
+  }
 
   navItems = [
     {
