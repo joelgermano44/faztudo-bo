@@ -1,0 +1,95 @@
+<app-drawer [open]="open()" title="Detalhes da campanha" size="md" (closed)="requestClose()">
+  @if (advertisement(); as advertisement) {
+    <div class="flex flex-col gap-6">
+      <!-- Capa -->
+      <button
+        type="button"
+        (click)="openLightbox(0)"
+        [disabled]="images().length === 0"
+        class="group relative h-48 w-full overflow-hidden rounded-2xl bg-[#E6E9E8] disabled:cursor-default"
+      >
+        @if (images().length > 0) {
+          <img [src]="images()[0]" [alt]="advertisement.title" class="h-full w-full object-cover" />
+          <div
+            class="absolute inset-0 flex items-center justify-center bg-black/0 text-transparent transition-all duration-300 group-hover:bg-black/40 group-hover:text-white"
+          >
+            <span class="text-sm font-semibold">Ver imagem</span>
+          </div>
+        } @else {
+          <div class="flex h-full w-full items-center justify-center">
+            <img src="/icons/advertisements/campaigns.svg" alt="" class="h-8 w-8 opacity-40" />
+          </div>
+        }
+
+        <span
+          class="absolute top-3 right-3 flex items-center justify-center rounded-full px-3 py-1 text-[10px] font-bold uppercase shadow-sm {{
+            statusBadgeClass()
+          }}"
+        >
+          {{ advertisement.is_active ? 'Ativa' : 'Pausada' }}
+        </span>
+      </button>
+
+      <!-- Galeria -->
+      @if (images().length > 1) {
+        <div class="grid grid-cols-4 gap-2">
+          @for (image of images(); track image; let i = $index) {
+            <button
+              type="button"
+              (click)="openLightbox(i)"
+              class="group relative h-16 overflow-hidden rounded-lg border border-[#0000001A]"
+            >
+              <img [src]="image" alt="" class="h-full w-full object-cover" />
+              <div
+                class="absolute inset-0 bg-black/0 transition-all duration-300 group-hover:bg-black/30"
+              ></div>
+            </button>
+          }
+        </div>
+      }
+
+      <!-- Info -->
+      <div class="flex flex-col gap-1">
+        <h3 class="text-xl font-bold text-[#062406]">{{ advertisement.title }}</h3>
+        @if (advertisement.description) {
+          <p class="text-sm leading-relaxed text-[#41493D]">{{ advertisement.description }}</p>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1 border-t border-[#0B2E130D] pt-5">
+        <span class="text-xs font-semibold uppercase text-[#8C9492]">Link de destino</span>
+        <a
+          [href]="advertisement.link"
+          target="_blank"
+          rel="noopener"
+          class="truncate text-sm text-secondary underline hover:text-[#0B2E13] transition-colors"
+        >
+          {{ advertisement.link }}
+        </a>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 border-t border-[#0B2E130D] pt-5">
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Cliques</span>
+          <span class="text-sm text-[#41493D]">{{ advertisement.clicks }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Criado em</span>
+          <span class="text-sm text-[#41493D]">{{ formatDate(advertisement.created_at) }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Atualizado em</span>
+          <span class="text-sm text-[#41493D]">{{ formatDate(advertisement.updated_at) }}</span>
+        </div>
+      </div>
+    </div>
+  }
+</app-drawer>
+
+<app-image-viewer
+  [open]="lightboxOpen()"
+  [images]="images()"
+  [startIndex]="lightboxIndex()"
+  [alt]="advertisement()?.title ?? ''"
+  (closed)="closeLightbox()"
+></app-image-viewer>

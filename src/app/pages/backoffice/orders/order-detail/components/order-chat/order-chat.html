@@ -1,0 +1,82 @@
+<div class="bg-white rounded-xl border border-[#C2C8BE33] shadow-sm p-6 flex flex-col gap-4">
+  <h2 class="text-xl font-semibold text-[#191C1D] flex items-center gap-2">
+    <img src="/icons/orders/chat.svg" alt="" width="18" height="18" />
+    Conversa entre {{ clientName() }} e {{ professionalName() }}
+  </h2>
+
+  @if (!hasConversation()) {
+    <p class="text-sm text-gray-500 py-8 text-center">
+      Esta conversa ainda não foi iniciada.
+    </p>
+  } @else {
+    @if (hasMore()) {
+      <button
+        type="button"
+        (click)="loadMore.emit()"
+        [disabled]="loading()"
+        class="mx-auto text-sm text-[#0B2E13] font-medium hover:underline cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        @if (loading()) {
+          A carregar...
+        } @else {
+          Carregar mensagens anteriores
+        }
+      </button>
+    }
+
+    @if (isEmpty()) {
+      <p class="text-sm text-gray-500 py-8 text-center">Ainda não há mensagens nesta conversa.</p>
+    } @else {
+      <div class="flex flex-col gap-4 max-h-125 overflow-y-auto pr-1">
+        @for (message of messages(); track message.id) {
+          <div
+            class="flex items-start gap-3"
+            [class.flex-row-reverse]="message.sender_type === 'professional'"
+          >
+            <img
+              [src]="avatarFor(message) || '/icons/user.svg'"
+              [alt]="nameFor(message)"
+              class="w-8 h-8 rounded-full object-cover shrink-0"
+            />
+
+            <div class="flex flex-col gap-1 max-w-[70%]">
+              <div class="rounded-2xl px-4 py-2.5 text-sm {{ bubbleClass(message) }}">
+                @if (message.content) {
+                  <p>{{ message.content }}</p>
+                }
+
+                @if (imagesFor(message).length > 0) {
+                  <div class="flex flex-wrap gap-1.5" [class.mt-2]="message.content">
+                    @for (image of imagesFor(message); track image; let i = $index) {
+                      <button type="button" (click)="openLightbox(message, i)">
+                        <img
+                          [src]="image"
+                          alt=""
+                          class="h-16 w-16 rounded-lg object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                        />
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+
+              <span
+                class="text-xs text-[#8C9492]"
+                [class.text-right]="message.sender_type === 'professional'"
+              >
+                {{ nameFor(message) }} · {{ formatTime(message.created_at) }}
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>
+
+<app-image-viewer
+  [open]="lightboxOpen()"
+  [images]="lightboxImages()"
+  [startIndex]="lightboxIndex()"
+  (closed)="closeLightbox()"
+></app-image-viewer>

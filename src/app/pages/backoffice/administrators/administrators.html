@@ -37,6 +37,7 @@
 
       <button
         type="button"
+        (click)="openCreateModal()"
         class="flex items-center gap-2 rounded-3xl px-5 py-3 bg-primary text-[#0B2E13] text-sm font-semibold hover:scale-105 transition-all duration-300 cursor-pointer"
       >
         <svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -50,5 +51,23 @@
     </div>
   </div>
 
-  <app-administrators-table [admins]="filteredAdmins()"></app-administrators-table>
+  <app-administrators-table
+    [admins]="filteredAdmins()"
+    (edit)="openEditModal($event)"
+    (view)="openViewDrawer($event)"
+  ></app-administrators-table>
 </div>
+
+<app-admin-form-modal
+  [open]="isFormModalOpen()"
+  [admin]="editingAdmin()"
+  (saved)="onAdminSaved()"
+  (closed)="closeFormModal()"
+></app-admin-form-modal>
+
+<app-admin-view-drawer
+  [open]="isViewDrawerOpen()"
+  [admin]="viewingAdmin()"
+  [avatarUrl]="viewingAdminAvatarUrl()"
+  (closed)="closeViewDrawer()"
+></app-admin-view-drawer>

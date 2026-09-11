@@ -1,0 +1,75 @@
+<app-drawer [open]="open()" title="Detalhes do administrador" size="md" (closed)="requestClose()">
+  @if (admin(); as admin) {
+    <div class="flex flex-col gap-6">
+      <!-- Avatar -->
+      <div class="flex items-center gap-4">
+        <button
+          type="button"
+          (click)="openLightbox()"
+          [disabled]="!avatarUrl()"
+          class="group relative h-20 w-20 shrink-0 overflow-hidden rounded-full bg-[#E6E9E8] disabled:cursor-default"
+        >
+          <img
+            [src]="avatarUrl() || '/icons/user.svg'"
+            [alt]="admin.name"
+            class="h-full w-full object-cover"
+          />
+          @if (avatarUrl()) {
+            <div
+              class="absolute inset-0 flex items-center justify-center bg-black/0 text-transparent transition-all duration-300 group-hover:bg-black/40 group-hover:text-white"
+            >
+              <span class="text-[10px] font-semibold">Ver</span>
+            </div>
+          }
+        </button>
+
+        <div class="flex flex-col gap-1">
+          <h3 class="text-xl font-bold text-[#062406]">{{ admin.name }}</h3>
+          <p class="text-sm text-[#41493D]">{{ admin.email }}</p>
+          <span
+            class="w-fit rounded-full px-3 py-1 text-[10px] font-bold uppercase {{
+              statusBadgeClass()
+            }}"
+          >
+            {{ isActive() ? 'Ativo' : 'Inativo' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="grid grid-cols-2 gap-4 border-t border-[#0B2E130D] pt-5">
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Usuário</span>
+          <span class="text-sm text-[#41493D]">{{ admin.username }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">ID</span>
+          <span class="text-sm text-[#41493D]">#ADM-{{ admin.id }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Telefone</span>
+          <span class="text-sm text-[#41493D]">{{ admin.phone }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">BI</span>
+          <span class="text-sm text-[#41493D]">{{ admin.bi }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Nascimento</span>
+          <span class="text-sm text-[#41493D]">{{ formatDate(admin.birthdate) }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Criado em</span>
+          <span class="text-sm text-[#41493D]">{{ formatDate(admin.created_at) }}</span>
+        </div>
+      </div>
+    </div>
+  }
+</app-drawer>
+
+<app-image-viewer
+  [open]="lightboxOpen()"
+  [images]="avatarUrl() ? [avatarUrl()!] : []"
+  [alt]="admin()?.name ?? ''"
+  (closed)="closeLightbox()"
+></app-image-viewer>

@@ -1,0 +1,62 @@
+<app-modal
+  [open]="open()"
+  [title]="editing() ? 'Editar categoria' : 'Nova categoria'"
+  size="sm"
+  [closeable]="!saving()"
+  (closed)="requestClose()"
+>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-6">
+    <div class="flex flex-col gap-2">
+      <label for="category-name" class="text-sm font-semibold text-[#001A18]">Nome</label>
+      <input
+        id="category-name"
+        type="text"
+        formControlName="name"
+        placeholder="ex.: Limpeza"
+        class="w-full rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+        [class.border-red-500]="form.controls.name.invalid && form.controls.name.touched"
+      />
+      @if (form.controls.name.invalid && form.controls.name.touched) {
+        <span class="text-xs text-red-500">O nome é obrigatório.</span>
+      }
+    </div>
+
+    <div class="mt-2 flex items-center justify-end gap-3 border-t border-[#0B2E130D] pt-5">
+      <button
+        type="button"
+        (click)="requestClose()"
+        [disabled]="saving()"
+        class="cursor-pointer rounded-full px-6 py-3 text-sm font-semibold text-[#41493D] transition-all duration-300 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        Cancelar
+      </button>
+
+      <button
+        type="submit"
+        [disabled]="saving()"
+        class="flex cursor-pointer items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-[#0B2E13] shadow-xs shadow-black/10 transition-all duration-300 hover:scale-[1.02] hover:bg-primary/80 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+      >
+        @if (saving()) {
+          <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+            ></path>
+          </svg>
+          A guardar...
+        } @else {
+          {{ editing() ? 'Guardar alterações' : 'Criar categoria' }}
+        }
+      </button>
+    </div>
+  </form>
+</app-modal>

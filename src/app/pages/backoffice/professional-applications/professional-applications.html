@@ -1,0 +1,124 @@
+<div class="flex flex-col font-raleway">
+  <app-title-header
+    title="Candidaturas"
+    description="Reveja e decida as candidaturas a profissional da plataforma."
+  ></app-title-header>
+
+  <div
+    class="mt-6 flex items-center flex-wrap gap-4 py-6 px-4 rounded-lg bg-white shadow-sm shadow-[#0B2E130D] justify-between"
+  >
+    <ul class="flex flex-wrap max-w-160 w-full gap-3">
+      @for (filter of filters; track filter) {
+        <li
+          (click)="setFilter(filter)"
+          [class]="
+            (activeFilter() === filter ? 'bg-[#094908] text-white' : 'bg-tertiary') +
+            ' flex gap-2 items-center rounded-3xl w-fit px-4 py-2 border border-[#C2C8BE] hover:bg-[#094908] hover:text-white transition-all duration-300 cursor-pointer'
+          "
+        >
+          {{ filterLabels[filter] }}
+        </li>
+      }
+    </ul>
+
+    <div class="flex items-center gap-3">
+      <div
+        class="flex gap-2 items-center rounded-3xl px-4 py-3 bg-tertiary border border-[#C2C8BE]"
+      >
+        <img src="/icons/dashboard/search-v2.svg" alt="" />
+        <input
+          type="text"
+          placeholder="Buscar candidaturas..."
+          class="outline-none text-sm"
+          [value]="searchTerm()"
+          (input)="onSearch($any($event.target).value)"
+        />
+      </div>
+    </div>
+  </div>
+
+  <app-professional-applications-table
+    [applications]="filteredApplications()"
+    (view)="openViewDrawer($event)"
+  ></app-professional-applications-table>
+</div>
+
+<app-application-view-drawer
+  [open]="isViewDrawerOpen()"
+  [application]="viewingApplication()"
+  [avatarUrl]="viewingAvatarUrl()"
+  [history]="viewingHistory()"
+  [reviewing]="reviewing()"
+  [approving]="approving()"
+  (closed)="closeViewDrawer()"
+  (review)="onReview($event)"
+  (approve)="onApprove($event)"
+  (reject)="requestReject($event)"
+></app-application-view-drawer>
+
+<app-modal
+  [open]="isRejectModalOpen()"
+  title="Rejeitar candidatura"
+  size="sm"
+  [closeable]="!isRejecting()"
+  (closed)="cancelReject()"
+>
+  <div class="flex flex-col gap-5">
+    <p class="text-sm text-[#41493D]">
+      Indique o motivo da rejeição da candidatura de
+      <strong class="text-[#062406]">{{ rejectingApplication()?.name }}</strong
+      >. Esta informação poderá ser partilhada com o candidato.
+    </p>
+
+    <div class="flex flex-col gap-2">
+      <label for="reject-reason" class="text-sm font-semibold text-[#001A18]">Motivo</label>
+      <textarea
+        id="reject-reason"
+        rows="4"
+        placeholder="Descreva o motivo da rejeição..."
+        class="w-full resize-none rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+        [value]="rejectReason()"
+        (input)="rejectReason.set($any($event.target).value)"
+      ></textarea>
+    </div>
+
+    <div class="flex items-center justify-end gap-3">
+      <button
+        type="button"
+        (click)="cancelReject()"
+        [disabled]="isRejecting()"
+        class="cursor-pointer rounded-full px-6 py-3 text-sm font-semibold text-[#41493D] transition-all duration-300 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        Cancelar
+      </button>
+
+      <button
+        type="button"
+        (click)="confirmReject()"
+        [disabled]="isRejecting() || !rejectReason().trim()"
+        class="flex cursor-pointer items-center justify-center gap-2 rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white shadow-xs shadow-black/10 transition-all duration-300 hover:scale-[1.02] hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+      >
+        @if (isRejecting()) {
+          <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+            ></path>
+          </svg>
+          A rejeitar...
+        } @else {
+          Rejeitar candidatura
+        }
+      </button>
+    </div>
+  </div>
+</app-modal>

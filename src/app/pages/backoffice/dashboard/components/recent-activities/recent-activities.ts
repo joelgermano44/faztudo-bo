@@ -1,33 +1,33 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { NotificationService } from '../../../../../../core/features/notifications/services/notification.service';
+import { AdminNotification } from '../../../../../../core/features/notifications/models/notification.model';
+import { formatNotificationTimestamp } from '../../../../../../core/features/notifications/notification.util';
 
-interface Activity {
-  colorClass: string;
-  title: string;
-  time: string;
-}
+const MAX_ACTIVITIES = 6;
 
 @Component({
-  imports: [],
+  imports: [RouterLink],
   selector: 'app-recent-activities',
   styleUrl: './recent-activities.css',
   templateUrl: './recent-activities.html',
 })
 export class RecentActivities {
-  activities: Activity[] = [
-    {
-      colorClass: 'bg-emerald-400',
-      title: 'Novo contrato assinado - Cliente XPTO',
-      time: 'Há 10 minutos',
-    },
-    {
-      colorClass: 'bg-amber-500',
-      title: 'Faturação consolidada gerada',
-      time: 'Há 2 horas',
-    },
-    {
-      colorClass: 'bg-red-700',
-      title: 'Falha no processamento de pagamento #492',
-      time: 'Há 4 horas',
-    },
-  ];
+  private readonly notificationService = inject(NotificationService);
+
+  readonly activities = computed<AdminNotification[]>(() =>
+    this.notificationService.notifications().slice(0, MAX_ACTIVITIES),
+  );
+
+  constructor() {
+    this.notificationService.refresh();
+  }
+
+  colorClass(notification: AdminNotification): string {
+    return notification.read_at ? 'bg-gray-300' : 'bg-emerald-400';
+  }
+
+  timestamp(iso: string): string {
+    return formatNotificationTimestamp(iso);
+  }
 }

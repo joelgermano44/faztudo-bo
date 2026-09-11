@@ -5,6 +5,7 @@
     <h2 class="text-lg font-semibold text-[#191C1D]">Atividades Recentes</h2>
 
     <button
+      routerLink="/dashboard/notifications"
       class="text-sm text-[#0B2E13] hover:scale-105 font-medium transition-colors cursor-pointer"
     >
       Ver todas as atividades
@@ -12,21 +13,23 @@
   </div>
 
   <div class="overflow-y-auto h-full flex flex-col gap-4">
-    @for (activity of activities; track activity.title) {
+    @for (activity of activities(); track activity.id) {
       <div
         class="flex items-start gap-3.5 hover:bg-gray-100 p-1 rounded-sm transition-all duration-300"
       >
-        <span [class]="'w-2.5 h-2.5 rounded-full mt-2 shrink-0 ' + activity.colorClass"></span>
+        <span [class]="'w-2.5 h-2.5 rounded-full mt-2 shrink-0 ' + colorClass(activity)"></span>
 
         <div class="flex flex-col">
           <span class="text-[#191C1D] font-medium text-sm">
             {{ activity.title }}
           </span>
           <span class="text-[#727970] text-xs">
-            {{ activity.time }}
+            {{ timestamp(activity.created_at) }}
           </span>
         </div>
       </div>
+    } @empty {
+      <p class="text-sm text-[#727970]">Sem atividade recente.</p>
     }
   </div>
 </div>

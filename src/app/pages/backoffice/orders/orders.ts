@@ -1,21 +1,16 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
+import { toast } from 'ngx-sonner';
 import { TitleHeader } from '../../layout/backoffice/components/title-header/title-header';
 import { OrderDisplayStatus, OrderRow, OrdersTable } from './components/orders-table/orders-table';
+import { Modal } from '../../../shared/ui/modal/modal';
 import { OrderService } from '../../../../core/features/orders/services/order.service';
 import { Order, OrderStatus } from '../../../../core/features/orders/models/order.model';
 import { API_BASE_URL } from '../../../../core/shared/http/api-config';
-
-/** A API só devolve o nome do ficheiro; os uploads ficam servidos em `uploads/<pasta>/<ficheiro>`. */
-function buildImageUrl(baseUrl: string, folder: string, filename: string | null): string | null {
-  if (!filename) {
-    return null;
-  }
-  if (/^https?:\/\//.test(filename)) {
-    return filename;
-  }
-  return `${baseUrl}uploads/${folder}/${filename}`;
-}
+import {
+  buildAvatarUrl as buildImageUrl,
+  buildMediaUrl,
+} from '../../../../core/shared/util/media-url';
 
 type StatusFilter = 'Todos' | OrderDisplayStatus;
 
@@ -63,6 +58,7 @@ function formatMoney(amount: number): string {
 function toOrderRow(order: Order, baseUrl: string): OrderRow {
   return {
     id: order.id,
+    rawStatus: order.status,
     client: {
       name: order.client.name,
       avatar: buildImageUrl(baseUrl, 'clients', order.client.image),
@@ -72,6 +68,7 @@ function toOrderRow(order: Order, baseUrl: string): OrderRow {
       avatar: buildImageUrl(baseUrl, 'professionals', order.professional.image),
     },
     service: order.service.name,
+    serviceImage: order.service.image ? buildMediaUrl(baseUrl, order.service.image) : null,
     value: formatMoney(order.first_payment?.amount ?? 0),
     startDate: formatDate(order.created_at),
     status: statusLabel(order.status),
@@ -79,7 +76,7 @@ function toOrderRow(order: Order, baseUrl: string): OrderRow {
 }
 
 @Component({
-  imports: [TitleHeader, OrdersTable],
+  imports: [TitleHeader, OrdersTable, Modal],
   selector: 'app-orders',
   styleUrl: './orders.css',
   templateUrl: './orders.html',
@@ -101,6 +98,11 @@ export class Orders {
   readonly searchTerm = signal('');
 
   private readonly orders = signal<Order[]>([]);
+
+  readonly rejectingOrder = signal<Order | null>(null);
+  readonly rejectReason = signal('');
+  readonly isRejecting = signal(false);
+  readonly isRejectModalOpen = computed(() => this.rejectingOrder() !== null);
 
   readonly filteredOrders = computed<OrderRow[]>(() => {
     const filter = this.activeFilter();
@@ -147,6 +149,52 @@ export class Orders {
         next: (orders) => this.orders.set(orders),
         error: (err) => console.error('Erro ao carregar pedidos', err),
       });
+  }
+
+  private findOrderById(id: number): Order | null {
+    return this.orders().find((order) => order.id === id) ?? null;
+  }
+
+  private replaceOrder(updated: Order): void {
+    this.orders.update((list) =>
+      list.map((order) => (order.id === updated.id ? { ...order, ...updated } : order)),
+    );
+  }
+
+  requestReject(id: number): void {
+    this.rejectingOrder.set(this.findOrderById(id));
+    this.rejectReason.set('');
+  }
+
+  cancelReject(): void {
+    if (this.isRejecting()) {
+      return;
+    }
+    this.rejectingOrder.set(null);
+  }
+
+  confirmReject(): void {
+    const order = this.rejectingOrder();
+    const reason = this.rejectReason().trim();
+    if (!order || !reason || this.isRejecting()) {
+      return;
+    }
+
+    this.isRejecting.set(true);
+    this.orderService.reject(order.id, { reason }).subscribe({
+      next: (updated) => {
+        this.isRejecting.set(false);
+        this.rejectingOrder.set(null);
+        this.replaceOrder(updated);
+        toast.success('Contrato rejeitado');
+      },
+      error: (err) => {
+        this.isRejecting.set(false);
+        toast.error('Não foi possível rejeitar o contrato', {
+          description: err?.error?.message ?? 'Tente novamente mais tarde.',
+        });
+      },
+    });
   }
 
   setFilter(filter: StatusFilter): void {

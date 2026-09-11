@@ -10,3 +10,22 @@ export function buildMediaUrl(baseUrl: string, media: Media): string {
   const normalizedBase = baseUrl.replace(/\/+$/, '');
   return `${normalizedBase}/${normalizedPath}`;
 }
+
+/**
+ * Alguns recursos (admins, clientes, profissionais) guardam só o nome do
+ * ficheiro, servido em `uploads/<pasta>/<ficheiro>` — sem o wrapper `Media`.
+ */
+export function buildAvatarUrl(
+  baseUrl: string,
+  folder: string,
+  filename: string | null,
+): string | null {
+  if (!filename) {
+    return null;
+  }
+  if (/^https?:\/\//.test(filename)) {
+    return filename;
+  }
+  const normalizedBase = baseUrl.replace(/\/+$/, '');
+  return `${normalizedBase}/uploads/${folder}/${filename}`;
+}

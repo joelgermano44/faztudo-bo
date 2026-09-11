@@ -114,13 +114,7 @@
           </div>
 
           @if (form.controls.password.invalid && form.controls.password.touched) {
-            <span class="text-xs text-red-500">
-              @if (form.controls.password.hasError('required')) {
-                A palavra-passe é obrigatória.
-              } @else {
-                A palavra-passe deve ter pelo menos 6 caracteres.
-              }
-            </span>
+            <span class="text-xs text-red-500">A palavra-passe é obrigatória.</span>
           }
         </div>
 

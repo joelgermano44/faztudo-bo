@@ -1,10 +1,12 @@
-import { Component, computed, effect, input, signal } from '@angular/core';
+import { Component, computed, effect, input, output, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { OrderStatus } from '../../../../../../core/features/orders/models/order.model';
 
 export type OrderDisplayStatus = 'Ativo' | 'Pendente' | 'Finalizado' | 'Cancelado';
 
 export interface OrderRow {
   id: number;
+  rawStatus: OrderStatus;
   client: {
     name: string;
     avatar: string | null;
@@ -14,6 +16,7 @@ export interface OrderRow {
     avatar: string | null;
   };
   service: string;
+  serviceImage: string | null;
   value: string;
   startDate: string;
   status: OrderDisplayStatus;
@@ -34,12 +37,12 @@ const ORDER_STATUS_STYLES: Record<OrderDisplayStatus, OrderStatusStyle> = {
     dot: 'bg-[#CCA830]',
   },
   Finalizado: {
-    badge: 'bg-gray-100 text-[#436746]',
-    dot: 'bg-[#436746]',
+    badge: 'bg-teal-50 text-teal-700',
+    dot: 'bg-teal-600',
   },
   Cancelado: {
-    badge: 'bg-gray-100 text-[#436746]',
-    dot: 'bg-[#436746]',
+    badge: 'bg-gray-100 text-gray-500',
+    dot: 'bg-gray-400',
   },
 };
 
@@ -53,6 +56,8 @@ const PAGE_SIZE = 8;
 })
 export class OrdersTable {
   readonly orders = input<OrderRow[]>([]);
+
+  readonly reject = output<number>();
 
   readonly page = signal(1);
 
@@ -89,6 +94,15 @@ export class OrdersTable {
 
   statusStyle(status: OrderDisplayStatus): OrderStatusStyle {
     return ORDER_STATUS_STYLES[status];
+  }
+
+  canReject(row: OrderRow): boolean {
+    return row.rawStatus === OrderStatus.REQUESTED;
+  }
+
+  onReject(event: Event, id: number): void {
+    event.stopPropagation();
+    this.reject.emit(id);
   }
 
   goToPage(page: number): void {

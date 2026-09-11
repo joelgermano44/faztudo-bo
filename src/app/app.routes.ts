@@ -11,6 +11,12 @@ import { OrderDetail } from './pages/backoffice/orders/order-detail/order-detail
 import { Administrators } from './pages/backoffice/administrators/administrators';
 import { Notifications } from './pages/backoffice/notifications/notifications';
 import { Services } from './pages/backoffice/services/services';
+import { ProfessionalApplications } from './pages/backoffice/professional-applications/professional-applications';
+import { SupportChat } from './pages/backoffice/support-chat/support-chat';
+import { Payments } from './pages/backoffice/payments/payments';
+import { Advertisements } from './pages/backoffice/advertisements/advertisements';
+import { Categories } from './pages/backoffice/categories/categories';
+import { Clients } from './pages/backoffice/clients/clients';
 
 export const routes: Routes = [
   {
@@ -57,6 +63,30 @@ export const routes: Routes = [
       {
         path: 'services',
         component: Services,
+      },
+      {
+        path: 'professional-applications',
+        component: ProfessionalApplications,
+      },
+      {
+        path: 'admin-support-chat',
+        component: SupportChat,
+      },
+      {
+        path: 'payments',
+        component: Payments,
+      },
+      {
+        path: 'advertisements',
+        component: Advertisements,
+      },
+      {
+        path: 'categories',
+        component: Categories,
+      },
+      {
+        path: 'clients-users',
+        component: Clients,
       },
     ],
   },

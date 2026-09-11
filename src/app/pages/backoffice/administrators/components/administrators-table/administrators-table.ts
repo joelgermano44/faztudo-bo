@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, signal } from '@angular/core';
+import { Component, computed, effect, input, output, signal } from '@angular/core';
 
 export type AdminStatus = 'Ativo' | 'Inativo';
 
@@ -19,7 +19,7 @@ interface StatusStyle {
 }
 
 const STATUS_STYLES: Record<AdminStatus, StatusStyle> = {
-  Ativo: { badge: 'bg-[#80F98B33] text-emerald-700' },
+  Ativo: { badge: 'bg-primary text-[#161E00]' },
   Inativo: { badge: 'bg-gray-100 text-[#436746]' },
 };
 
@@ -33,6 +33,9 @@ const PAGE_SIZE = 8;
 })
 export class AdministratorsTable {
   readonly admins = input<AdminRow[]>([]);
+
+  readonly edit = output<number>();
+  readonly view = output<number>();
 
   readonly page = signal(1);
 

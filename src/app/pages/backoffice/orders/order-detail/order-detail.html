@@ -25,16 +25,56 @@
       [statusBadgeClass]="status.badge"
       [serviceName]="currentOrder.service.name"
       [canCancel]="canCancel()"
+      [canReject]="canReject()"
       [canPayProfessional]="canPayProfessional()"
-      [actionError]="actionError()"
-      (cancel)="cancelOrder()"
-      (payProfessional)="payProfessional()"
+      (cancel)="requestCancel()"
+      (reject)="requestReject()"
+      (payProfessional)="requestPay()"
+      (viewChat)="setTab('chat')"
     ></app-order-header>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+    <div class="flex items-center gap-2 border-b border-[#C2C8BE4D]">
+      <button
+        type="button"
+        (click)="setTab('details')"
+        class="px-4 py-2.5 text-sm font-semibold cursor-pointer transition-all duration-300 {{
+          tabClass('details')
+        }}"
+      >
+        Detalhes
+      </button>
+      <button
+        type="button"
+        (click)="setTab('chat')"
+        class="px-4 py-2.5 text-sm font-semibold cursor-pointer transition-all duration-300 {{
+          tabClass('chat')
+        }}"
+      >
+        Conversa
+      </button>
+    </div>
+
+    @if (activeTab() === 'chat') {
+      <app-order-chat
+        [clientName]="currentOrder.client.name"
+        [clientAvatar]="clientAvatar()"
+        [professionalName]="currentOrder.professional.name"
+        [professionalAvatar]="professionalAvatar()"
+        [messages]="chatMessages()"
+        [hasConversation]="chatConversation() !== null"
+        [hasMore]="chatHasMore()"
+        [loading]="chatLoading()"
+        (loadMore)="loadMoreChat()"
+      ></app-order-chat>
+    }
+
+    <div [hidden]="activeTab() !== 'details'" class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
       <!-- Coluna principal -->
       <div class="lg:col-span-2 flex flex-col gap-6">
         <app-service-details
+          [serviceName]="currentOrder.service.name"
+          [image]="serviceImage()"
+          [gallery]="serviceGallery()"
           [modalityLabel]="modalityLabel()"
           [scheduledDate]="formatDate(currentOrder.created_at)"
           [description]="currentOrder.description || ''"
@@ -76,4 +116,98 @@
       </div>
     </div>
   </div>
+
+  <app-modal
+    [open]="isActionModalOpen()"
+    [title]="actionModalTitle()"
+    size="sm"
+    [closeable]="!isProcessingAction()"
+    (closed)="cancelPendingAction()"
+  >
+    <div class="flex flex-col gap-5">
+      @if (pendingAction() === 'reject') {
+        <p class="text-sm text-[#41493D]">
+          Indique o motivo da rejeição do contrato
+          <strong class="text-[#062406]">#CTR-{{ currentOrder.id }}</strong>. Esta informação
+          poderá ser partilhada com o cliente e o prestador.
+        </p>
+
+        <div class="flex flex-col gap-2">
+          <label for="detail-reject-reason" class="text-sm font-semibold text-[#001A18]"
+            >Motivo</label
+          >
+          <textarea
+            id="detail-reject-reason"
+            rows="4"
+            placeholder="Descreva o motivo da rejeição..."
+            class="w-full resize-none rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+            [value]="rejectReason()"
+            (input)="rejectReason.set($any($event.target).value)"
+          ></textarea>
+        </div>
+      } @else if (pendingAction() === 'cancel') {
+        <p class="text-sm text-[#41493D]">
+          Tem a certeza que deseja cancelar o contrato
+          <strong class="text-[#062406]">#CTR-{{ currentOrder.id }}</strong>? Esta ação não pode
+          ser revertida.
+        </p>
+      } @else if (pendingAction() === 'pay') {
+        <p class="text-sm text-[#41493D]">
+          Confirma o pagamento ao prestador
+          <strong class="text-[#062406]">{{ currentOrder.professional.name }}</strong> para o
+          contrato <strong class="text-[#062406]">#CTR-{{ currentOrder.id }}</strong>?
+        </p>
+      }
+
+      <div class="flex items-center justify-end gap-3">
+        <button
+          type="button"
+          (click)="cancelPendingAction()"
+          [disabled]="isProcessingAction()"
+          class="cursor-pointer rounded-full px-6 py-3 text-sm font-semibold text-[#41493D] transition-all duration-300 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          Voltar
+        </button>
+
+        <button
+          type="button"
+          (click)="confirmPendingAction()"
+          [disabled]="
+            isProcessingAction() || (pendingAction() === 'reject' && !rejectReason().trim())
+          "
+          [class]="
+            pendingAction() === 'pay'
+              ? 'bg-primary text-[#0B2E13] hover:bg-primary/80'
+              : 'bg-red-600 text-white hover:bg-red-700'
+          "
+          class="flex cursor-pointer items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold shadow-xs shadow-black/10 transition-all duration-300 hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+        >
+          @if (isProcessingAction()) {
+            <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              ></path>
+            </svg>
+            A processar...
+          } @else if (pendingAction() === 'reject') {
+            Rejeitar contrato
+          } @else if (pendingAction() === 'cancel') {
+            Cancelar contrato
+          } @else {
+            Confirmar pagamento
+          }
+        </button>
+      </div>
+    </div>
+  </app-modal>
 }

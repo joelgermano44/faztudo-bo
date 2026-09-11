@@ -5,9 +5,12 @@ import {
   AdminRow,
   AdminStatus,
 } from './components/administrators-table/administrators-table';
+import { AdminFormModal } from './components/admin-form-modal/admin-form-modal';
+import { AdminViewDrawer } from './components/admin-view-drawer/admin-view-drawer';
 import { AdminService } from '../../../../core/features/admins/services/admin.service';
 import { Admin } from '../../../../core/features/admins/models/admin.model';
 import { API_BASE_URL } from '../../../../core/shared/http/api-config';
+import { buildAvatarUrl as buildImageUrl } from '../../../../core/shared/util/media-url';
 
 type StatusFilter = 'Todos' | AdminStatus;
 
@@ -32,17 +35,6 @@ function formatBirthdate(iso: string): string {
   return `${day} ${MONTH_ABBR[date.getMonth()]} ${date.getFullYear()}`;
 }
 
-/** A API só devolve o nome do ficheiro; os uploads ficam servidos em `uploads/<pasta>/<ficheiro>`. */
-function buildImageUrl(baseUrl: string, folder: string, filename: string | null): string | null {
-  if (!filename) {
-    return null;
-  }
-  if (/^https?:\/\//.test(filename)) {
-    return filename;
-  }
-  return `${baseUrl}uploads/${folder}/${filename}`;
-}
-
 function toAdminRow(admin: Admin, baseUrl: string): AdminRow {
   return {
     id: admin.id,
@@ -58,7 +50,7 @@ function toAdminRow(admin: Admin, baseUrl: string): AdminRow {
 }
 
 @Component({
-  imports: [TitleHeader, AdministratorsTable],
+  imports: [TitleHeader, AdministratorsTable, AdminFormModal, AdminViewDrawer],
   selector: 'app-administrators',
   styleUrl: './administrators.css',
   templateUrl: './administrators.html',
@@ -78,6 +70,17 @@ export class Administrators {
   readonly searchTerm = signal('');
 
   private readonly admins = signal<Admin[]>([]);
+
+  readonly isFormModalOpen = signal(false);
+  readonly editingAdmin = signal<Admin | null>(null);
+
+  readonly isViewDrawerOpen = signal(false);
+  readonly viewingAdmin = signal<Admin | null>(null);
+
+  readonly viewingAdminAvatarUrl = computed(() => {
+    const admin = this.viewingAdmin();
+    return admin ? buildImageUrl(this.baseUrl, 'admins', admin.image) : null;
+  });
 
   readonly filteredAdmins = computed<AdminRow[]>(() => {
     const filter = this.activeFilter();
@@ -101,10 +104,18 @@ export class Administrators {
   });
 
   constructor() {
+    this.loadAdmins();
+  }
+
+  private loadAdmins(): void {
     this.adminService.findAll().subscribe({
       next: (admins) => this.admins.set(admins),
       error: (err) => console.error('Erro ao carregar administradores', err),
     });
+  }
+
+  private findAdminById(id: number): Admin | null {
+    return this.admins().find((admin) => admin.id === id) ?? null;
   }
 
   setFilter(filter: StatusFilter): void {
@@ -113,5 +124,33 @@ export class Administrators {
 
   onSearch(term: string): void {
     this.searchTerm.set(term);
+  }
+
+  openCreateModal(): void {
+    this.editingAdmin.set(null);
+    this.isFormModalOpen.set(true);
+  }
+
+  openEditModal(id: number): void {
+    this.editingAdmin.set(this.findAdminById(id));
+    this.isFormModalOpen.set(true);
+  }
+
+  closeFormModal(): void {
+    this.isFormModalOpen.set(false);
+  }
+
+  onAdminSaved(): void {
+    this.isFormModalOpen.set(false);
+    this.loadAdmins();
+  }
+
+  openViewDrawer(id: number): void {
+    this.viewingAdmin.set(this.findAdminById(id));
+    this.isViewDrawerOpen.set(true);
+  }
+
+  closeViewDrawer(): void {
+    this.isViewDrawerOpen.set(false);
   }
 }

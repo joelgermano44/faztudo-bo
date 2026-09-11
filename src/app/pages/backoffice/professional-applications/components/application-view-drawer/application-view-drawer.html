@@ -1,0 +1,253 @@
+<app-drawer [open]="open()" title="Detalhes da candidatura" size="lg" (closed)="requestClose()">
+  @if (application(); as application) {
+    <div class="flex flex-col gap-6">
+      <!-- Cabeçalho -->
+      <div class="flex items-center gap-4">
+        <button
+          type="button"
+          (click)="openAvatarLightbox()"
+          [disabled]="!avatarUrl()"
+          class="group relative h-20 w-20 shrink-0 overflow-hidden rounded-full bg-[#E6E9E8] disabled:cursor-default"
+        >
+          <img
+            [src]="avatarUrl() || '/icons/user.svg'"
+            [alt]="application.name"
+            class="h-full w-full object-cover"
+          />
+          @if (avatarUrl()) {
+            <div
+              class="absolute inset-0 flex items-center justify-center bg-black/0 text-transparent transition-all duration-300 group-hover:bg-black/40 group-hover:text-white"
+            >
+              <span class="text-[10px] font-semibold">Ver</span>
+            </div>
+          }
+        </button>
+
+        <div class="flex flex-col gap-1">
+          <h3 class="text-xl font-bold text-[#062406]">{{ application.name }}</h3>
+          <p class="text-sm text-[#41493D]">{{ application.email }}</p>
+          @if (statusStyle(); as status) {
+            <span
+              class="w-fit rounded-full px-3 py-1 text-[10px] font-bold uppercase {{
+                status.badge
+              }}"
+            >
+              {{ status.label }}
+            </span>
+          }
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="grid grid-cols-2 gap-4 border-t border-[#0B2E130D] pt-5">
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Telefone</span>
+          <span class="text-sm text-[#41493D]">{{ application.phone }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">BI</span>
+          <span class="text-sm text-[#41493D]">{{ application.bi }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">NIF</span>
+          <span class="text-sm text-[#41493D]">{{ application.nif || '—' }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Nascimento</span>
+          <span class="text-sm text-[#41493D]">{{ formatDate(application.birthdate) }}</span>
+        </div>
+        <div class="col-span-2 flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Morada</span>
+          <span class="text-sm text-[#41493D]">{{ formatAddress(application) }}</span>
+        </div>
+      </div>
+
+      <!-- Sobre -->
+      @if (application.about_me) {
+        <div class="flex flex-col gap-2 border-t border-[#0B2E130D] pt-5">
+          <span class="text-sm font-semibold text-[#001A18]">Sobre</span>
+          <p class="text-sm leading-relaxed text-[#41493D]">{{ application.about_me }}</p>
+        </div>
+      }
+
+      <!-- Profissões -->
+      @if (application.professions.length > 0) {
+        <div class="flex flex-col gap-2 border-t border-[#0B2E130D] pt-5">
+          <span class="text-sm font-semibold text-[#001A18]"
+            >Profissões ({{ application.professions.length }})</span
+          >
+          <ul class="flex flex-col gap-1.5">
+            @for (profession of application.professions; track profession.id) {
+              <li class="flex items-center justify-between text-sm text-[#41493D]">
+                <span>{{ profession.name }}</span>
+                <span class="text-xs text-[#8C9492]">desde {{ formatDate(profession.start_date) }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      <!-- Formação -->
+      @if (application.educations.length > 0) {
+        <div class="flex flex-col gap-2 border-t border-[#0B2E130D] pt-5">
+          <span class="text-sm font-semibold text-[#001A18]"
+            >Formação ({{ application.educations.length }})</span
+          >
+          <ul class="flex flex-col gap-3">
+            @for (education of application.educations; track education.id) {
+              <li class="flex flex-col text-sm">
+                <span class="font-medium text-[#062406]">{{ education.course }}</span>
+                <span class="text-[#41493D]">{{ education.institution }}</span>
+                <span class="text-xs text-[#8C9492]">
+                  {{ formatDate(education.start_date) }} —
+                  {{ education.end_date ? formatDate(education.end_date) : 'atual' }}
+                </span>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      <!-- Experiência -->
+      @if (application.experiences.length > 0) {
+        <div class="flex flex-col gap-2 border-t border-[#0B2E130D] pt-5">
+          <span class="text-sm font-semibold text-[#001A18]"
+            >Experiência ({{ application.experiences.length }})</span
+          >
+          <ul class="flex flex-col gap-3">
+            @for (experience of application.experiences; track experience.id) {
+              <li class="flex flex-col text-sm">
+                <span class="font-medium text-[#062406]">{{ experience.role }}</span>
+                <span class="text-[#41493D]">{{ experience.company }}</span>
+                <span class="text-xs text-[#8C9492]">
+                  {{ formatDate(experience.start_date) }} —
+                  {{ experience.end_date ? formatDate(experience.end_date) : 'atual' }}
+                </span>
+                @if (experience.description) {
+                  <span class="mt-1 text-[#41493D]">{{ experience.description }}</span>
+                }
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      <!-- Certificados -->
+      @if (application.certificates.length > 0) {
+        <div class="flex flex-col gap-2 border-t border-[#0B2E130D] pt-5">
+          <span class="text-sm font-semibold text-[#001A18]"
+            >Certificados ({{ application.certificates.length }})</span
+          >
+          <div class="grid grid-cols-3 gap-2">
+            @for (certificate of application.certificates; track certificate.id; let i = $index) {
+              <button
+                type="button"
+                (click)="openCertificateLightbox(i)"
+                [disabled]="!certificate.image"
+                class="group relative flex h-24 flex-col items-center justify-center overflow-hidden rounded-xl border border-[#0000001A] bg-[#F8F9FA] p-2 text-center disabled:cursor-default"
+              >
+                @if (certificate.image) {
+                  <img
+                    [src]="certificateImages()[i]"
+                    alt=""
+                    class="absolute inset-0 h-full w-full object-cover"
+                  />
+                  <div
+                    class="absolute inset-0 bg-black/0 transition-all duration-300 group-hover:bg-black/30"
+                  ></div>
+                } @else {
+                  <span class="text-[11px] font-medium text-[#41493D]">{{ certificate.name }}</span>
+                }
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Histórico -->
+      @if (history().length > 0) {
+        <div class="flex flex-col gap-2 border-t border-[#0B2E130D] pt-5">
+          <span class="text-sm font-semibold text-[#001A18]"
+            >Histórico ({{ history().length }})</span
+          >
+          <ul class="flex flex-col gap-3">
+            @for (entry of history(); track entry.id) {
+              <li class="flex flex-col gap-1 text-sm">
+                <div class="flex items-center gap-1.5">
+                  @if (entry.previous_status) {
+                    <span class="text-xs text-[#8C9492]">{{ statusLabel(entry.previous_status) }}</span>
+                    <span class="text-xs text-[#8C9492]">→</span>
+                  }
+                  <span class="font-medium text-[#062406]">{{ statusLabel(entry.status) }}</span>
+                </div>
+                <span class="text-xs text-[#8C9492]">
+                  {{ formatDateTime(entry.created_at) }}
+                  @if (entry.reviewed_by) {
+                    · por {{ entry.reviewed_by.name }}
+                  }
+                </span>
+                @if (entry.description) {
+                  <p class="mt-1 rounded-lg bg-[#F8F9FA] px-3 py-2 text-[#41493D]">
+                    {{ entry.description }}
+                  </p>
+                }
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      <!-- Ações -->
+      @if (canReview() || canDecide()) {
+        <div class="flex flex-wrap items-center gap-3 border-t border-[#0B2E130D] pt-5">
+          @if (canReview()) {
+            <button
+              type="button"
+              (click)="review.emit(application.id)"
+              [disabled]="reviewing() || approving()"
+              class="cursor-pointer rounded-full border border-[#C0C8C6]/60 px-5 py-2.5 text-sm font-semibold text-[#41493D] transition-all duration-300 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              @if (reviewing()) {
+                A processar...
+              } @else {
+                Colocar em análise
+              }
+            </button>
+          }
+
+          @if (canDecide()) {
+            <button
+              type="button"
+              (click)="approve.emit(application.id)"
+              [disabled]="reviewing() || approving()"
+              class="cursor-pointer rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-[#0B2E13] shadow-xs shadow-black/10 transition-all duration-300 hover:scale-[1.02] hover:bg-primary/80 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+            >
+              @if (approving()) {
+                A aprovar...
+              } @else {
+                Aprovar
+              }
+            </button>
+
+            <button
+              type="button"
+              (click)="reject.emit(application.id)"
+              [disabled]="reviewing() || approving()"
+              class="cursor-pointer rounded-full border border-red-200 px-5 py-2.5 text-sm font-semibold text-red-600 transition-all duration-300 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              Rejeitar
+            </button>
+          }
+        </div>
+      }
+    </div>
+  }
+</app-drawer>
+
+<app-image-viewer
+  [open]="lightboxOpen()"
+  [images]="lightboxImages()"
+  [startIndex]="lightboxIndex()"
+  [alt]="application()?.name ?? ''"
+  (closed)="closeLightbox()"
+></app-image-viewer>

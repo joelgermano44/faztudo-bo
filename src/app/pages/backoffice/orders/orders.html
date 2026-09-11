@@ -33,5 +33,75 @@
     </div>
   </div>
 
-  <app-orders-table [orders]="filteredOrders()"></app-orders-table>
+  <app-orders-table
+    [orders]="filteredOrders()"
+    (reject)="requestReject($event)"
+  ></app-orders-table>
 </div>
+
+<app-modal
+  [open]="isRejectModalOpen()"
+  title="Rejeitar contrato"
+  size="sm"
+  [closeable]="!isRejecting()"
+  (closed)="cancelReject()"
+>
+  <div class="flex flex-col gap-5">
+    <p class="text-sm text-[#41493D]">
+      Indique o motivo da rejeição do contrato
+      <strong class="text-[#062406]">#CTR-{{ rejectingOrder()?.id }}</strong>. Esta informação
+      poderá ser partilhada com o cliente e o prestador.
+    </p>
+
+    <div class="flex flex-col gap-2">
+      <label for="order-reject-reason" class="text-sm font-semibold text-[#001A18]">Motivo</label>
+      <textarea
+        id="order-reject-reason"
+        rows="4"
+        placeholder="Descreva o motivo da rejeição..."
+        class="w-full resize-none rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+        [value]="rejectReason()"
+        (input)="rejectReason.set($any($event.target).value)"
+      ></textarea>
+    </div>
+
+    <div class="flex items-center justify-end gap-3">
+      <button
+        type="button"
+        (click)="cancelReject()"
+        [disabled]="isRejecting()"
+        class="cursor-pointer rounded-full px-6 py-3 text-sm font-semibold text-[#41493D] transition-all duration-300 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        Cancelar
+      </button>
+
+      <button
+        type="button"
+        (click)="confirmReject()"
+        [disabled]="isRejecting() || !rejectReason().trim()"
+        class="flex cursor-pointer items-center justify-center gap-2 rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white shadow-xs shadow-black/10 transition-all duration-300 hover:scale-[1.02] hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+      >
+        @if (isRejecting()) {
+          <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+            ></path>
+          </svg>
+          A rejeitar...
+        } @else {
+          Rejeitar contrato
+        }
+      </button>
+    </div>
+  </div>
+</app-modal>

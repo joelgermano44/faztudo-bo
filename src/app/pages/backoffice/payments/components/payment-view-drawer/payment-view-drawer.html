@@ -1,0 +1,109 @@
+<app-drawer [open]="open()" title="Detalhes do repasse" size="md" (closed)="requestClose()">
+  @if (row(); as row) {
+    <div class="flex flex-col gap-6">
+      <!-- Valor + estado -->
+      <div class="flex items-center justify-between">
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Valor total do pedido</span>
+          <span class="text-2xl font-bold text-[#062406]">{{ formatMoney(row.totalAmount) }}</span>
+        </div>
+        @if (statusStyle(); as status) {
+          <span class="w-fit rounded-full px-3 py-1 text-xs font-bold uppercase {{ status.badge }}">
+            {{ status.label }}
+          </span>
+        }
+      </div>
+
+      <!-- Cliente -->
+      <div class="flex items-center gap-3 border-t border-[#0B2E130D] pt-5">
+        <img
+          [src]="row.clientAvatar || '/icons/user.svg'"
+          [alt]="row.clientName"
+          class="h-12 w-12 rounded-full object-cover"
+        />
+        <div class="flex flex-col">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Cliente</span>
+          <span class="font-semibold text-[#062406]">{{ row.clientName }}</span>
+        </div>
+      </div>
+
+      <!-- Profissional -->
+      <div class="flex items-center gap-3 border-t border-[#0B2E130D] pt-5">
+        <div class="flex flex-col">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Profissional</span>
+          <span class="font-semibold text-[#062406]">{{ row.professionalName }}</span>
+          <span class="text-sm text-[#41493D]">{{ row.professionalProfession }}</span>
+        </div>
+      </div>
+
+      <!-- Breakdown financeiro -->
+      <div class="grid grid-cols-2 gap-4 border-t border-[#0B2E130D] pt-5">
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Pedido</span>
+          <span class="text-sm text-[#41493D]">#PED-{{ row.orderId }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Referência</span>
+          <span class="text-sm text-[#41493D]">{{ row.reference }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Método de pagamento</span>
+          <span class="text-sm text-[#41493D]">{{ row.methodName }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Data</span>
+          <span class="text-sm text-[#41493D]">{{ row.createdAt }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Comissão da plataforma</span>
+          <span class="text-sm text-[#41493D]">
+            {{ formatMoney(row.commissionAmount ?? 0) }}
+            @if (row.commissionPercent != null) {
+              ({{ row.commissionPercent }}%)
+            }
+          </span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Repasse ao profissional</span>
+          <span class="text-sm font-semibold text-[#062406]">{{ formatMoney(row.payoutAmount) }}</span>
+        </div>
+      </div>
+
+      <!-- Histórico -->
+      <div class="flex flex-col gap-2 border-t border-[#0B2E130D] pt-5">
+        <span class="text-sm font-semibold text-[#001A18]">Histórico do repasse</span>
+        @if (historyLoading()) {
+          <span class="text-sm text-[#8C9492]">A carregar...</span>
+        } @else if (history().length === 0) {
+          <span class="text-sm text-[#8C9492]">Sem histórico disponível.</span>
+        } @else {
+          <ul class="flex flex-col gap-3">
+            @for (item of history(); track item.id) {
+              <li class="flex items-center justify-between rounded-lg bg-[#F8F9FA] px-3 py-2.5">
+                <div class="flex flex-col gap-0.5">
+                  <span class="text-sm font-semibold text-[#062406]">
+                    {{ historyStatusStyle(item.status).label }}
+                  </span>
+                  @if (item.transfer_reference) {
+                    <span class="text-xs text-[#8C9492]">Ref: {{ item.transfer_reference }}</span>
+                  }
+                </div>
+                <span class="text-xs text-[#8C9492]">{{ formatDate(item.created_at) }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+
+      @if (row.status === 'PENDING') {
+        <button
+          type="button"
+          (click)="requestMarkPaid()"
+          class="mt-2 w-full rounded-lg bg-[#094908] py-3 text-sm font-semibold text-white hover:bg-[#0B2E13] transition-all duration-300 cursor-pointer"
+        >
+          Marcar como pago
+        </button>
+      }
+    </div>
+  }
+</app-drawer>

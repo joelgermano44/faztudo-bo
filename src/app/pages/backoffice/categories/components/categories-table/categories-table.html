@@ -1,0 +1,140 @@
+<div class="bg-white mt-8 rounded-lg shadow-sm border border-gray-100 overflow-hidden font-raleway">
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr
+          class="bg-[#F8F9FA80] border-b border-[#C2C8BE4D] text-xs font-semibold text-[#727970] uppercase"
+        >
+          <th class="py-4 px-6">Categoria</th>
+          <th class="py-4 px-6">ID</th>
+          <th class="py-4 px-6">Serviços</th>
+          <th class="py-4 px-6">Criada em</th>
+          <th class="py-4 px-6">Estado</th>
+          <th class="py-4 px-6 text-right">Ações</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50 text-sm">
+        @for (category of pagedCategories(); track category.id) {
+          <tr class="hover:bg-gray-50/50 transition-colors">
+            <td class="py-4 px-6 font-semibold text-[#0B2E13] whitespace-nowrap">
+              {{ category.name }}
+            </td>
+
+            <td class="py-4 px-6 text-gray-600 whitespace-nowrap">#CAT-{{ category.id }}</td>
+
+            <td class="py-4 px-6 text-gray-600 whitespace-nowrap">{{ category.servicesCount }}</td>
+
+            <td class="py-4 px-6 text-gray-500 whitespace-nowrap">{{ category.createdAt }}</td>
+
+            <td class="py-4 px-6 whitespace-nowrap">
+              <span
+                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {{
+                  statusBadge(category.status)
+                }}"
+              >
+                {{ category.status }}
+              </span>
+            </td>
+
+            <td class="py-4 px-6 text-right whitespace-nowrap">
+              <div class="flex items-center justify-end gap-1">
+                <button
+                  type="button"
+                  (click)="view.emit(category.id)"
+                  aria-label="Ver"
+                  class="rounded-full h-9 w-9 bg-[#F2F4F3] hover:bg-gray-300 cursor-pointer hover:scale-105 duration-300 transition-all flex items-center justify-center"
+                >
+                  <img src="/icons/services/eye.svg" alt="Ver" width="14" height="14" />
+                </button>
+                <button
+                  type="button"
+                  (click)="edit.emit(category.id)"
+                  aria-label="Editar"
+                  class="rounded-full h-9 w-9 bg-[#F2F4F3] hover:bg-gray-300 cursor-pointer hover:scale-105 duration-300 transition-all flex items-center justify-center"
+                >
+                  <img src="/icons/services/pencil.svg" alt="Editar" width="14" height="14" />
+                </button>
+                <button
+                  type="button"
+                  (click)="remove.emit(category.id)"
+                  aria-label="Eliminar"
+                  class="rounded-full h-9 w-9 bg-[#F2F4F3] text-[#41493D] hover:bg-red-50 hover:text-red-600 cursor-pointer hover:scale-105 duration-300 transition-all flex items-center justify-center"
+                >
+                  <svg width="15" height="16" viewBox="0 0 15 16" fill="none">
+                    <path
+                      d="M1.5 4H13.5M5.83333 7.33333V11.3333M9.16667 7.33333V11.3333M2.33333 4L3 13.3333C3 13.7754 3.17559 14.1993 3.48816 14.5118C3.80072 14.8244 4.22464 15 4.66667 15H10.3333C10.7754 15 11.1993 14.8244 11.5118 14.5118C11.8244 14.1993 12 13.7754 12 13.3333L12.6667 4M5.33333 4V1.83333C5.33333 1.61232 5.42113 1.40036 5.57741 1.24408C5.73369 1.0878 5.94565 1 6.16667 1H8.83333C9.05435 1 9.26631 1.0878 9.42259 1.24408C9.57887 1.40036 9.66667 1.61232 9.66667 1.83333V4"
+                      stroke="currentColor"
+                      stroke-width="1.4"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="py-8 px-6 text-center text-gray-500">
+              Nenhuma categoria encontrada
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div
+    class="flex items-center justify-between px-6 py-4 border-t border-gray-100 text-sm text-gray-500"
+  >
+    <div>
+      @if (categories().length === 0) {
+        Nenhum resultado
+      } @else {
+        Mostrando <span class="font-medium text-gray-700">{{ rangeStart() }}</span> a
+        <span class="font-medium text-gray-700">{{ rangeEnd() }}</span> de
+        <span class="font-medium text-gray-700">{{ categories().length }}</span> resultados
+      }
+    </div>
+    <div class="flex items-center gap-1">
+      <button
+        type="button"
+        (click)="previousPage()"
+        [disabled]="page() <= 1"
+        class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-400 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
+      </button>
+      @for (pageNumber of pageNumbers(); track pageNumber) {
+        <button
+          type="button"
+          (click)="goToPage(pageNumber)"
+          [class.bg-emerald-950]="pageNumber === page()"
+          [class.text-white]="pageNumber === page()"
+          [class.text-gray-600]="pageNumber !== page()"
+          [class.hover:bg-gray-100]="pageNumber !== page()"
+          class="w-8 h-8 flex items-center justify-center rounded text-xs font-medium"
+        >
+          {{ pageNumber }}
+        </button>
+      }
+      <button
+        type="button"
+        (click)="nextPage()"
+        [disabled]="page() >= totalPages()"
+        class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50 text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>

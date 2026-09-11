@@ -97,15 +97,48 @@ export interface OrderTimeline {
   events: OrderTimelineEvent[];
 }
 
+/** De que lado do pedido veio a mensagem (só cliente/profissional — o admin apenas lê). */
+export type OrderChatSenderType = 'client' | 'professional';
+
+/** Mensagem de uma conversa de pedido. */
+export interface OrderChatMessage {
+  id: number;
+  conversation_id: number;
+  sender_type: OrderChatSenderType;
+  sender_id: string | null;
+  type: 'text' | 'image';
+  content: string | null;
+  created_at: string;
+  images?: Media[];
+}
+
+/** Conversa entre cliente e profissional associada a um pedido. */
+export interface OrderConversation {
+  id: number;
+  order_id: number;
+  client_id: string;
+  professional_id: number;
+  last_message_at: string | null;
+  last_message_preview: string | null;
+  client_unread_count: number;
+  professional_unread_count: number;
+  client_last_read_at: string | null;
+  professional_last_read_at: string | null;
+  archived_at: string | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+}
+
 /** Página de mensagens embutida em `GET /orders/:id/chat`. */
 export interface OrderChatMessagesPage {
-  data: Record<string, unknown>[];
+  data: OrderChatMessage[];
   next_cursor: number | null;
   has_more: boolean;
 }
 
-/** Resposta de `GET /orders/:id/chat` — vista do BO sobre a conversa do pedido. */
+/** Resposta de `GET /orders/:id/chat` — vista do BO sobre a conversa do pedido, só leitura. */
 export interface OrderChatView {
-  conversation: Record<string, unknown> | null;
+  conversation: OrderConversation | null;
   messages: OrderChatMessagesPage;
 }

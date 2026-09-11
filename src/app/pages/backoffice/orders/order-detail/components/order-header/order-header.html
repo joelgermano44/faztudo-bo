@@ -16,6 +16,16 @@
     </div>
 
     <div class="flex items-center gap-2">
+      @if (canReject()) {
+        <button
+          type="button"
+          (click)="reject.emit()"
+          class="flex gap-2 items-center text-base text-red-600 font-normal px-4 py-2 border rounded-3xl bg-[#F8FAF9] border-red-200 hover:bg-red-50 hover:scale-105 transition-all duration-300 cursor-pointer"
+        >
+          <img src="/icons/orders/reject.svg" alt="" width="15" height="15" />
+          Rejeitar
+        </button>
+      }
       @if (canCancel()) {
         <button
           type="button"
@@ -28,10 +38,11 @@
       }
       <button
         type="button"
+        (click)="viewChat.emit()"
         class="flex gap-2 items-center text-base text-black font-normal px-4 py-2 border rounded-3xl bg-[#F8FAF9] border-[#292D3299] hover:bg-gray-100 hover:scale-105 transition-all duration-300 cursor-pointer"
       >
         <img src="/icons/orders/chat.svg" alt="" width="15" height="15" />
-        Contactar
+        Ver Conversa
       </button>
       @if (canPayProfessional()) {
         <button
@@ -47,8 +58,4 @@
   </div>
 
   <p class="text-black font-normal text-xl">{{ serviceName() }}</p>
-
-  @if (actionError()) {
-    <p class="text-red-600 text-sm mt-2">{{ actionError() }}</p>
-  }
 </div>

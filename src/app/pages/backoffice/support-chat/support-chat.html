@@ -1,0 +1,35 @@
+<div class="flex flex-col font-raleway h-full">
+  <app-title-header
+    title="Chat de Suporte"
+    description="Acompanhe e responda às conversas de suporte com clientes e profissionais."
+  ></app-title-header>
+
+  <div
+    class="mt-6 flex gap-4 flex-1 overflow-hidden"
+    style="height: calc(100vh - 220px); min-height: 500px"
+  >
+    <app-conversation-list
+      [conversations]="filteredConversations()"
+      [selectedId]="selectedId()"
+      [activeFilter]="activeFilter()"
+      [searchTerm]="searchTerm()"
+      [hasMore]="conversationsHasMore()"
+      [loading]="conversationsLoading()"
+      (select)="selectConversation($event)"
+      (filterChange)="setFilter($event)"
+      (searchChange)="onSearch($event)"
+      (loadMore)="loadMoreConversations()"
+    ></app-conversation-list>
+
+    <app-conversation-thread
+      class="w-full"
+      [conversation]="selectedConversation()"
+      [messages]="messages()"
+      [hasMore]="messagesHasMore()"
+      [loading]="messagesLoading()"
+      [sending]="sending()"
+      (loadMore)="loadMoreMessages()"
+      (send)="sendMessage($event)"
+    ></app-conversation-thread>
+  </div>
+</div>

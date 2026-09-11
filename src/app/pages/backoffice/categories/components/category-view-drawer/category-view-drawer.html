@@ -1,0 +1,72 @@
+<app-drawer [open]="open()" title="Detalhes da categoria" size="md" (closed)="requestClose()">
+  @if (category(); as category) {
+    <div class="flex flex-col gap-6">
+      <!-- Cabeçalho -->
+      <div class="flex items-center justify-between">
+        <h3 class="text-xl font-bold text-[#062406]">{{ category.name }}</h3>
+        <span
+          class="w-fit rounded-full px-3 py-1 text-[10px] font-bold uppercase {{
+            statusBadgeClass()
+          }}"
+        >
+          {{ isActive() ? 'Ativa' : 'Inativa' }}
+        </span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 border-t border-[#0B2E130D] pt-5">
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">ID</span>
+          <span class="text-sm text-[#41493D]">#CAT-{{ category.id }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Serviços</span>
+          <span class="text-sm text-[#41493D]">{{ category.services.length }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Criada em</span>
+          <span class="text-sm text-[#41493D]">{{ formatDate(category.created_at) }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Atualizada em</span>
+          <span class="text-sm text-[#41493D]">{{ formatDate(category.updated_at) }}</span>
+        </div>
+      </div>
+
+      <!-- Serviços vinculados -->
+      <div class="flex flex-col gap-2 border-t border-[#0B2E130D] pt-5">
+        <span class="text-sm font-semibold text-[#001A18]"
+          >Serviços vinculados ({{ category.services.length }})</span
+        >
+
+        @if (category.services.length === 0) {
+          <p class="text-sm text-gray-500">Nenhum serviço vinculado a esta categoria.</p>
+        } @else {
+          <ul class="flex flex-col gap-3">
+            @for (service of category.services; track service.id) {
+              <li class="flex items-center gap-3 rounded-lg border border-[#0000001A] p-2.5">
+                <img
+                  [src]="serviceImage(service) || '/icons/dashboard/dashcard/servicos.svg'"
+                  alt=""
+                  [class.p-3]="!serviceImage(service)"
+                  class="h-11 w-11 shrink-0 rounded-lg object-cover bg-[#E6E9E8]"
+                />
+                <div class="min-w-0 flex-1">
+                  <p class="truncate font-medium text-[#062406]">{{ service.name }}</p>
+                  <p class="truncate text-xs text-[#8C9492]">{{ service.description }}</p>
+                </div>
+
+                <span
+                  class="shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase {{
+                    serviceStatusBadge(service)
+                  }}"
+                >
+                  {{ serviceStatus(service) }}
+                </span>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    </div>
+  }
+</app-drawer>

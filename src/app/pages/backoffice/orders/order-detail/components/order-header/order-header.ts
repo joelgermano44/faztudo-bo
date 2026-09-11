@@ -13,9 +13,11 @@ export class OrderHeader {
   readonly statusBadgeClass = input.required<string>();
   readonly serviceName = input.required<string>();
   readonly canCancel = input(false);
+  readonly canReject = input(false);
   readonly canPayProfessional = input(false);
-  readonly actionError = input<string | null>(null);
 
   readonly cancel = output<void>();
+  readonly reject = output<void>();
   readonly payProfessional = output<void>();
+  readonly viewChat = output<void>();
 }

@@ -4,6 +4,34 @@
     Detalhes do Serviço
   </h2>
 
+  @if (image()) {
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        (click)="openLightbox(0)"
+        class="group relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-[#0000001A]"
+      >
+        <img [src]="image()" [alt]="serviceName()" class="h-full w-full object-cover" />
+        <div
+          class="absolute inset-0 bg-black/0 transition-all duration-300 group-hover:bg-black/30"
+        ></div>
+      </button>
+
+      @for (thumb of gallery(); track thumb; let i = $index) {
+        <button
+          type="button"
+          (click)="openLightbox(i + 1)"
+          class="group relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-[#0000001A]"
+        >
+          <img [src]="thumb" alt="" class="h-full w-full object-cover" />
+          <div
+            class="absolute inset-0 bg-black/0 transition-all duration-300 group-hover:bg-black/30"
+          ></div>
+        </button>
+      }
+    </div>
+  }
+
   <div class="grid grid-cols-2 gap-4">
     <div>
       <p class="text-xs uppercase text-[#424841] font-semibold">Modalidade</p>
@@ -28,3 +56,11 @@
     </p>
   </div>
 </div>
+
+<app-image-viewer
+  [open]="lightboxOpen()"
+  [images]="allImages()"
+  [startIndex]="lightboxIndex()"
+  [alt]="serviceName()"
+  (closed)="closeLightbox()"
+></app-image-viewer>
