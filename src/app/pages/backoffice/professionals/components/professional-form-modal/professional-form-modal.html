@@ -1,0 +1,215 @@
+<app-modal
+  [open]="open()"
+  title="Editar profissional"
+  size="md"
+  [closeable]="!saving()"
+  (closed)="requestClose()"
+>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5">
+    <!-- Avatar -->
+    <div class="flex items-center gap-4">
+      <img
+        [src]="imagePreview() || '/icons/user.svg'"
+        alt=""
+        class="h-16 w-16 rounded-full object-cover bg-[#E6E9E8]"
+      />
+      <label
+        class="cursor-pointer rounded-full border border-[#C0C8C6]/60 px-4 py-2 text-sm font-semibold text-[#41493D] hover:bg-gray-50 transition-all duration-300"
+      >
+        Alterar foto
+        <input type="file" accept="image/*" class="hidden" (change)="onImageSelected($event)" />
+      </label>
+    </div>
+
+    <!-- Nome -->
+    <div class="flex flex-col gap-2">
+      <label for="prof-name" class="text-sm font-semibold text-[#001A18]">Nome</label>
+      <input
+        id="prof-name"
+        type="text"
+        formControlName="name"
+        class="w-full rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+        [class.border-red-500]="form.controls.name.invalid && form.controls.name.touched"
+      />
+      @if (form.controls.name.invalid && form.controls.name.touched) {
+        <span class="text-xs text-red-500">O nome é obrigatório.</span>
+      }
+    </div>
+
+    <!-- Email -->
+    <div class="flex flex-col gap-2">
+      <label for="prof-email" class="text-sm font-semibold text-[#001A18]">E-mail</label>
+      <input
+        id="prof-email"
+        type="email"
+        formControlName="email"
+        class="w-full rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+        [class.border-red-500]="form.controls.email.invalid && form.controls.email.touched"
+      />
+      @if (form.controls.email.invalid && form.controls.email.touched) {
+        <span class="text-xs text-red-500">
+          @if (form.controls.email.hasError('required')) {
+            O e-mail é obrigatório.
+          } @else {
+            Introduza um e-mail válido.
+          }
+        </span>
+      }
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="flex flex-col gap-2">
+        <label for="prof-phone" class="text-sm font-semibold text-[#001A18]">Telefone</label>
+        <input
+          id="prof-phone"
+          type="text"
+          formControlName="phone"
+          class="w-full rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+          [class.border-red-500]="form.controls.phone.invalid && form.controls.phone.touched"
+        />
+        @if (form.controls.phone.invalid && form.controls.phone.touched) {
+          <span class="text-xs text-red-500">O telefone é obrigatório.</span>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="prof-bi" class="text-sm font-semibold text-[#001A18]">BI</label>
+        <input
+          id="prof-bi"
+          type="text"
+          formControlName="bi"
+          class="w-full rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+          [class.border-red-500]="form.controls.bi.invalid && form.controls.bi.touched"
+        />
+        @if (form.controls.bi.invalid && form.controls.bi.touched) {
+          <span class="text-xs text-red-500">O BI é obrigatório.</span>
+        }
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="flex flex-col gap-2">
+        <label for="prof-nif" class="text-sm font-semibold text-[#001A18]"
+          >NIF <span class="font-normal text-[#8C9492]">(opcional)</span></label
+        >
+        <input
+          id="prof-nif"
+          type="text"
+          formControlName="nif"
+          class="w-full rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+        />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="prof-birthdate" class="text-sm font-semibold text-[#001A18]"
+          >Data de nascimento</label
+        >
+        <input
+          id="prof-birthdate"
+          type="date"
+          formControlName="birthdate"
+          class="w-full rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 focus:border-secondary"
+          [class.border-red-500]="form.controls.birthdate.invalid && form.controls.birthdate.touched"
+        />
+        @if (form.controls.birthdate.invalid && form.controls.birthdate.touched) {
+          <span class="text-xs text-red-500">A data de nascimento é obrigatória.</span>
+        }
+      </div>
+    </div>
+
+    <!-- Sobre -->
+    <div class="flex flex-col gap-2">
+      <label for="prof-about" class="text-sm font-semibold text-[#001A18]"
+        >Sobre <span class="font-normal text-[#8C9492]">(opcional)</span></label
+      >
+      <textarea
+        id="prof-about"
+        formControlName="about_me"
+        rows="3"
+        class="w-full rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary resize-none"
+      ></textarea>
+    </div>
+
+    <!-- Morada -->
+    <div class="flex flex-col gap-4 border-t border-[#0B2E130D] pt-5">
+      <span class="text-sm font-semibold text-[#001A18]">Morada</span>
+
+      <div class="flex flex-col gap-2">
+        <input
+          type="text"
+          formControlName="address"
+          placeholder="Endereço"
+          class="w-full rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+        />
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <input
+          type="text"
+          formControlName="municiple"
+          placeholder="Município"
+          class="w-full rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+        />
+        <input
+          type="text"
+          formControlName="province"
+          placeholder="Província"
+          class="w-full rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+        />
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <input
+          type="text"
+          formControlName="lat"
+          placeholder="Latitude (opcional)"
+          class="w-full rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+        />
+        <input
+          type="text"
+          formControlName="lng"
+          placeholder="Longitude (opcional)"
+          class="w-full rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+        />
+      </div>
+    </div>
+
+    <div class="mt-2 flex items-center justify-end gap-3 border-t border-[#0B2E130D] pt-5">
+      <button
+        type="button"
+        (click)="requestClose()"
+        [disabled]="saving()"
+        class="cursor-pointer rounded-full px-6 py-3 text-sm font-semibold text-[#41493D] transition-all duration-300 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        Cancelar
+      </button>
+
+      <button
+        type="submit"
+        [disabled]="saving()"
+        class="flex cursor-pointer items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-[#0B2E13] shadow-xs shadow-black/10 transition-all duration-300 hover:scale-[1.02] hover:bg-primary/80 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+      >
+        @if (saving()) {
+          <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+            ></path>
+          </svg>
+          A guardar...
+        } @else {
+          Guardar alterações
+        }
+      </button>
+    </div>
+  </form>
+</app-modal>

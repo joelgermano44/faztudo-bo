@@ -1,0 +1,519 @@
+<app-drawer [open]="open()" title="Detalhes do profissional" size="xl" (closed)="requestClose()">
+  @if (professional(); as professional) {
+    <div class="flex flex-col gap-6">
+      <!-- Cabeçalho -->
+      <div class="flex items-start justify-between gap-4 flex-wrap">
+        <div class="flex items-center gap-4">
+          <img
+            [src]="avatarUrl() || '/icons/user.svg'"
+            [alt]="professional.name"
+            class="h-16 w-16 rounded-full object-cover bg-[#E6E9E8] shrink-0"
+          />
+          <div class="flex flex-col gap-1.5">
+            <h3 class="text-xl font-bold text-[#062406]">{{ professional.name }}</h3>
+            <p class="text-sm text-[#41493D]">{{ professional.email }}</p>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span
+                class="w-fit rounded-full px-3 py-1 text-[10px] font-bold uppercase {{
+                  availabilityBadge()
+                }}"
+              >
+                {{ isAvailable() ? 'Disponível' : 'Indisponível' }}
+              </span>
+              <span
+                class="w-fit rounded-full bg-tertiary px-3 py-1 text-[10px] font-bold uppercase text-[#41493D]"
+              >
+                Candidatura Aprovada
+              </span>
+              @if (professional.average_rating != null) {
+                <span class="flex items-center gap-1 text-xs font-semibold text-[#0B2E13]">
+                  <svg width="12" height="12" viewBox="0 0 20 20" fill="#FBBF24">
+                    <path
+                      d="M10 15.27L16.18 19l-1.64-7.03L20 7.24l-7.19-.61L10 0 7.19 6.63 0 7.24l5.46 4.73L3.82 19z"
+                    />
+                  </svg>
+                  {{ professional.average_rating.toFixed(1) }} ({{ professional.ratings_count }})
+                </span>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="flex items-center gap-1 border-b border-[#C2C8BE4D] overflow-x-auto">
+        <button
+          type="button"
+          (click)="setTab('perfil')"
+          class="px-3 py-2.5 text-sm font-semibold cursor-pointer whitespace-nowrap transition-all duration-300 {{
+            tabClass('perfil')
+          }}"
+        >
+          Perfil
+        </button>
+        <button
+          type="button"
+          (click)="setTab('curriculo')"
+          class="px-3 py-2.5 text-sm font-semibold cursor-pointer whitespace-nowrap transition-all duration-300 {{
+            tabClass('curriculo')
+          }}"
+        >
+          Currículo
+        </button>
+        <button
+          type="button"
+          (click)="setTab('servicos')"
+          class="px-3 py-2.5 text-sm font-semibold cursor-pointer whitespace-nowrap transition-all duration-300 {{
+            tabClass('servicos')
+          }}"
+        >
+          Serviços
+        </button>
+        <button
+          type="button"
+          (click)="setTab('agenda')"
+          class="px-3 py-2.5 text-sm font-semibold cursor-pointer whitespace-nowrap transition-all duration-300 {{
+            tabClass('agenda')
+          }}"
+        >
+          Agenda
+        </button>
+        <button
+          type="button"
+          (click)="setTab('financeiro')"
+          class="px-3 py-2.5 text-sm font-semibold cursor-pointer whitespace-nowrap transition-all duration-300 {{
+            tabClass('financeiro')
+          }}"
+        >
+          Financeiro
+        </button>
+        <button
+          type="button"
+          (click)="setTab('avaliacoes')"
+          class="px-3 py-2.5 text-sm font-semibold cursor-pointer whitespace-nowrap transition-all duration-300 {{
+            tabClass('avaliacoes')
+          }}"
+        >
+          Avaliações
+        </button>
+        <button
+          type="button"
+          (click)="setTab('pedidos')"
+          class="px-3 py-2.5 text-sm font-semibold cursor-pointer whitespace-nowrap transition-all duration-300 {{
+            tabClass('pedidos')
+          }}"
+        >
+          Pedidos
+        </button>
+      </div>
+
+      <!-- Perfil -->
+      <div [hidden]="activeTab() !== 'perfil'" class="flex flex-col gap-6">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col gap-1">
+            <span class="text-xs font-semibold uppercase text-[#8C9492]">Telefone</span>
+            <span class="text-sm text-[#41493D]">{{ professional.phone }}</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-xs font-semibold uppercase text-[#8C9492]">BI</span>
+            <span class="text-sm text-[#41493D]">{{ professional.bi }}</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-xs font-semibold uppercase text-[#8C9492]">NIF</span>
+            <span class="text-sm text-[#41493D]">{{ professional.nif || '—' }}</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-xs font-semibold uppercase text-[#8C9492]">Data de nascimento</span>
+            <span class="text-sm text-[#41493D]">{{ formatDate(professional.birthdate) }}</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-xs font-semibold uppercase text-[#8C9492]">Morada</span>
+            <span class="text-sm text-[#41493D]">
+              @if (professional.address) {
+                {{ professional.address.address }}, {{ professional.address.municiple }},
+                {{ professional.address.province }}
+              } @else {
+                —
+              }
+            </span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-xs font-semibold uppercase text-[#8C9492]">Registado em</span>
+            <span class="text-sm text-[#41493D]">{{ formatDate(professional.created_at) }}</span>
+          </div>
+        </div>
+
+        @if (professional.about_me) {
+          <div class="flex flex-col gap-1 border-t border-[#0B2E130D] pt-5">
+            <span class="text-xs font-semibold uppercase text-[#8C9492]">Sobre</span>
+            <p class="text-sm text-[#41493D]">{{ professional.about_me }}</p>
+          </div>
+        }
+
+        @if (professional.professions.length > 0) {
+          <div class="flex flex-col gap-2 border-t border-[#0B2E130D] pt-5">
+            <span class="text-xs font-semibold uppercase text-[#8C9492]">Profissões</span>
+            <div class="flex flex-wrap gap-1.5">
+              @for (profession of professional.professions; track profession.id) {
+                <span class="rounded-full bg-tertiary px-3 py-1 text-xs font-medium text-[#41493D]">
+                  {{ profession.name }}
+                </span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Currículo -->
+      <div [hidden]="activeTab() !== 'curriculo'" class="flex flex-col gap-6">
+        <div class="flex flex-col gap-3">
+          <span class="text-sm font-semibold text-[#001A18]"
+            >Formação ({{ professional.educations.length }})</span
+          >
+          @if (professional.educations.length === 0) {
+            <p class="text-sm text-gray-500">Sem registos de formação.</p>
+          } @else {
+            <ul class="flex flex-col gap-2">
+              @for (education of professional.educations; track education.id) {
+                <li class="rounded-lg border border-[#0000001A] p-3">
+                  <p class="font-medium text-[#062406]">{{ education.course }}</p>
+                  <p class="text-sm text-[#41493D]">{{ education.institution }}</p>
+                  <p class="text-xs text-[#8C9492]">
+                    {{ formatDate(education.start_date) }} —
+                    {{ education.end_date ? formatDate(education.end_date) : 'Atual' }}
+                  </p>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+
+        <div class="flex flex-col gap-3 border-t border-[#0B2E130D] pt-5">
+          <span class="text-sm font-semibold text-[#001A18]"
+            >Certificados ({{ professional.certificates.length }})</span
+          >
+          @if (professional.certificates.length === 0) {
+            <p class="text-sm text-gray-500">Sem certificados registados.</p>
+          } @else {
+            <ul class="flex flex-col gap-2">
+              @for (certificate of professional.certificates; track certificate.id) {
+                <li class="flex items-center gap-3 rounded-lg border border-[#0000001A] p-3">
+                  @if (certificateImageUrl(certificate.image)) {
+                    <img
+                      [src]="certificateImageUrl(certificate.image)"
+                      alt=""
+                      class="h-11 w-11 shrink-0 rounded-lg object-cover"
+                    />
+                  }
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate font-medium text-[#062406]">{{ certificate.name }}</p>
+                    <p class="truncate text-sm text-[#41493D]">{{ certificate.issuing_institution }}</p>
+                    <p class="text-xs text-[#8C9492]">
+                      Emitido em {{ formatDate(certificate.issue_date) }}
+                      @if (certificate.expiry_date) {
+                        · Expira em {{ formatDate(certificate.expiry_date) }}
+                      }
+                    </p>
+                  </div>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+
+        <div class="flex flex-col gap-3 border-t border-[#0B2E130D] pt-5">
+          <span class="text-sm font-semibold text-[#001A18]"
+            >Experiência ({{ professional.experiences.length }})</span
+          >
+          @if (professional.experiences.length === 0) {
+            <p class="text-sm text-gray-500">Sem experiência profissional registada.</p>
+          } @else {
+            <ul class="flex flex-col gap-2">
+              @for (experience of professional.experiences; track experience.id) {
+                <li class="rounded-lg border border-[#0000001A] p-3">
+                  <p class="font-medium text-[#062406]">{{ experience.role }}</p>
+                  <p class="text-sm text-[#41493D]">{{ experience.company }}</p>
+                  <p class="text-xs text-[#8C9492]">
+                    {{ formatDate(experience.start_date) }} —
+                    {{ experience.end_date ? formatDate(experience.end_date) : 'Atual' }}
+                  </p>
+                  @if (experience.description) {
+                    <p class="mt-1 text-sm text-[#41493D]">{{ experience.description }}</p>
+                  }
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </div>
+
+      <!-- Serviços -->
+      <div [hidden]="activeTab() !== 'servicos'" class="flex flex-col gap-3">
+        <span class="text-sm font-semibold text-[#001A18]"
+          >Serviços oferecidos ({{ professional.serviceOfferings.length }})</span
+        >
+        @if (servicesLoading()) {
+          <span class="text-sm text-[#8C9492]">A carregar...</span>
+        } @else if (professional.serviceOfferings.length === 0) {
+          <p class="text-sm text-gray-500">Este profissional não subscreveu nenhum serviço.</p>
+        } @else {
+          <ul class="flex flex-col gap-2">
+            @for (offering of professional.serviceOfferings; track offering.service_id) {
+              <li class="flex items-center gap-3 rounded-lg border border-[#0000001A] p-3">
+                <img
+                  [src]="serviceImage(offering.service_id) || '/icons/advertisements/campaigns.svg'"
+                  alt=""
+                  [class.p-3]="!serviceImage(offering.service_id)"
+                  class="h-11 w-11 shrink-0 rounded-lg object-cover bg-[#E6E9E8]"
+                />
+                <div class="min-w-0 flex-1">
+                  <p class="truncate font-medium text-[#062406]">{{ serviceName(offering.service_id) }}</p>
+                  <p class="text-xs text-[#8C9492]">Preço base</p>
+                </div>
+                <div class="flex flex-col items-end shrink-0 text-right">
+                  <span class="text-sm font-semibold text-[#062406]">{{ formatMoney(offering.price) }}</span>
+                  @if (offering.travel_price) {
+                    <span class="text-xs text-[#8C9492]"
+                      >+ {{ formatMoney(offering.travel_price) }} deslocação</span
+                    >
+                  }
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+
+      <!-- Agenda -->
+      <div [hidden]="activeTab() !== 'agenda'" class="flex flex-col gap-6">
+        <div class="flex flex-col gap-3">
+          <span class="text-sm font-semibold text-[#001A18]">Horário de expediente</span>
+          @if (agendaLoading()) {
+            <span class="text-sm text-[#8C9492]">A carregar...</span>
+          } @else {
+            <ul class="flex flex-col divide-y divide-[#0000000D] rounded-lg border border-[#0000001A]">
+              @for (day of weekdayOrder; track day) {
+                <li class="flex items-center justify-between px-3 py-2.5">
+                  <span class="text-sm text-[#41493D]">{{ weekdayLabel(day) }}</span>
+                  @if (workingHoursByDay().get(day); as slots) {
+                    <div class="flex flex-wrap gap-1.5 justify-end">
+                      @for (slot of slots; track slot.id) {
+                        <span class="rounded-full bg-tertiary px-2.5 py-1 text-xs font-medium text-[#41493D]">
+                          {{ slot.start_time }} - {{ slot.end_time }}
+                        </span>
+                      }
+                    </div>
+                  } @else {
+                    <span class="text-xs text-[#8C9492]">Não trabalha</span>
+                  }
+                </li>
+              }
+            </ul>
+          }
+        </div>
+
+        <div class="flex flex-col gap-3 border-t border-[#0B2E130D] pt-5">
+          <span class="text-sm font-semibold text-[#001A18]">Ausências ({{ absences().length }})</span>
+          @if (agendaLoading()) {
+            <span class="text-sm text-[#8C9492]">A carregar...</span>
+          } @else if (absences().length === 0) {
+            <p class="text-sm text-gray-500">Sem ausências registadas.</p>
+          } @else {
+            <ul class="flex flex-col gap-2">
+              @for (absence of absences(); track absence.id) {
+                <li class="rounded-lg border border-[#0000001A] p-3">
+                  <p class="text-sm font-medium text-[#062406]">
+                    {{ formatDate(absence.start_date) }} — {{ formatDate(absence.end_date) }}
+                  </p>
+                  @if (absence.reason) {
+                    <p class="text-sm text-[#41493D]">{{ absence.reason }}</p>
+                  }
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </div>
+
+      <!-- Financeiro -->
+      <div [hidden]="activeTab() !== 'financeiro'" class="flex flex-col gap-6">
+        @if (financeiroLoading()) {
+          <span class="text-sm text-[#8C9492]">A carregar...</span>
+        } @else {
+          @if (walletSummary(); as summary) {
+            <div class="grid grid-cols-3 gap-3">
+              <div class="flex flex-col gap-1 rounded-xl bg-[#F8F9FA] p-3">
+                <span class="text-[10px] font-semibold uppercase text-[#8C9492]">A Receber</span>
+                <span class="text-lg font-bold text-[#062406]">{{ formatMoney(summary.to_receive) }}</span>
+              </div>
+              <div class="flex flex-col gap-1 rounded-xl bg-[#F8F9FA] p-3">
+                <span class="text-[10px] font-semibold uppercase text-[#8C9492]">Recebido</span>
+                <span class="text-lg font-bold text-[#062406]">{{ formatMoney(summary.received) }}</span>
+              </div>
+              <div class="flex flex-col gap-1 rounded-xl bg-[#F8F9FA] p-3">
+                <span class="text-[10px] font-semibold uppercase text-[#8C9492]">Total Faturado</span>
+                <span class="text-lg font-bold text-[#062406]">{{ formatMoney(summary.total_invoiced) }}</span>
+              </div>
+            </div>
+          }
+
+          <div class="flex flex-col gap-2 border-t border-[#0B2E130D] pt-5">
+            <span class="text-sm font-semibold text-[#001A18]">Extrato ({{ statement().length }})</span>
+            @if (statement().length === 0) {
+              <p class="text-sm text-gray-500">Sem movimentos financeiros.</p>
+            } @else {
+              <ul class="flex flex-col gap-2">
+                @for (item of statement(); track item.payout_id) {
+                  <li class="flex items-center justify-between gap-3 rounded-lg border border-[#0000001A] p-3">
+                    <div class="min-w-0 flex-1">
+                      <p class="truncate font-medium text-[#062406]">{{ item.service_name || 'Serviço' }}</p>
+                      <p class="text-xs text-[#8C9492]">
+                        {{ formatDate(item.created_at) }} · Bruto {{ formatMoney(item.gross_amount) }} · Comissão
+                        {{ formatMoney(item.commission_amount) }}
+                      </p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                      <span class="text-sm font-semibold text-[#062406]">{{ formatMoney(item.net_amount) }}</span>
+                      @let payoutStatus = payoutStatusStyle(item.status);
+                      <span
+                        class="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase {{
+                          payoutStatus.badge
+                        }}"
+                      >
+                        {{ payoutStatus.label }}
+                      </span>
+                      @if (item.status === 'PENDING') {
+                        <button
+                          type="button"
+                          (click)="markPayoutPaid(item.payout_id)"
+                          [disabled]="markingPaidId() === item.payout_id"
+                          class="rounded-full border border-[#C0C8C6]/60 px-3 py-1 text-xs font-semibold text-[#41493D] hover:bg-gray-100 transition-all duration-300 disabled:opacity-60 cursor-pointer"
+                        >
+                          @if (markingPaidId() === item.payout_id) {
+                            A marcar...
+                          } @else {
+                            Marcar pago
+                          }
+                        </button>
+                      }
+                    </div>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Avaliações -->
+      <div [hidden]="activeTab() !== 'avaliacoes'" class="flex flex-col gap-3">
+        <span class="text-sm font-semibold text-[#001A18]">Avaliações de clientes</span>
+        @if (ratings().length === 0 && !ratingsLoading()) {
+          <p class="text-sm text-gray-500">Este profissional ainda não tem avaliações.</p>
+        } @else {
+          <ul class="flex flex-col gap-3">
+            @for (rating of ratings(); track rating.id) {
+              <li class="rounded-lg border border-[#0000001A] p-3">
+                <div class="flex items-center gap-2">
+                  <img
+                    [src]="clientAvatar(rating) || '/icons/user.svg'"
+                    alt=""
+                    class="h-7 w-7 rounded-full object-cover"
+                  />
+                  <span class="font-medium text-[#062406]">{{ rating.client.name }}</span>
+                  <div class="flex items-center gap-0.5 ml-auto">
+                    @for (star of [1, 2, 3, 4, 5]; track star) {
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 20 20"
+                        [attr.fill]="star <= rating.stars ? '#FBBF24' : '#E5E7EB'"
+                      >
+                        <path
+                          d="M10 15.27L16.18 19l-1.64-7.03L20 7.24l-7.19-.61L10 0 7.19 6.63 0 7.24l5.46 4.73L3.82 19z"
+                        />
+                      </svg>
+                    }
+                  </div>
+                </div>
+                @if (rating.comment) {
+                  <p class="mt-2 text-sm text-[#41493D]">{{ rating.comment }}</p>
+                }
+                <p class="mt-1 text-xs text-[#8C9492]">{{ formatDate(rating.created_at) }}</p>
+              </li>
+            }
+          </ul>
+
+          @if (ratingsHasMore()) {
+            <button
+              type="button"
+              (click)="loadMoreRatings()"
+              [disabled]="ratingsLoading()"
+              class="mx-auto text-sm font-medium text-[#0B2E13] hover:underline cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              @if (ratingsLoading()) {
+                A carregar...
+              } @else {
+                Carregar mais
+              }
+            </button>
+          }
+        }
+      </div>
+
+      <!-- Pedidos -->
+      <div [hidden]="activeTab() !== 'pedidos'" class="flex flex-col gap-2">
+        <span class="text-sm font-semibold text-[#001A18]">Histórico de pedidos ({{ orders().length }})</span>
+        @if (ordersLoading()) {
+          <span class="text-sm text-[#8C9492]">A carregar...</span>
+        } @else if (orders().length === 0) {
+          <p class="text-sm text-gray-500">Sem pedidos associados.</p>
+        } @else {
+          <ul class="flex flex-col gap-2">
+            @for (order of orders(); track order.id) {
+              <li class="flex items-center justify-between gap-3 rounded-lg border border-[#0000001A] p-3">
+                <div class="min-w-0 flex-1">
+                  <p class="truncate font-medium text-[#062406]">#PED-{{ order.id }} · {{ order.service.name }}</p>
+                  <p class="text-xs text-[#8C9492]">{{ order.client.name }} · {{ formatDate(order.created_at) }}</p>
+                </div>
+                @let orderStatus = orderStatusStyle(order.status);
+                <span
+                  class="shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase {{
+                    orderStatus.badge
+                  }}"
+                >
+                  {{ orderStatus.label }}
+                </span>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+
+      <!-- Ações -->
+      <div class="flex items-center gap-3 border-t border-[#0B2E130D] pt-5">
+        <button
+          type="button"
+          (click)="requestEdit()"
+          class="cursor-pointer rounded-full border border-[#C0C8C6]/60 px-5 py-2.5 text-sm font-semibold text-[#41493D] transition-all duration-300 hover:bg-gray-100"
+        >
+          Editar
+        </button>
+        <button
+          type="button"
+          (click)="requestToggleAvailability()"
+          class="cursor-pointer rounded-full border border-[#C0C8C6]/60 px-5 py-2.5 text-sm font-semibold text-[#41493D] transition-all duration-300 hover:bg-gray-100"
+        >
+          {{ isAvailable() ? 'Marcar indisponível' : 'Marcar disponível' }}
+        </button>
+        <button
+          type="button"
+          (click)="requestRemove()"
+          class="cursor-pointer rounded-full border border-red-200 px-5 py-2.5 text-sm font-semibold text-red-600 transition-all duration-300 hover:bg-red-50"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  }
+</app-drawer>

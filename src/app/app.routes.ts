@@ -18,6 +18,7 @@ import { Advertisements } from './pages/backoffice/advertisements/advertisements
 import { Categories } from './pages/backoffice/categories/categories';
 import { Clients } from './pages/backoffice/clients/clients';
 import { Addresses } from './pages/backoffice/addresses/addresses';
+import { Professionals } from './pages/backoffice/professionals/professionals';
 
 export const routes: Routes = [
   {
@@ -92,6 +93,10 @@ export const routes: Routes = [
       {
         path: 'addresses',
         component: Addresses,
+      },
+      {
+        path: 'professionals-users',
+        component: Professionals,
       },
     ],
   },

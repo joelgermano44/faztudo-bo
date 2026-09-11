@@ -19,3 +19,9 @@ export interface RatingListParams {
   take?: number;
   skip?: number;
 }
+
+/** Resposta paginada de `GET /ratings/professionals/:professionalId`. */
+export interface RatingListResponse {
+  total: number;
+  items: Rating[];
+}

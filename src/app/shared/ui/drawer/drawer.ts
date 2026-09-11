@@ -1,11 +1,12 @@
 import { Component, HostListener, effect, input, output, signal } from '@angular/core';
 
-export type DrawerSize = 'sm' | 'md' | 'lg';
+export type DrawerSize = 'sm' | 'md' | 'lg' | 'xl';
 
 const SIZE_CLASSES: Record<DrawerSize, string> = {
   sm: 'max-w-sm',
   md: 'max-w-md',
   lg: 'max-w-2xl',
+  xl: 'max-w-4xl',
 };
 
 /**

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../shared/http/api-config';
-import { Rating, RatingListParams } from '../models/rating.model';
+import { Rating, RatingListParams, RatingListResponse } from '../models/rating.model';
 
 /**
  * Consulta de avaliações (T21).
@@ -28,8 +28,11 @@ export class RatingService {
   }
 
   /** `GET /ratings/professionals/:professionalId` — avaliações de um profissional, paginadas. Rota pública. */
-  findForProfessional(professionalId: number, params: RatingListParams = {}): Observable<Rating[]> {
-    return this.http.get<Rating[]>(`${this.resource}/professionals/${professionalId}`, {
+  findForProfessional(
+    professionalId: number,
+    params: RatingListParams = {},
+  ): Observable<RatingListResponse> {
+    return this.http.get<RatingListResponse>(`${this.resource}/professionals/${professionalId}`, {
       params: { ...params } as Record<string, number>,
     });
   }
