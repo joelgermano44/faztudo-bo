@@ -1,0 +1,11 @@
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background-color: #96d786;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #7fc96d;
+}
+
+.sidebar-scroll {
+  scrollbar-color: #96d786 transparent;
+}

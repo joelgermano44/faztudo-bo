@@ -1,0 +1,246 @@
+<div class="flex flex-col font-raleway">
+  <app-title-header
+    title="Meu Perfil"
+    description="Gerencie os dados da sua conta de administrador."
+  ></app-title-header>
+
+  @if (currentUser(); as user) {
+    <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+      <!-- Resumo da conta -->
+      <div class="flex flex-col gap-6 rounded-lg bg-white shadow-sm shadow-[#0B2E130D] p-6">
+        <div class="flex flex-col items-center gap-3 text-center">
+          <div
+            class="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-secondary"
+          >
+            @if (previewAvatar(); as avatar) {
+              <img [src]="avatar" alt="" class="h-full w-full object-cover" />
+            } @else {
+              <img src="/icons/settings/profile.svg" alt="" width="36" height="36" />
+            }
+          </div>
+          <div class="flex flex-col gap-1">
+            <h3 class="text-lg font-bold text-[#062406]">{{ user.name }}</h3>
+            <p class="text-sm text-[#41493D]">{{ user.email }}</p>
+          </div>
+          <span
+            class="w-fit rounded-full bg-tertiary px-3 py-1 text-[10px] font-bold uppercase text-[#41493D]"
+          >
+            {{ user.role }}
+          </span>
+        </div>
+
+        <div class="flex flex-col gap-3 border-t border-[#0B2E130D] pt-5">
+          <div class="flex flex-col gap-1">
+            <span class="text-xs font-semibold uppercase text-[#8C9492]">Utilizador</span>
+            <span class="text-sm text-[#41493D]">&#64;{{ user.username }}</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-xs font-semibold uppercase text-[#8C9492]">ID da conta</span>
+            <span class="text-sm text-[#41493D]">#ADM-{{ user.id }}</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-xs font-semibold uppercase text-[#8C9492]">Membro desde</span>
+            <span class="text-sm text-[#41493D]">{{ memberSince() }}</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-xs font-semibold uppercase text-[#8C9492]">Última atualização</span>
+            <span class="text-sm text-[#41493D]">{{ lastUpdatedAt() }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulário -->
+      <div class="lg:col-span-2 rounded-lg bg-white shadow-sm shadow-[#0B2E130D] p-6">
+        <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5">
+          <span class="text-sm font-semibold text-[#001A18]">Dados pessoais</span>
+
+          <div class="flex flex-col gap-2">
+            <label for="profile-name" class="text-sm font-semibold text-[#001A18]">Nome</label>
+            <input
+              id="profile-name"
+              type="text"
+              formControlName="name"
+              class="w-full rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+              [class.border-red-500]="form.controls.name.invalid && form.controls.name.touched"
+            />
+            @if (form.controls.name.invalid && form.controls.name.touched) {
+              <span class="text-xs text-red-500">O nome é obrigatório.</span>
+            }
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label for="profile-email" class="text-sm font-semibold text-[#001A18]">E-mail</label>
+            <input
+              id="profile-email"
+              type="email"
+              formControlName="email"
+              class="w-full rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+              [class.border-red-500]="form.controls.email.invalid && form.controls.email.touched"
+            />
+            @if (form.controls.email.invalid && form.controls.email.touched) {
+              <span class="text-xs text-red-500">
+                @if (form.controls.email.hasError('required')) {
+                  O e-mail é obrigatório.
+                } @else {
+                  Introduza um e-mail válido.
+                }
+              </span>
+            }
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="flex flex-col gap-2">
+              <label for="profile-phone" class="text-sm font-semibold text-[#001A18]">Telefone</label>
+              <input
+                id="profile-phone"
+                type="text"
+                formControlName="phone"
+                class="w-full rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+                [class.border-red-500]="form.controls.phone.invalid && form.controls.phone.touched"
+              />
+              @if (form.controls.phone.invalid && form.controls.phone.touched) {
+                <span class="text-xs text-red-500">O telefone é obrigatório.</span>
+              }
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <label for="profile-bi" class="text-sm font-semibold text-[#001A18]">BI</label>
+              <input
+                id="profile-bi"
+                type="text"
+                formControlName="bi"
+                class="w-full rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+                [class.border-red-500]="form.controls.bi.invalid && form.controls.bi.touched"
+              />
+              @if (form.controls.bi.invalid && form.controls.bi.touched) {
+                <span class="text-xs text-red-500">O BI é obrigatório.</span>
+              }
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="flex flex-col gap-2">
+              <label for="profile-birthdate" class="text-sm font-semibold text-[#001A18]"
+                >Data de nascimento</label
+              >
+              <input
+                id="profile-birthdate"
+                type="date"
+                formControlName="birthdate"
+                class="w-full rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 focus:border-secondary"
+                [class.border-red-500]="
+                  form.controls.birthdate.invalid && form.controls.birthdate.touched
+                "
+              />
+              @if (form.controls.birthdate.invalid && form.controls.birthdate.touched) {
+                <span class="text-xs text-red-500">A data de nascimento é obrigatória.</span>
+              }
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <label for="profile-image" class="text-sm font-semibold text-[#001A18]"
+                >Foto de perfil <span class="font-normal text-[#8C9492]">(URL, opcional)</span></label
+              >
+              <input
+                id="profile-image"
+                type="text"
+                formControlName="image"
+                placeholder="https://..."
+                class="w-full rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+              />
+            </div>
+          </div>
+
+          <!-- Palavra-passe -->
+          <div class="flex flex-col gap-2 border-t border-[#0B2E130D] pt-5">
+            <span class="text-sm font-semibold text-[#001A18]">Segurança</span>
+
+            <label for="profile-password" class="text-sm font-semibold text-[#001A18] mt-1">
+              Nova palavra-passe
+              <span class="font-normal text-[#8C9492]">(deixe em branco para manter a atual)</span>
+            </label>
+
+            <div class="relative w-full">
+              <input
+                id="profile-password"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="password"
+                autocomplete="new-password"
+                placeholder="••••••••"
+                class="w-full rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 pr-12 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+                [class.border-red-500]="
+                  form.controls.password.invalid && form.controls.password.touched
+                "
+              />
+
+              <button
+                type="button"
+                (click)="togglePassword()"
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-[#8C9492] hover:text-secondary transition-colors duration-300 cursor-pointer"
+                [attr.aria-label]="showPassword() ? 'Ocultar palavra-passe' : 'Mostrar palavra-passe'"
+              >
+                @if (showPassword()) {
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M3 3L21 21M10.584 10.587A2 2 0 0012 14a2 2 0 001.415-3.414M9.363 5.365A9.466 9.466 0 0112 5c4.664 0 8.4 2.943 10 7-.617 1.57-1.562 2.96-2.75 4.075M6.62 6.618C4.593 7.86 2.995 9.727 2 12c1.6 4.057 5.336 7 10 7 1.271 0 2.484-.217 3.6-.615"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                } @else {
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M2 12C3.6 7.943 7.336 5 12 5c4.664 0 8.4 2.943 10 7-1.6 4.057-5.336 7-10 7-4.664 0-8.4-2.943-10-7Z"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6" />
+                  </svg>
+                }
+              </button>
+            </div>
+
+            @if (form.controls.password.invalid && form.controls.password.touched) {
+              <span class="text-xs text-red-500"
+                >A palavra-passe deve ter pelo menos 6 caracteres.</span
+              >
+            }
+          </div>
+
+          <div class="mt-2 flex items-center justify-end gap-3 border-t border-[#0B2E130D] pt-5">
+            <button
+              type="submit"
+              [disabled]="saving()"
+              class="flex cursor-pointer items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-[#0B2E13] shadow-xs shadow-black/10 transition-all duration-300 hover:scale-[1.02] hover:bg-primary/80 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+            >
+              @if (saving()) {
+                <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  ></path>
+                </svg>
+                A guardar...
+              } @else {
+                Guardar alterações
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

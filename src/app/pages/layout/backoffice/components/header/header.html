@@ -110,17 +110,47 @@
           class="absolute right-0 top-full mt-2 w-44 bg-white rounded-lg shadow-lg border border-[#0000001A] overflow-hidden z-10"
         >
           <a
-            routerLink="/settings"
+            routerLink="/dashboard/profile"
             (click)="isMenuOpen.set(false)"
-            class="block px-4 py-3 text-sm text-[#41493D] hover:bg-tertiary/80 transition-colors"
+            class="flex items-center gap-2.5 px-4 py-3 text-sm text-[#41493D] hover:bg-tertiary/80 transition-colors"
           >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z"
+                stroke="currentColor"
+                stroke-width="1.6"
+              />
+              <path
+                d="M4.5 20C5.5 16.5 8.3 14.5 12 14.5C15.7 14.5 18.5 16.5 19.5 20"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              />
+            </svg>
             Perfil
           </a>
           <button
             type="button"
             (click)="logout()"
-            class="w-full text-left px-4 py-3 text-sm text-[#41493D] hover:bg-tertiary/80 cursor-pointer transition-colors"
+            class="flex w-full items-center gap-2.5 px-4 py-3 text-sm text-red-600 hover:bg-red-50 cursor-pointer transition-colors"
           >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M16 17L21 12L16 7"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path d="M21 12H9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
             Sair
           </button>
         </div>

@@ -1,5 +1,5 @@
 <div
-  class="w-full min-w-65 h-full flex-col overflow-y-auto gap-5 flex py-8.5 bg-[#094908] text-white border-b border-[#C0C8C6]/40"
+  class="sidebar-scroll w-full min-w-65 h-full flex-col overflow-y-auto gap-5 flex py-8.5 bg-[#094908] text-white border-b border-[#C0C8C6]/40"
 >
   <div class="pb-4 border-b border-white/20 w-fit h-fit ml-4">
     <img src="/logos/logo-horizontal.svg" alt="" class="" />
@@ -61,11 +61,11 @@
           routerLinkActive="border-r-4 border-primary bg-[#F8F9FA5C]"
           [routerLinkActiveOptions]="{ exact: true }"
           #rla="routerLinkActive"
-          routerLink="/settings"
+          routerLink="/dashboard/profile"
           class="pl-8 pr-16 py-3 rounded-r-full w-fit flex gap-3 text-[13px] items-center hover:border-r-4 border-primary hover:bg-[#F8F9FA5C] cursor-pointer transition-colors"
         >
-          <img src="/icons/dashboard/sidebar/settings.svg" alt="" class="" />
-          <span class="font-medium">Configurações</span>
+          <img src="/icons/settings/profile.svg" alt="" class="" />
+          <span class="font-medium">Meu Perfil</span>
         </a>
       </li>
 

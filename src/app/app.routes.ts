@@ -19,6 +19,7 @@ import { Categories } from './pages/backoffice/categories/categories';
 import { Clients } from './pages/backoffice/clients/clients';
 import { Addresses } from './pages/backoffice/addresses/addresses';
 import { Professionals } from './pages/backoffice/professionals/professionals';
+import { Profile } from './pages/backoffice/profile/profile';
 
 export const routes: Routes = [
   {
@@ -97,6 +98,10 @@ export const routes: Routes = [
       {
         path: 'professionals-users',
         component: Professionals,
+      },
+      {
+        path: 'profile',
+        component: Profile,
       },
     ],
   },

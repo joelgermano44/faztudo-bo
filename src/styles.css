@@ -23,3 +23,28 @@
   --color-cinza-2: #e1e3e4;
   --color-cinza-3: #a3cfca;
 }
+
+/* Scrollbar personalizada (WebKit/Blink: Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #c2c8be;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #94a396;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c2c8be transparent;
+}

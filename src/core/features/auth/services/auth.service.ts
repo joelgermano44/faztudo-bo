@@ -55,6 +55,14 @@ export class AuthService {
     return this.isBrowser ? localStorage.getItem(TOKEN_KEY) : null;
   }
 
+  /** Atualiza os dados do administrador autenticado após uma edição de perfil. */
+  updateCurrentUser(user: Admin): void {
+    if (this.isBrowser) {
+      localStorage.setItem(USER_KEY, JSON.stringify(user));
+    }
+    this.user.set(user);
+  }
+
   private setSession(token: string, user: Admin): void {
     if (this.isBrowser) {
       localStorage.setItem(TOKEN_KEY, token);
