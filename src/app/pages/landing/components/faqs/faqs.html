@@ -13,7 +13,7 @@
 
     <ul class="flex flex-col w-full gap-5">
       @for (item of faqs; track item.question) {
-        <li class="flex flex-col gap-3">
+        <li class="flex flex-col gap-3 w-full">
           <div
             (click)="toggle(item)"
             class="flex w-full justify-between gap-3 p-6 rounded-3xl bg-tertiary border border-[#C0C8C6]/20 hover:bg-cinza-3/20 transition-all duration-300 cursor-pointer max-sm:p-4"
@@ -28,7 +28,7 @@
           </div>
 
           @if (item.open) {
-            <p class="font-normal w-full mx-6">{{ item.answer }}</p>
+            <p class="font-normal w-full px-6 max-sm:px-4">{{ item.answer }}</p>
           }
         </li>
       }

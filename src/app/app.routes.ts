@@ -21,6 +21,8 @@ import { Clients } from './pages/backoffice/clients/clients';
 import { Addresses } from './pages/backoffice/addresses/addresses';
 import { Professionals } from './pages/backoffice/professionals/professionals';
 import { Profile } from './pages/backoffice/profile/profile';
+import { NotFound } from './pages/landing/not-found/not-found';
+import { DashboardNotFound } from './pages/backoffice/not-found/not-found';
 
 export const routes: Routes = [
   {
@@ -107,6 +109,20 @@ export const routes: Routes = [
       {
         path: 'profile',
         component: Profile,
+      },
+      {
+        path: '**',
+        component: DashboardNotFound,
+      },
+    ],
+  },
+  {
+    path: '**',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        component: NotFound,
       },
     ],
   },

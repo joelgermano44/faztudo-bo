@@ -2,6 +2,7 @@ import { Component, ElementRef, inject, signal, viewChild } from '@angular/core'
 import { API_BASE_URL } from '../../../../../core/shared/http/api-config';
 import { ServiceCatalogService } from '../../../../../core/features/services/services/service.service';
 import { buildMediaUrl } from '../../../../../core/shared/util/media-url';
+import { Skeleton } from '../../../../shared/ui/skeleton/skeleton';
 
 interface PopularServiceCard {
   id: number;
@@ -15,7 +16,7 @@ interface PopularServiceCard {
 const MAX_SERVICES = 8;
 
 @Component({
-  imports: [],
+  imports: [Skeleton],
   selector: 'app-popular-services',
   styleUrl: './popular-services.css',
   templateUrl: './popular-services.html',
@@ -25,6 +26,8 @@ export class PopularServices {
   private readonly baseUrl = inject(API_BASE_URL);
 
   readonly track = viewChild<ElementRef<HTMLElement>>('track');
+
+  readonly skeletonCards = [0, 1, 2, 3];
 
   /**
    * `GET /services` é um dos poucos endpoints públicos da API (sem

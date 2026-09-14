@@ -15,6 +15,14 @@ import {
   SupportPartyType,
 } from '../../../../core/features/support-chat/models/support-chat.model';
 
+/** Ordena sempre por data ascendente (mais antiga primeiro, mais recente por último). */
+function sortMessagesByDate<T extends { created_at: string; id: number }>(messages: T[]): T[] {
+  return [...messages].sort((a, b) => {
+    const diff = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    return diff !== 0 ? diff : a.id - b.id;
+  });
+}
+
 @Component({
   imports: [TitleHeader, ConversationList, ConversationThread],
   selector: 'app-support-chat',
@@ -149,7 +157,11 @@ export class SupportChat {
     this.supportChatService.listMessages(id, before ? { before } : {}).subscribe({
       next: (page) => {
         this.messagesLoading.set(false);
-        this.messages.update((current) => (before ? [...page.data, ...current] : page.data));
+        // A API devolve cada página da mais recente para a mais antiga; ordenamos
+        // sempre por `created_at` ascendente para que a mais recente fique no fim.
+        this.messages.update((current) =>
+          sortMessagesByDate(before ? [...page.data, ...current] : page.data),
+        );
         this.messagesNextCursor.set(page.next_cursor);
         this.messagesHasMore.set(page.has_more);
       },
@@ -186,7 +198,7 @@ export class SupportChat {
       .subscribe({
         next: (message) => {
           this.sending.set(false);
-          this.messages.update((current) => [...current, message]);
+          this.messages.update((current) => sortMessagesByDate([...current, message]));
           this.conversations.update((current) =>
             current.map((item) =>
               item.id === id

@@ -50,6 +50,7 @@
   [open]="isViewDrawerOpen()"
   [report]="viewingReport()"
   [reviewing]="reviewing()"
+  [loadingDetails]="viewingReportLoading()"
   (closed)="closeViewDrawer()"
   (review)="onReview($event)"
   (resolve)="requestResolve($event)"

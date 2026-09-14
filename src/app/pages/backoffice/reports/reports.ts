@@ -13,6 +13,7 @@ import { ProfessionalService } from '../../../../core/features/professionals/ser
 import { Professional } from '../../../../core/features/professionals/models/professional.model';
 import { ClientService } from '../../../../core/features/users-clients/services/client.service';
 import { Client } from '../../../../core/features/users-clients/models/client.model';
+import { OrderService } from '../../../../core/features/orders/services/order.service';
 import { API_BASE_URL } from '../../../../core/shared/http/api-config';
 import { buildAvatarUrl } from '../../../../core/shared/util/media-url';
 
@@ -40,6 +41,7 @@ export class Reports {
   private readonly reportService = inject(ReportService);
   private readonly professionalService = inject(ProfessionalService);
   private readonly clientService = inject(ClientService);
+  private readonly orderService = inject(OrderService);
   private readonly baseUrl = inject(API_BASE_URL);
   private readonly route = inject(ActivatedRoute);
 
@@ -69,6 +71,7 @@ export class Reports {
 
   readonly isViewDrawerOpen = signal(false);
   readonly viewingReport = signal<Report | null>(null);
+  readonly viewingReportLoading = signal(false);
 
   readonly reviewing = signal(false);
 
@@ -224,9 +227,31 @@ export class Reports {
   }
 
   openViewDrawer(id: number): void {
+    // Mostra já os dados da lista (rápido), depois troca pela versão completa
+    // com cliente, profissional e pedido/serviço populados.
     const report = this.reports().find((item) => item.id === id) ?? null;
     this.viewingReport.set(report);
     this.isViewDrawerOpen.set(true);
+    if (!report) {
+      return;
+    }
+
+    this.viewingReportLoading.set(true);
+    forkJoin({
+      report: this.reportService.findOne(id),
+      // `order` do endpoint de denúncias vem "enxuto" (sem imagem/categoria
+      // do serviço) — buscamos o pedido completo à parte para as fotos.
+      order: this.orderService.findOne(report.order_id).pipe(catchError(() => of(null))),
+    }).subscribe({
+      next: ({ report: full, order }) => {
+        this.viewingReportLoading.set(false);
+        this.replaceReport(order ? { ...full, order } : full);
+      },
+      error: (err) => {
+        this.viewingReportLoading.set(false);
+        console.error('Erro ao carregar detalhes da denúncia', err);
+      },
+    });
   }
 
   closeViewDrawer(): void {

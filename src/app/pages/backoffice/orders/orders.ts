@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, ElementRef, HostListener, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
 import { toast } from 'ngx-sonner';
@@ -86,10 +86,11 @@ export class Orders {
   private readonly orderService = inject(OrderService);
   private readonly baseUrl = inject(API_BASE_URL);
   private readonly route = inject(ActivatedRoute);
+  private readonly elementRef = inject(ElementRef);
 
   readonly filters: StatusFilter[] = ['Todos', 'Ativo', 'Pendente', 'Finalizado', 'Cancelado'];
   readonly filterLabels: Record<StatusFilter, string> = {
-    Todos: 'Todos',
+    Todos: 'Todos os Status',
     Ativo: 'Ativos',
     Pendente: 'Pendentes',
     Finalizado: 'Finalizados',
@@ -97,6 +98,7 @@ export class Orders {
   };
 
   readonly activeFilter = signal<StatusFilter>('Todos');
+  readonly isStatusMenuOpen = signal(false);
   readonly searchTerm = signal('');
 
   private readonly orders = signal<Order[]>([]);
@@ -227,9 +229,21 @@ export class Orders {
 
   setFilter(filter: StatusFilter): void {
     this.activeFilter.set(filter);
+    this.isStatusMenuOpen.set(false);
+  }
+
+  toggleStatusMenu(): void {
+    this.isStatusMenuOpen.update((open) => !open);
   }
 
   onSearch(term: string): void {
     this.searchTerm.set(term);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.isStatusMenuOpen.set(false);
+    }
   }
 }

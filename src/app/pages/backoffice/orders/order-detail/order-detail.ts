@@ -113,6 +113,14 @@ function formatMoney(amount: number): string {
   return `${amount.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} AOA`;
 }
 
+/** Ordena sempre por data ascendente (mais antiga primeiro, mais recente por último). */
+function sortMessagesByDate<T extends { created_at: string; id: number }>(messages: T[]): T[] {
+  return [...messages].sort((a, b) => {
+    const diff = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    return diff !== 0 ? diff : a.id - b.id;
+  });
+}
+
 @Component({
   imports: [
     RouterLink,
@@ -454,8 +462,10 @@ export class OrderDetail {
         this.chatLoading.set(false);
         this.chatLoaded.set(true);
         this.chatConversation.set(view.conversation);
+        // A API devolve cada página da mais recente para a mais antiga; ordenamos
+        // sempre por `created_at` ascendente para que a mais recente fique no fim.
         this.chatMessages.update((current) =>
-          before ? [...view.messages.data, ...current] : view.messages.data,
+          sortMessagesByDate(before ? [...view.messages.data, ...current] : view.messages.data),
         );
         this.chatNextCursor.set(view.messages.next_cursor);
         this.chatHasMore.set(view.messages.has_more);

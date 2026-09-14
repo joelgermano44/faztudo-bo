@@ -25,19 +25,34 @@
     </div>
   }
 
-  <ul class="flex flex-wrap w-full gap-3 mt-6">
-    @for (filter of filters; track filter) {
-      <li
-        (click)="setFilter(filter)"
-        [class]="
-          (activeFilter() === filter ? 'bg-[#094908] text-white' : 'bg-white text-[#41493D]') +
-          ' flex gap-2 items-center rounded-3xl font-semibold w-fit px-4 py-1 border border-[#C2C8BE] hover:bg-[#094908] hover:text-white transition-all duration-300 cursor-pointer'
-        "
-      >
-        {{ filter }}
-      </li>
-    }
-  </ul>
+  <div class="flex flex-wrap items-center justify-between gap-4 mt-6">
+    <ul class="flex flex-wrap gap-3">
+      @for (filter of filters; track filter) {
+        <li
+          (click)="setFilter(filter)"
+          [class]="
+            (activeFilter() === filter ? 'bg-[#094908] text-white' : 'bg-white text-[#41493D]') +
+            ' flex gap-2 items-center rounded-3xl font-semibold w-fit px-4 py-1 border border-[#C2C8BE] hover:bg-[#094908] hover:text-white transition-all duration-300 cursor-pointer'
+          "
+        >
+          {{ filter }}
+        </li>
+      }
+    </ul>
+
+    <div
+      class="flex gap-2 items-center rounded-3xl px-4 py-2 bg-tertiary border border-[#C2C8BE] max-sm:w-full"
+    >
+      <img src="/icons/dashboard/search-v2.svg" alt="" />
+      <input
+        type="text"
+        placeholder="Buscar notificações..."
+        class="outline-none text-sm bg-transparent"
+        [value]="searchTerm()"
+        (input)="onSearch($any($event.target).value)"
+      />
+    </div>
+  </div>
 
   <div class="flex flex-col gap-4 mt-6">
     @for (notification of filteredNotifications(); track notification.id) {

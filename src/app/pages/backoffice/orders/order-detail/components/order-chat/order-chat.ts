@@ -1,4 +1,14 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  input,
+  output,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { ImageViewer } from '../../../../../../shared/ui/image-viewer/image-viewer';
 import { Skeleton } from '../../../../../../shared/ui/skeleton/skeleton';
 import { API_BASE_URL } from '../../../../../../../core/shared/http/api-config';
@@ -37,6 +47,31 @@ export class OrderChat {
   readonly isInitialLoading = computed(
     () => this.hasConversation() && this.loading() && this.messages().length === 0,
   );
+
+  private readonly messagesContainer = viewChild<ElementRef<HTMLElement>>('messagesContainer');
+  private lastMessageId: number | null = null;
+
+  constructor() {
+    // Desce sempre para a mensagem mais recente quando chega uma mensagem nova
+    // — mas não quando se carrega histórico antigo (o último id mantém-se igual).
+    effect(() => {
+      const messages = this.messages();
+      const latest = messages.length > 0 ? messages[messages.length - 1].id : null;
+      if (latest !== null && latest !== this.lastMessageId) {
+        this.lastMessageId = latest;
+        queueMicrotask(() => this.scrollToBottom());
+      } else if (latest === null) {
+        this.lastMessageId = null;
+      }
+    });
+  }
+
+  private scrollToBottom(): void {
+    const element = this.messagesContainer()?.nativeElement;
+    if (element) {
+      element.scrollTop = element.scrollHeight;
+    }
+  }
 
   avatarFor(message: OrderChatMessage): string | null {
     return message.sender_type === 'client' ? this.clientAvatar() : this.professionalAvatar();

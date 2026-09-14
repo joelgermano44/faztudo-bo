@@ -1,6 +1,7 @@
-import { Component, computed, effect, input, output, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { Skeleton } from '../../../../../shared/ui/skeleton/skeleton';
 import { EmptyState } from '../../../../../shared/ui/empty-state/empty-state';
+import { AuthService } from '../../../../../../core/features/auth/services/auth.service';
 
 export type AdminStatus = 'Ativo' | 'Inativo';
 
@@ -34,6 +35,8 @@ const PAGE_SIZE = 8;
   templateUrl: './administrators-table.html',
 })
 export class AdministratorsTable {
+  private readonly authService = inject(AuthService);
+
   readonly admins = input<AdminRow[]>([]);
   readonly isLoading = input(false);
   readonly loadError = input(false);
@@ -77,6 +80,10 @@ export class AdministratorsTable {
 
   statusStyle(status: AdminStatus): StatusStyle {
     return STATUS_STYLES[status];
+  }
+
+  isCurrentUser(adminId: number): boolean {
+    return this.authService.currentUser()?.id === adminId;
   }
 
   goToPage(page: number): void {

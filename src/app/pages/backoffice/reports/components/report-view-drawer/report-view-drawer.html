@@ -23,17 +23,138 @@
         <p class="text-sm leading-relaxed text-[#41493D]">{{ report.description }}</p>
       </div>
 
-      <!-- Info -->
+      <!-- Denunciante x Denunciado -->
       <div class="grid grid-cols-2 gap-4 border-t border-[#0B2E130D] pt-5 max-sm:grid-cols-1">
-        <div class="flex flex-col gap-1">
-          <span class="text-xs font-semibold uppercase text-[#8C9492]">Pedido</span>
+        <div class="flex flex-col gap-2">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Quem denunciou</span>
+          <a
+            [routerLink]="['/dashboard/clients-users']"
+            [queryParams]="report.client ? { q: report.client.name } : {}"
+            class="flex items-center gap-3 rounded-xl border border-[#0000000D] p-3 hover:bg-tertiary/60 transition-all duration-300"
+          >
+            <img
+              [src]="reporterAvatar() || '/icons/user.svg'"
+              [alt]="report.client?.name || 'Cliente'"
+              class="h-10 w-10 rounded-full object-cover shrink-0"
+            />
+            <div class="flex flex-col min-w-0">
+              <span class="text-sm font-semibold text-[#191C1D] truncate">
+                {{ report.client?.name || 'Cliente removido' }}
+              </span>
+              <span class="text-xs text-[#8C9492] truncate">
+                {{ report.client?.phone || report.client?.email || 'Cliente' }}
+              </span>
+            </div>
+          </a>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Quem foi denunciado</span>
+          <a
+            [routerLink]="['/dashboard/professionals-users']"
+            [queryParams]="report.professional ? { q: report.professional.name } : {}"
+            class="flex items-center gap-3 rounded-xl border border-[#0000000D] p-3 hover:bg-tertiary/60 transition-all duration-300"
+          >
+            <img
+              [src]="reportedAvatar() || '/icons/user.svg'"
+              [alt]="report.professional?.name || 'Profissional'"
+              class="h-10 w-10 rounded-full object-cover shrink-0"
+            />
+            <div class="flex flex-col min-w-0">
+              <span class="text-sm font-semibold text-[#191C1D] truncate">
+                {{ report.professional?.name || 'Profissional removido' }}
+              </span>
+              <span class="text-xs text-[#8C9492] truncate">
+                {{ report.professional?.phone || report.professional?.email || 'Profissional' }}
+              </span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Serviço / Pedido -->
+      <div class="flex flex-col gap-3 border-t border-[#0B2E130D] pt-5">
+        <span class="text-xs font-semibold uppercase text-[#8C9492]">Serviço denunciado</span>
+
+        @if (loadingDetails() && !service()) {
+          <div class="h-32 w-full animate-pulse rounded-xl bg-tertiary"></div>
+        } @else if (service(); as svc) {
+          <div class="flex flex-col gap-3 rounded-xl border border-[#0000000D] p-3">
+            <div class="flex items-start gap-3">
+              @if (serviceImage()) {
+                <button
+                  type="button"
+                  (click)="openLightbox(0)"
+                  class="h-16 w-16 shrink-0 cursor-pointer rounded-lg overflow-hidden"
+                >
+                  <img [src]="serviceImage()" [alt]="svc.name" class="h-full w-full object-cover" />
+                </button>
+              } @else {
+                <div
+                  class="h-16 w-16 shrink-0 rounded-lg bg-tertiary flex items-center justify-center"
+                >
+                  <img src="/icons/dashboard/dashcard/servicos.svg" alt="" class="w-6 h-6 opacity-40" />
+                </div>
+              }
+
+              <div class="flex flex-col gap-0.5 min-w-0">
+                <span class="text-sm font-semibold text-[#191C1D] truncate">{{ svc.name }}</span>
+                @if (svc.category) {
+                  <span class="text-xs text-[#8C9492]">{{ svc.category.name }}</span>
+                }
+                <p class="text-xs text-[#41493D] leading-relaxed line-clamp-2 mt-1">
+                  {{ svc.description }}
+                </p>
+              </div>
+            </div>
+
+            @if (serviceGallery().length > 0) {
+              <div class="flex flex-wrap gap-1.5">
+                @for (image of serviceImages(); track image; let i = $index) {
+                  <button
+                    type="button"
+                    (click)="openLightbox(i)"
+                    class="h-12 w-12 cursor-pointer rounded-lg overflow-hidden hover:opacity-90 transition-opacity"
+                  >
+                    <img [src]="image" alt="" class="h-full w-full object-cover" />
+                  </button>
+                }
+              </div>
+            }
+
+            <div class="flex flex-wrap items-center gap-3 border-t border-[#0000000D] pt-2.5 text-xs text-[#41493D]">
+              <a
+                [routerLink]="['/dashboard/orders', report.order_id]"
+                class="font-semibold text-secondary hover:underline"
+              >
+                #CTR-{{ report.order_id }}
+              </a>
+              <span class="rounded-full bg-tertiary px-2.5 py-0.5 font-medium">
+                {{ orderStatusLabel() }}
+              </span>
+              @if (report.order?.location_type) {
+                <span>
+                  {{
+                    report.order?.location_type === OrderLocationType.CLIENT_ADDRESS
+                      ? 'No domicílio do cliente'
+                      : 'Na morada do profissional'
+                  }}
+                </span>
+              }
+            </div>
+          </div>
+        } @else {
           <a
             [routerLink]="['/dashboard/orders', report.order_id]"
             class="text-sm text-secondary hover:underline"
           >
-            #CTR-{{ report.order_id }}
+            Ver pedido #CTR-{{ report.order_id }}
           </a>
-        </div>
+        }
+      </div>
+
+      <!-- Info -->
+      <div class="grid grid-cols-2 gap-4 border-t border-[#0B2E130D] pt-5 max-sm:grid-cols-1">
         <div class="flex flex-col gap-1">
           <span class="text-xs font-semibold uppercase text-[#8C9492]">Submetida em</span>
           <span class="text-sm text-[#41493D]">{{ formatDateTime(report.created_at) }}</span>
@@ -90,3 +211,10 @@
     </div>
   }
 </app-drawer>
+
+<app-image-viewer
+  [open]="lightboxOpen()"
+  [images]="serviceImages()"
+  [startIndex]="lightboxIndex()"
+  (closed)="closeLightbox()"
+></app-image-viewer>

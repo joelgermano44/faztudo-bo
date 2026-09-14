@@ -1,4 +1,15 @@
-import { Component, computed, ElementRef, HostListener, inject, input, output, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  HostListener,
+  inject,
+  input,
+  output,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { ImageViewer } from '../../../../../shared/ui/image-viewer/image-viewer';
 import { Skeleton } from '../../../../../shared/ui/skeleton/skeleton';
 import { EmptyState } from '../../../../../shared/ui/empty-state/empty-state';
@@ -55,6 +66,32 @@ export class ConversationThread {
   readonly lightboxIndex = signal(0);
 
   readonly SupportSenderType = SupportSenderType;
+
+  private readonly messagesContainer = viewChild<ElementRef<HTMLElement>>('messagesContainer');
+  private lastMessageId: number | null = null;
+
+  constructor() {
+    // Desce sempre para a mensagem mais recente ao trocar de conversa ou ao
+    // chegar uma mensagem nova — mas não quando se carrega histórico antigo
+    // (nesse caso o último id mantém-se igual).
+    effect(() => {
+      const messages = this.messages();
+      const latest = messages.length > 0 ? messages[messages.length - 1].id : null;
+      if (latest !== null && latest !== this.lastMessageId) {
+        this.lastMessageId = latest;
+        queueMicrotask(() => this.scrollToBottom());
+      } else if (latest === null) {
+        this.lastMessageId = null;
+      }
+    });
+  }
+
+  private scrollToBottom(): void {
+    const element = this.messagesContainer()?.nativeElement;
+    if (element) {
+      element.scrollTop = element.scrollHeight;
+    }
+  }
 
   partyAvatar(): string | null {
     const conversation = this.conversation();
