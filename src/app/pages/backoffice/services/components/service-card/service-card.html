@@ -1,5 +1,6 @@
 <div
-  class="bg-white rounded-xl border h-125 border-[#C2C8BE33] shadow-sm overflow-hidden flex flex-col hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+  (click)="view.emit(id())"
+  class="bg-white rounded-xl border h-125 border-[#C2C8BE33] shadow-sm overflow-hidden flex flex-col cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
 >
   <!-- Capa -->
   <div class="relative h-60 bg-[#E6E9E8]">
@@ -53,7 +54,7 @@
       </div>
     }
 
-    <div class="flex items-center justify-end gap-1">
+    <div class="flex items-center justify-end gap-1" (click)="$event.stopPropagation()">
       <button
         type="button"
         (click)="edit.emit(id())"

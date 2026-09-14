@@ -1,6 +1,9 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { catchError, forkJoin, of } from 'rxjs';
 import { Drawer } from '../../../../../shared/ui/drawer/drawer';
+import { Skeleton } from '../../../../../shared/ui/skeleton/skeleton';
+import { EmptyState } from '../../../../../shared/ui/empty-state/empty-state';
 import {
   Professional,
   ProfessionalAbsence,
@@ -71,7 +74,7 @@ const WEEKDAY_ORDER: DayOfWeek[] = [
 ];
 
 @Component({
-  imports: [Drawer],
+  imports: [Drawer, Skeleton, EmptyState, RouterLink],
   selector: 'app-professional-view-drawer',
   styleUrl: './professional-view-drawer.css',
   templateUrl: './professional-view-drawer.html',
@@ -112,17 +115,20 @@ export class ProfessionalViewDrawer {
   // --- Agenda (working hours + absences) ---
   readonly agendaLoaded = signal(false);
   readonly agendaLoading = signal(false);
+  readonly agendaError = signal(false);
   readonly workingHours = signal<ProfessionalWorkingHours[]>([]);
   readonly absences = signal<ProfessionalAbsence[]>([]);
 
   // --- Serviços (catálogo para resolver nomes) ---
   readonly servicesLoaded = signal(false);
   readonly servicesLoading = signal(false);
+  readonly servicesError = signal(false);
   private readonly serviceCatalog = signal<Map<number, Service>>(new Map());
 
   // --- Financeiro ---
   readonly financeiroLoaded = signal(false);
   readonly financeiroLoading = signal(false);
+  readonly financeiroError = signal(false);
   readonly walletSummary = signal<WalletSummary | null>(null);
   readonly statement = signal<WalletStatementItem[]>([]);
   readonly markingPaidId = signal<number | null>(null);
@@ -130,6 +136,7 @@ export class ProfessionalViewDrawer {
   // --- Avaliações ---
   readonly ratingsLoaded = signal(false);
   readonly ratingsLoading = signal(false);
+  readonly ratingsError = signal(false);
   readonly ratings = signal<Rating[]>([]);
   readonly ratingsHasMore = signal(false);
   private readonly ratingsPageSize = 10;
@@ -137,6 +144,7 @@ export class ProfessionalViewDrawer {
   // --- Pedidos ---
   readonly ordersLoaded = signal(false);
   readonly ordersLoading = signal(false);
+  readonly ordersError = signal(false);
   readonly orders = signal<Order[]>([]);
 
   readonly workingHoursByDay = computed(() => {
@@ -194,8 +202,15 @@ export class ProfessionalViewDrawer {
       error: () => {
         this.agendaLoading.set(false);
         this.agendaLoaded.set(true);
+        this.agendaError.set(true);
       },
     });
+  }
+
+  retryAgenda(): void {
+    this.agendaLoaded.set(false);
+    this.agendaError.set(false);
+    this.loadAgenda();
   }
 
   private loadServiceCatalog(): void {
@@ -209,8 +224,15 @@ export class ProfessionalViewDrawer {
       error: () => {
         this.servicesLoading.set(false);
         this.servicesLoaded.set(true);
+        this.servicesError.set(true);
       },
     });
+  }
+
+  retryServices(): void {
+    this.servicesLoaded.set(false);
+    this.servicesError.set(false);
+    this.loadServiceCatalog();
   }
 
   private loadFinanceiro(): void {
@@ -219,15 +241,34 @@ export class ProfessionalViewDrawer {
       return;
     }
     this.financeiroLoading.set(true);
+    let summaryFailed = false;
+    let statementFailed = false;
     forkJoin({
-      summary: this.walletService.getSummary(professional.id).pipe(catchError(() => of(null))),
-      statement: this.walletService.getStatement(professional.id).pipe(catchError(() => of([]))),
+      summary: this.walletService.getSummary(professional.id).pipe(
+        catchError(() => {
+          summaryFailed = true;
+          return of(null);
+        }),
+      ),
+      statement: this.walletService.getStatement(professional.id).pipe(
+        catchError(() => {
+          statementFailed = true;
+          return of([]);
+        }),
+      ),
     }).subscribe(({ summary, statement }) => {
       this.financeiroLoading.set(false);
       this.financeiroLoaded.set(true);
       this.walletSummary.set(summary);
       this.statement.set(statement);
+      this.financeiroError.set(summaryFailed && statementFailed);
     });
+  }
+
+  retryFinanceiro(): void {
+    this.financeiroLoaded.set(false);
+    this.financeiroError.set(false);
+    this.loadFinanceiro();
   }
 
   private loadRatings(): void {
@@ -246,8 +287,15 @@ export class ProfessionalViewDrawer {
       error: () => {
         this.ratingsLoading.set(false);
         this.ratingsLoaded.set(true);
+        this.ratingsError.set(true);
       },
     });
+  }
+
+  retryRatings(): void {
+    this.ratingsLoaded.set(false);
+    this.ratingsError.set(false);
+    this.loadRatings();
   }
 
   loadMoreRatings(): void {
@@ -283,8 +331,15 @@ export class ProfessionalViewDrawer {
       error: () => {
         this.ordersLoading.set(false);
         this.ordersLoaded.set(true);
+        this.ordersError.set(true);
       },
     });
+  }
+
+  retryOrders(): void {
+    this.ordersLoaded.set(false);
+    this.ordersError.set(false);
+    this.loadOrders();
   }
 
   markPayoutPaid(payoutId: number): void {

@@ -39,6 +39,9 @@
 
   <app-professional-applications-table
     [applications]="filteredApplications()"
+    [isLoading]="isLoading()"
+    [loadError]="loadError()"
+    (retry)="retryLoad()"
     (view)="openViewDrawer($event)"
   ></app-professional-applications-table>
 </div>

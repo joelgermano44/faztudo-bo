@@ -75,6 +75,9 @@
 
   <app-addresses-table
     [addresses]="filteredAddresses()"
+    [isLoading]="isLoading()"
+    [loadError]="loadError()"
+    (retry)="retryLoad()"
     (view)="openViewDrawer($event)"
     (edit)="openEditModal($event)"
     (remove)="requestDelete($event)"

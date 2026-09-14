@@ -101,6 +101,9 @@ export class Orders {
 
   private readonly orders = signal<Order[]>([]);
 
+  readonly isLoading = signal(true);
+  readonly loadError = signal(false);
+
   readonly rejectingOrder = signal<Order | null>(null);
   readonly rejectReason = signal('');
   readonly isRejecting = signal(false);
@@ -132,6 +135,13 @@ export class Orders {
       this.activeFilter.set(filter as StatusFilter);
     }
 
+    this.loadOrders();
+  }
+
+  private loadOrders(): void {
+    this.isLoading.set(true);
+    this.loadError.set(false);
+
     this.orderService
       .findAll()
       .pipe(
@@ -153,9 +163,20 @@ export class Orders {
         }),
       )
       .subscribe({
-        next: (orders) => this.orders.set(orders),
-        error: (err) => console.error('Erro ao carregar pedidos', err),
+        next: (orders) => {
+          this.isLoading.set(false);
+          this.orders.set(orders);
+        },
+        error: (err) => {
+          this.isLoading.set(false);
+          this.loadError.set(true);
+          console.error('Erro ao carregar pedidos', err);
+        },
       });
+  }
+
+  retryLoad(): void {
+    this.loadOrders();
   }
 
   private findOrderById(id: number): Order | null {

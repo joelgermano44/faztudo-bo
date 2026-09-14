@@ -10,6 +10,7 @@ export enum NotificationEventType {
   PROFESSIONAL_APPLICATION_SUBMITTED = 'professional_application.submitted',
   ORDER_STATUS_CHANGED = 'order.status_changed',
   ORDER_PROFESSIONAL_REQUESTED = 'order.professional_requested',
+  REPORT_SUBMITTED = 'report.submitted',
 }
 
 /** Notificação administrativa (T25): entidade devolvida por `/admin-notifications` e pelo WebSocket. */

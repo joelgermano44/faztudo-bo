@@ -8,7 +8,8 @@ export interface ProfessionalApplicationStatusHistory {
   id: number;
   professional_id: number;
   previous_status: ProfessionalApplicationStatus | null;
-  status: ProfessionalApplicationStatus;
+  /** A API devolve `""` na entrada inicial (criação), antes de qualquer transição real. */
+  status: ProfessionalApplicationStatus | '';
   description: string | null;
   reviewed_by_admin_id: number | null;
   reviewed_by?: Admin | null;

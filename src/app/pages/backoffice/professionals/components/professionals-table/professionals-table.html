@@ -15,8 +15,39 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-50 text-sm">
+        @if (isLoading()) {
+          @for (row of skeletonRows; track row) {
+            <tr>
+              <td colspan="7" class="py-4 px-6 max-2xl:px-3">
+                <div class="flex items-center gap-6">
+                  <app-skeleton width="180px" height="14px" />
+                  <app-skeleton width="120px" height="14px" />
+                  <app-skeleton width="90px" height="14px" />
+                  <app-skeleton width="70px" height="14px" />
+                  <app-skeleton width="80px" height="20px" />
+                  <app-skeleton width="90px" height="14px" />
+                </div>
+              </td>
+            </tr>
+          }
+        } @else if (loadError()) {
+          <tr>
+            <td colspan="7">
+              <app-empty-state
+                variant="error"
+                title="Não foi possível carregar os profissionais"
+                description="Verifique a sua ligação e tente novamente."
+                actionLabel="Tentar novamente"
+                (action)="retry.emit()"
+              ></app-empty-state>
+            </td>
+          </tr>
+        } @else {
         @for (professional of pagedProfessionals(); track professional.id) {
-          <tr class="hover:bg-gray-50/50 transition-colors">
+          <tr
+            (click)="view.emit(professional.id)"
+            class="hover:bg-gray-50/50 transition-colors cursor-pointer"
+          >
             <td class="py-4 px-6 max-2xl:px-3 whitespace-nowrap">
               <div class="flex items-center gap-3">
                 <img
@@ -79,7 +110,7 @@
             <td class="py-4 px-6 max-2xl:px-3 text-gray-500 whitespace-nowrap">{{ professional.createdAt }}</td>
 
             <td class="py-4 px-6 max-2xl:px-3 text-right whitespace-nowrap">
-              <div class="flex items-center justify-end gap-1">
+              <div class="flex items-center justify-end gap-1" (click)="$event.stopPropagation()">
                 <button
                   type="button"
                   (click)="view.emit(professional.id)"
@@ -134,16 +165,22 @@
           </tr>
         } @empty {
           <tr>
-            <td colspan="7" class="py-8 px-6 max-2xl:px-3 text-center text-gray-500">
-              Nenhum profissional encontrado
+            <td colspan="7">
+              <app-empty-state
+                variant="empty"
+                title="Nenhum profissional encontrado"
+                description="Ainda não há profissionais aprovados registados."
+              ></app-empty-state>
             </td>
           </tr>
+        }
         }
       </tbody>
     </table>
   </div>
 </div>
 
+@if (!isLoading() && !loadError()) {
 <div class="mt-4 flex items-center justify-between text-sm text-gray-500 max-sm:flex-col max-sm:items-start max-sm:gap-3">
   <div>
     @if (professionals().length === 0) {
@@ -202,3 +239,4 @@
     </button>
   </div>
 </div>
+}

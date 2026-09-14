@@ -33,50 +33,70 @@
   </div>
 
   <div class="flex-1 overflow-y-auto">
-    @for (conversation of conversations(); track conversation.id) {
-      <button
-        type="button"
-        (click)="select.emit(conversation.id)"
-        class="flex w-full items-start gap-3 border-b border-[#C2C8BE1A] px-5 py-4 text-left hover:bg-gray-50 transition-all duration-300 cursor-pointer {{
-          rowClass(conversation)
-        }}"
-      >
-        <img
-          [src]="avatarUrl(conversation) || '/icons/user.svg'"
-          [alt]="conversation.party.name"
-          class="h-10 w-10 rounded-full object-cover shrink-0"
-        />
-
-        <div class="flex min-w-0 flex-1 flex-col gap-0.5">
-          <div class="flex items-center justify-between gap-2">
-            <span class="truncate font-semibold text-sm text-[#191C1D]">{{
-              conversation.party.name
-            }}</span>
-            <span class="shrink-0 text-xs text-[#8C9492]">{{
-              timestamp(conversation.last_message_at)
-            }}</span>
-          </div>
-          <p class="truncate text-sm text-gray-500">
-            {{ conversation.last_message_preview || 'Sem mensagens' }}
-          </p>
-          <div class="mt-1 flex items-center justify-between gap-2">
-            <span
-              class="w-fit rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600"
-            >
-              {{ roleLabel(conversation) }}
-            </span>
-            @if (conversation.unread_count > 0) {
-              <span
-                class="flex h-5 w-5 items-center justify-center rounded-full bg-[#094908] text-[10px] font-bold text-white"
-              >
-                {{ conversation.unread_count }}
-              </span>
-            }
+    @if (loading() && conversations().length === 0) {
+      @for (row of [1, 2, 3, 4]; track row) {
+        <div class="flex w-full items-start gap-3 border-b border-[#C2C8BE1A] px-5 py-4">
+          <app-skeleton width="40px" height="40px" />
+          <div class="flex min-w-0 flex-1 flex-col gap-1.5">
+            <app-skeleton width="50%" height="12px" />
+            <app-skeleton width="80%" height="10px" />
           </div>
         </div>
-      </button>
-    } @empty {
-      <p class="p-6 text-center text-sm text-gray-500">Nenhuma conversa encontrada.</p>
+      }
+    } @else if (error()) {
+      <app-empty-state
+        variant="error"
+        title="Não foi possível carregar as conversas"
+        description="Verifique a sua ligação e tente novamente."
+        actionLabel="Tentar novamente"
+        (action)="retry.emit()"
+      ></app-empty-state>
+    } @else if (conversations().length === 0) {
+      <app-empty-state variant="empty" title="Nenhuma conversa encontrada" description=""></app-empty-state>
+    } @else {
+      @for (conversation of conversations(); track conversation.id) {
+        <button
+          type="button"
+          (click)="select.emit(conversation.id)"
+          class="flex w-full items-start gap-3 border-b border-[#C2C8BE1A] px-5 py-4 text-left hover:bg-gray-50 transition-all duration-300 cursor-pointer {{
+            rowClass(conversation)
+          }}"
+        >
+          <img
+            [src]="avatarUrl(conversation) || '/icons/user.svg'"
+            [alt]="conversation.party.name"
+            class="h-10 w-10 rounded-full object-cover shrink-0"
+          />
+
+          <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="truncate font-semibold text-sm text-[#191C1D]">{{
+                conversation.party.name
+              }}</span>
+              <span class="shrink-0 text-xs text-[#8C9492]">{{
+                timestamp(conversation.last_message_at)
+              }}</span>
+            </div>
+            <p class="truncate text-sm text-gray-500">
+              {{ conversation.last_message_preview || 'Sem mensagens' }}
+            </p>
+            <div class="mt-1 flex items-center justify-between gap-2">
+              <span
+                class="w-fit rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600"
+              >
+                {{ roleLabel(conversation) }}
+              </span>
+              @if (conversation.unread_count > 0) {
+                <span
+                  class="flex h-5 w-5 items-center justify-center rounded-full bg-[#094908] text-[10px] font-bold text-white"
+                >
+                  {{ conversation.unread_count }}
+                </span>
+              }
+            </div>
+          </div>
+        </button>
+      }
     }
 
     @if (hasMore()) {

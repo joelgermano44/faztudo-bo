@@ -14,8 +14,35 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-50 text-sm">
+        @if (isLoading()) {
+          @for (row of skeletonRows; track row) {
+            <tr>
+              <td colspan="6" class="py-4 px-6 max-2xl:px-3">
+                <div class="flex items-center gap-6">
+                  <app-skeleton width="160px" height="14px" />
+                  <app-skeleton width="60px" height="14px" />
+                  <app-skeleton width="50px" height="14px" />
+                  <app-skeleton width="90px" height="14px" />
+                  <app-skeleton width="70px" height="20px" />
+                </div>
+              </td>
+            </tr>
+          }
+        } @else if (loadError()) {
+          <tr>
+            <td colspan="6">
+              <app-empty-state
+                variant="error"
+                title="Não foi possível carregar as categorias"
+                description="Verifique a sua ligação e tente novamente."
+                actionLabel="Tentar novamente"
+                (action)="retry.emit()"
+              ></app-empty-state>
+            </td>
+          </tr>
+        } @else {
         @for (category of pagedCategories(); track category.id) {
-          <tr class="hover:bg-gray-50/50 transition-colors">
+          <tr (click)="view.emit(category.id)" class="hover:bg-gray-50/50 transition-colors cursor-pointer">
             <td class="py-4 px-6 max-2xl:px-3 font-semibold text-[#0B2E13] whitespace-nowrap">
               {{ category.name }}
             </td>
@@ -37,7 +64,7 @@
             </td>
 
             <td class="py-4 px-6 max-2xl:px-3 text-right whitespace-nowrap">
-              <div class="flex items-center justify-end gap-1">
+              <div class="flex items-center justify-end gap-1" (click)="$event.stopPropagation()">
                 <button
                   type="button"
                   (click)="view.emit(category.id)"
@@ -75,15 +102,21 @@
           </tr>
         } @empty {
           <tr>
-            <td colspan="6" class="py-8 px-6 max-2xl:px-3 text-center text-gray-500">
-              Nenhuma categoria encontrada
+            <td colspan="6">
+              <app-empty-state
+                variant="empty"
+                title="Nenhuma categoria encontrada"
+                description="Ainda não há categorias registadas com estes filtros."
+              ></app-empty-state>
             </td>
           </tr>
+        }
         }
       </tbody>
     </table>
   </div>
 
+  @if (!isLoading() && !loadError()) {
   <div
     class="flex items-center justify-between px-6 max-2xl:px-3 py-4 border-t border-gray-100 text-sm text-gray-500 max-sm:flex-col max-sm:items-start max-sm:gap-3"
   >
@@ -137,4 +170,5 @@
       </button>
     </div>
   </div>
+  }
 </div>

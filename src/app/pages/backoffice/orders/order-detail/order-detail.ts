@@ -14,6 +14,8 @@ import {
 } from '../../../../../core/features/orders/models/order.model';
 import { Payment, PaymentStatus } from '../../../../../core/features/payments/models/payment.model';
 import { ProfessionalPayout, ProfessionalPayoutStatus } from '../../../../../core/features/payouts/models/payout.model';
+import { ReportService } from '../../../../../core/features/reports/services/report.service';
+import { Report, ReportStatus } from '../../../../../core/features/reports/models/report.model';
 import { OrderHeader } from './components/order-header/order-header';
 import { ServiceDetails } from './components/service-details/service-details';
 import { ClientCard } from './components/client-card/client-card';
@@ -22,6 +24,8 @@ import { FinancialSummary } from './components/financial-summary/financial-summa
 import { ContractTimeline, TimelineEntry } from './components/contract-timeline/contract-timeline';
 import { OrderChat } from './components/order-chat/order-chat';
 import { Modal } from '../../../../shared/ui/modal/modal';
+import { Skeleton } from '../../../../shared/ui/skeleton/skeleton';
+import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
 import {
   buildAvatarUrl as buildImageUrl,
   buildMediaUrl,
@@ -65,6 +69,12 @@ const STATUS_EVENT_LABEL: Record<OrderStatus, string> = {
   [OrderStatus.DONE]: 'Conclusão Confirmada',
   [OrderStatus.CANCELED]: 'Pedido Cancelado',
   [OrderStatus.REJECTED]: 'Pedido Rejeitado',
+};
+
+const REPORT_STATUS_STYLES: Record<ReportStatus, { label: string; badge: string }> = {
+  [ReportStatus.SUBMITTED]: { label: 'Submetida', badge: 'bg-gray-100 text-gray-600' },
+  [ReportStatus.IN_ANALYSIS]: { label: 'Em Análise', badge: 'bg-amber-50 text-amber-700' },
+  [ReportStatus.RESOLVED]: { label: 'Resolvida', badge: 'bg-[#80F98B33] text-emerald-700' },
 };
 
 const PAYMENT_STATUS_LABEL: Record<PaymentStatus, string> = {
@@ -114,6 +124,8 @@ function formatMoney(amount: number): string {
     ContractTimeline,
     OrderChat,
     Modal,
+    Skeleton,
+    EmptyState,
   ],
   selector: 'app-order-detail',
   styleUrl: './order-detail.css',
@@ -123,14 +135,30 @@ export class OrderDetail {
   private readonly route = inject(ActivatedRoute);
   private readonly orderService = inject(OrderService);
   private readonly payoutService = inject(PayoutService);
+  private readonly reportService = inject(ReportService);
   private readonly baseUrl = inject(API_BASE_URL);
 
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
   readonly order = signal<Order | null>(null);
   readonly payment = signal<Payment | null>(null);
+  readonly paymentLoading = signal(false);
+  readonly paymentFailed = signal(false);
   readonly payout = signal<ProfessionalPayout | null>(null);
+  readonly payoutLoading = signal(false);
+  readonly payoutFailed = signal(false);
   readonly timeline = signal<TimelineItem[]>([]);
+  readonly timelineLoading = signal(false);
+  readonly timelineFailed = signal(false);
+
+  /**
+   * `GET /orders/:id` não devolve as denúncias associadas — não há um
+   * endpoint que as procure por pedido, só por profissional/cliente. Por
+   * isso pedimos as denúncias do profissional e filtramos pelo `order_id`.
+   */
+  readonly report = signal<Report | null>(null);
+  readonly reportLoading = signal(false);
+  readonly reportFailed = signal(false);
 
   readonly PaymentStatus = PaymentStatus;
   readonly ProfessionalPayoutStatus = ProfessionalPayoutStatus;
@@ -175,8 +203,17 @@ export class OrderDetail {
     this.pendingAction.set(null);
     this.rejectReason.set('');
     this.payment.set(null);
+    this.paymentLoading.set(false);
+    this.paymentFailed.set(false);
     this.payout.set(null);
+    this.payoutLoading.set(false);
+    this.payoutFailed.set(false);
     this.timeline.set([]);
+    this.timelineLoading.set(false);
+    this.timelineFailed.set(false);
+    this.report.set(null);
+    this.reportLoading.set(false);
+    this.reportFailed.set(false);
   }
 
   private load(id: number): void {
@@ -190,6 +227,7 @@ export class OrderDetail {
         this.loadPayment(order);
         this.loadPayout(order);
         this.loadTimeline(order.id);
+        this.loadReport(order);
       },
       error: () => {
         this.loading.set(false);
@@ -203,31 +241,99 @@ export class OrderDetail {
       this.payment.set(order.first_payment);
       return;
     }
+    this.paymentLoading.set(true);
+    this.paymentFailed.set(false);
     this.orderService.getOrderPayments(order.id).subscribe({
-      next: (payments) => this.payment.set(payments[0] ?? null),
-      error: () => this.payment.set(null),
+      next: (payments) => {
+        this.paymentLoading.set(false);
+        this.payment.set(payments[0] ?? null);
+      },
+      error: () => {
+        this.paymentLoading.set(false);
+        this.paymentFailed.set(true);
+        this.payment.set(null);
+      },
     });
+  }
+
+  retryPayment(): void {
+    const order = this.order();
+    if (order) {
+      this.loadPayment(order);
+    }
   }
 
   private loadPayout(order: Order): void {
+    this.payoutLoading.set(true);
+    this.payoutFailed.set(false);
     this.payoutService.findAll(order.professional_id).subscribe({
       next: (payouts) => {
+        this.payoutLoading.set(false);
         this.payout.set(payouts.find((payout) => payout.order_id === order.id) ?? null);
       },
-      error: () => this.payout.set(null),
+      error: () => {
+        this.payoutLoading.set(false);
+        this.payoutFailed.set(true);
+        this.payout.set(null);
+      },
     });
   }
 
+  retryPayout(): void {
+    const order = this.order();
+    if (order) {
+      this.loadPayout(order);
+    }
+  }
+
   private loadTimeline(id: number): void {
+    this.timelineLoading.set(true);
+    this.timelineFailed.set(false);
     this.orderService.getTimeline(id).subscribe({
       next: (timeline) => {
+        this.timelineLoading.set(false);
         const items = timeline.events
           .map((event) => this.toTimelineItem(event))
           .sort((a, b) => a.occurredAt.getTime() - b.occurredAt.getTime());
         this.timeline.set(items);
       },
-      error: () => this.timeline.set([]),
+      error: () => {
+        this.timelineLoading.set(false);
+        this.timelineFailed.set(true);
+        this.timeline.set([]);
+      },
     });
+  }
+
+  retryTimeline(): void {
+    const order = this.order();
+    if (order) {
+      this.loadTimeline(order.id);
+    }
+  }
+
+  private loadReport(order: Order): void {
+    this.reportLoading.set(true);
+    this.reportFailed.set(false);
+    this.reportService
+      .findByProfessional(order.professional.id, { take: 200, skip: 0 })
+      .subscribe({
+        next: (page) => {
+          this.reportLoading.set(false);
+          this.report.set(page.items.find((item) => item.order_id === order.id) ?? null);
+        },
+        error: () => {
+          this.reportLoading.set(false);
+          this.reportFailed.set(true);
+        },
+      });
+  }
+
+  retryReport(): void {
+    const order = this.order();
+    if (order) {
+      this.loadReport(order);
+    }
   }
 
   private toTimelineItem(event: OrderTimelineEvent): TimelineItem {
@@ -254,6 +360,10 @@ export class OrderDetail {
 
   paymentStatusLabel(status: PaymentStatus): string {
     return PAYMENT_STATUS_LABEL[status];
+  }
+
+  reportStatusStyle(status: ReportStatus): { label: string; badge: string } {
+    return REPORT_STATUS_STYLES[status];
   }
 
   clientAvatar(): string | null {

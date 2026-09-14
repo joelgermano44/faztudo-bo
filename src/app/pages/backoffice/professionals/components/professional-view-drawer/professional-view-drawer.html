@@ -253,31 +253,60 @@
           >Serviços oferecidos ({{ professional.serviceOfferings.length }})</span
         >
         @if (servicesLoading()) {
-          <span class="text-sm text-[#8C9492]">A carregar...</span>
+          <ul class="flex flex-col gap-2">
+            @for (row of [1, 2]; track row) {
+              <li class="flex items-center gap-3 rounded-lg border border-[#0000001A] p-3">
+                <app-skeleton width="44px" height="44px" />
+                <div class="min-w-0 flex-1 flex flex-col gap-1.5">
+                  <app-skeleton width="60%" height="12px" />
+                  <app-skeleton width="35%" height="10px" />
+                </div>
+                <app-skeleton width="70px" height="14px" />
+              </li>
+            }
+          </ul>
+        } @else if (servicesError()) {
+          <app-empty-state
+            variant="error"
+            title="Não foi possível carregar os serviços"
+            description="Verifique a sua ligação e tente novamente."
+            actionLabel="Tentar novamente"
+            (action)="retryServices()"
+          ></app-empty-state>
         } @else if (professional.serviceOfferings.length === 0) {
-          <p class="text-sm text-gray-500">Este profissional não subscreveu nenhum serviço.</p>
+          <app-empty-state
+            variant="empty"
+            title="Este profissional não subscreveu nenhum serviço."
+            description=""
+          ></app-empty-state>
         } @else {
           <ul class="flex flex-col gap-2">
             @for (offering of professional.serviceOfferings; track offering.service_id) {
-              <li class="flex items-center gap-3 rounded-lg border border-[#0000001A] p-3">
-                <img
-                  [src]="serviceImage(offering.service_id) || '/icons/advertisements/campaigns.svg'"
-                  alt=""
-                  [class.p-3]="!serviceImage(offering.service_id)"
-                  class="h-11 w-11 shrink-0 rounded-lg object-cover bg-[#E6E9E8]"
-                />
-                <div class="min-w-0 flex-1">
-                  <p class="truncate font-medium text-[#062406]">{{ serviceName(offering.service_id) }}</p>
-                  <p class="text-xs text-[#8C9492]">Preço base</p>
-                </div>
-                <div class="flex flex-col items-end shrink-0 text-right">
-                  <span class="text-sm font-semibold text-[#062406]">{{ formatMoney(offering.price) }}</span>
-                  @if (offering.travel_price) {
-                    <span class="text-xs text-[#8C9492]"
-                      >+ {{ formatMoney(offering.travel_price) }} deslocação</span
-                    >
-                  }
-                </div>
+              <li>
+                <a
+                  [routerLink]="['/dashboard/services']"
+                  [queryParams]="{ serviceId: offering.service_id }"
+                  class="flex items-center gap-3 rounded-lg border border-[#0000001A] p-3 hover:bg-gray-50 transition-colors"
+                >
+                  <img
+                    [src]="serviceImage(offering.service_id) || '/icons/advertisements/campaigns.svg'"
+                    alt=""
+                    [class.p-3]="!serviceImage(offering.service_id)"
+                    class="h-11 w-11 shrink-0 rounded-lg object-cover bg-[#E6E9E8]"
+                  />
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate font-medium text-[#062406]">{{ serviceName(offering.service_id) }}</p>
+                    <p class="text-xs text-[#8C9492]">Preço base</p>
+                  </div>
+                  <div class="flex flex-col items-end shrink-0 text-right">
+                    <span class="text-sm font-semibold text-[#062406]">{{ formatMoney(offering.price) }}</span>
+                    @if (offering.travel_price) {
+                      <span class="text-xs text-[#8C9492]"
+                        >+ {{ formatMoney(offering.travel_price) }} deslocação</span
+                      >
+                    }
+                  </div>
+                </a>
               </li>
             }
           </ul>
@@ -289,7 +318,22 @@
         <div class="flex flex-col gap-3">
           <span class="text-sm font-semibold text-[#001A18]">Horário de expediente</span>
           @if (agendaLoading()) {
-            <span class="text-sm text-[#8C9492]">A carregar...</span>
+            <ul class="flex flex-col divide-y divide-[#0000000D] rounded-lg border border-[#0000001A]">
+              @for (row of [1, 2, 3]; track row) {
+                <li class="flex items-center justify-between px-3 py-2.5">
+                  <app-skeleton width="90px" height="12px" />
+                  <app-skeleton width="120px" height="20px" />
+                </li>
+              }
+            </ul>
+          } @else if (agendaError()) {
+            <app-empty-state
+              variant="error"
+              title="Não foi possível carregar a agenda"
+              description="Verifique a sua ligação e tente novamente."
+              actionLabel="Tentar novamente"
+              (action)="retryAgenda()"
+            ></app-empty-state>
           } @else {
             <ul class="flex flex-col divide-y divide-[#0000000D] rounded-lg border border-[#0000001A]">
               @for (day of weekdayOrder; track day) {
@@ -315,9 +359,18 @@
         <div class="flex flex-col gap-3 border-t border-[#0B2E130D] pt-5">
           <span class="text-sm font-semibold text-[#001A18]">Ausências ({{ absences().length }})</span>
           @if (agendaLoading()) {
-            <span class="text-sm text-[#8C9492]">A carregar...</span>
+            <ul class="flex flex-col gap-2">
+              @for (row of [1, 2]; track row) {
+                <li class="rounded-lg border border-[#0000001A] p-3 flex flex-col gap-1.5">
+                  <app-skeleton width="45%" height="12px" />
+                  <app-skeleton width="70%" height="10px" />
+                </li>
+              }
+            </ul>
+          } @else if (agendaError()) {
+            <!-- erro já reportado na secção de horário de expediente acima -->
           } @else if (absences().length === 0) {
-            <p class="text-sm text-gray-500">Sem ausências registadas.</p>
+            <app-empty-state variant="empty" title="Sem ausências registadas." description=""></app-empty-state>
           } @else {
             <ul class="flex flex-col gap-2">
               @for (absence of absences(); track absence.id) {
@@ -338,7 +391,33 @@
       <!-- Financeiro -->
       <div [hidden]="activeTab() !== 'financeiro'" class="flex flex-col gap-6">
         @if (financeiroLoading()) {
-          <span class="text-sm text-[#8C9492]">A carregar...</span>
+          <div class="grid grid-cols-3 gap-3 max-sm:grid-cols-1">
+            @for (col of [1, 2, 3]; track col) {
+              <div class="flex flex-col gap-1.5 rounded-xl bg-[#F8F9FA] p-3">
+                <app-skeleton width="60%" height="10px" />
+                <app-skeleton width="80%" height="18px" />
+              </div>
+            }
+          </div>
+          <ul class="flex flex-col gap-2">
+            @for (row of [1, 2]; track row) {
+              <li class="flex items-center justify-between gap-3 rounded-lg border border-[#0000001A] p-3">
+                <div class="min-w-0 flex-1 flex flex-col gap-1.5">
+                  <app-skeleton width="55%" height="12px" />
+                  <app-skeleton width="80%" height="10px" />
+                </div>
+                <app-skeleton width="70px" height="14px" />
+              </li>
+            }
+          </ul>
+        } @else if (financeiroError()) {
+          <app-empty-state
+            variant="error"
+            title="Não foi possível carregar os dados financeiros"
+            description="Verifique a sua ligação e tente novamente."
+            actionLabel="Tentar novamente"
+            (action)="retryFinanceiro()"
+          ></app-empty-state>
         } @else {
           @if (walletSummary(); as summary) {
             <div class="grid grid-cols-3 gap-3 max-sm:grid-cols-1">
@@ -360,7 +439,7 @@
           <div class="flex flex-col gap-2 border-t border-[#0B2E130D] pt-5">
             <span class="text-sm font-semibold text-[#001A18]">Extrato ({{ statement().length }})</span>
             @if (statement().length === 0) {
-              <p class="text-sm text-gray-500">Sem movimentos financeiros.</p>
+              <app-empty-state variant="empty" title="Sem movimentos financeiros." description=""></app-empty-state>
             } @else {
               <ul class="flex flex-col gap-2">
                 @for (item of statement(); track item.payout_id) {
@@ -408,8 +487,32 @@
       <!-- Avaliações -->
       <div [hidden]="activeTab() !== 'avaliacoes'" class="flex flex-col gap-3">
         <span class="text-sm font-semibold text-[#001A18]">Avaliações de clientes</span>
-        @if (ratings().length === 0 && !ratingsLoading()) {
-          <p class="text-sm text-gray-500">Este profissional ainda não tem avaliações.</p>
+        @if (ratingsLoading() && ratings().length === 0) {
+          <ul class="flex flex-col gap-3">
+            @for (row of [1, 2, 3]; track row) {
+              <li class="rounded-lg border border-[#0000001A] p-3 flex flex-col gap-2">
+                <div class="flex items-center gap-2">
+                  <app-skeleton width="28px" height="28px" />
+                  <app-skeleton width="35%" height="12px" />
+                </div>
+                <app-skeleton width="80%" height="10px" />
+              </li>
+            }
+          </ul>
+        } @else if (ratingsError()) {
+          <app-empty-state
+            variant="error"
+            title="Não foi possível carregar as avaliações"
+            description="Verifique a sua ligação e tente novamente."
+            actionLabel="Tentar novamente"
+            (action)="retryRatings()"
+          ></app-empty-state>
+        } @else if (ratings().length === 0) {
+          <app-empty-state
+            variant="empty"
+            title="Este profissional ainda não tem avaliações."
+            description=""
+          ></app-empty-state>
         } @else {
           <ul class="flex flex-col gap-3">
             @for (rating of ratings(); track rating.id) {
@@ -465,13 +568,35 @@
       <div [hidden]="activeTab() !== 'pedidos'" class="flex flex-col gap-2">
         <span class="text-sm font-semibold text-[#001A18]">Histórico de pedidos ({{ orders().length }})</span>
         @if (ordersLoading()) {
-          <span class="text-sm text-[#8C9492]">A carregar...</span>
+          <ul class="flex flex-col gap-2">
+            @for (row of [1, 2, 3]; track row) {
+              <li class="flex items-center justify-between gap-3 rounded-lg border border-[#0000001A] p-3">
+                <div class="min-w-0 flex-1 flex flex-col gap-1.5">
+                  <app-skeleton width="60%" height="12px" />
+                  <app-skeleton width="40%" height="10px" />
+                </div>
+                <app-skeleton width="70px" height="18px" />
+              </li>
+            }
+          </ul>
+        } @else if (ordersError()) {
+          <app-empty-state
+            variant="error"
+            title="Não foi possível carregar os pedidos"
+            description="Verifique a sua ligação e tente novamente."
+            actionLabel="Tentar novamente"
+            (action)="retryOrders()"
+          ></app-empty-state>
         } @else if (orders().length === 0) {
-          <p class="text-sm text-gray-500">Sem pedidos associados.</p>
+          <app-empty-state variant="empty" title="Sem pedidos associados." description=""></app-empty-state>
         } @else {
           <ul class="flex flex-col gap-2">
             @for (order of orders(); track order.id) {
-              <li class="flex items-center justify-between gap-3 rounded-lg border border-[#0000001A] p-3">
+              <li>
+                <a
+                  [routerLink]="['/dashboard/orders', order.id]"
+                  class="flex items-center justify-between gap-3 rounded-lg border border-[#0000001A] p-3 hover:bg-gray-50 transition-colors"
+                >
                 <div class="min-w-0 flex-1">
                   <p class="truncate font-medium text-[#062406]">#PED-{{ order.id }} · {{ order.service.name }}</p>
                   <p class="text-xs text-[#8C9492]">{{ order.client.name }} · {{ formatDate(order.created_at) }}</p>
@@ -484,6 +609,7 @@
                 >
                   {{ orderStatus.label }}
                 </span>
+                </a>
               </li>
             }
           </ul>

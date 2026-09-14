@@ -39,50 +39,68 @@
           </button>
         }
 
-        @for (message of messages(); track message.id; let i = $index) {
-          @if (showDateDivider(i)) {
-            <div
-              class="mx-auto rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-500"
-            >
-              {{ dateDividerLabel(message.created_at) }}
-            </div>
-          }
-
-          <div class="flex items-start gap-2.5" [class.flex-row-reverse]="!isIncoming(message)">
-            @if (isIncoming(message)) {
-              <img
-                [src]="partyAvatar() || '/icons/user.svg'"
-                [alt]="party.name"
-                class="h-7 w-7 rounded-full object-cover shrink-0"
-              />
+        @if (loading() && messages().length === 0) {
+          <div class="flex items-start gap-2.5">
+            <app-skeleton width="28px" height="28px" />
+            <app-skeleton width="55%" height="36px" />
+          </div>
+          <div class="flex items-start gap-2.5 flex-row-reverse">
+            <app-skeleton width="40%" height="30px" />
+          </div>
+          <div class="flex items-start gap-2.5">
+            <app-skeleton width="28px" height="28px" />
+            <app-skeleton width="65%" height="44px" />
+          </div>
+        } @else if (messages().length === 0) {
+          <app-empty-state
+            variant="empty"
+            title="Ainda não há mensagens."
+            description=""
+          ></app-empty-state>
+        } @else {
+          @for (message of messages(); track message.id; let i = $index) {
+            @if (showDateDivider(i)) {
+              <div
+                class="mx-auto rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-500"
+              >
+                {{ dateDividerLabel(message.created_at) }}
+              </div>
             }
 
-            <div class="flex max-w-[65%] flex-col gap-1" [class.items-end]="!isIncoming(message)">
-              <div class="rounded-2xl  px-4 py-2.5 text-sm {{ bubbleClass(message) }}">
-                @if (message.content) {
-                  <p class="whitespace-pre-line">{{ message.content }}</p>
-                }
+            <div class="flex items-start gap-2.5" [class.flex-row-reverse]="!isIncoming(message)">
+              @if (isIncoming(message)) {
+                <img
+                  [src]="partyAvatar() || '/icons/user.svg'"
+                  [alt]="party.name"
+                  class="h-7 w-7 rounded-full object-cover shrink-0"
+                />
+              }
 
-                @if (imagesFor(message).length > 0) {
-                  <div class="flex flex-wrap gap-1.5" [class.mt-2]="message.content">
-                    @for (image of imagesFor(message); track image; let imgIndex = $index) {
-                      <button type="button" (click)="openLightbox(message, imgIndex)">
-                        <img
-                          [src]="image"
-                          alt=""
-                          class="h-20 w-20 rounded-lg object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                        />
-                      </button>
-                    }
-                  </div>
-                }
+              <div class="flex max-w-[65%] flex-col gap-1" [class.items-end]="!isIncoming(message)">
+                <div class="rounded-2xl  px-4 py-2.5 text-sm {{ bubbleClass(message) }}">
+                  @if (message.content) {
+                    <p class="whitespace-pre-line">{{ message.content }}</p>
+                  }
+
+                  @if (imagesFor(message).length > 0) {
+                    <div class="flex flex-wrap gap-1.5" [class.mt-2]="message.content">
+                      @for (image of imagesFor(message); track image; let imgIndex = $index) {
+                        <button type="button" (click)="openLightbox(message, imgIndex)">
+                          <img
+                            [src]="image"
+                            alt=""
+                            class="h-20 w-20 rounded-lg object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                          />
+                        </button>
+                      }
+                    </div>
+                  }
+                </div>
+
+                <span class="text-xs text-[#8C9492]">{{ formatTime(message.created_at) }}</span>
               </div>
-
-              <span class="text-xs text-[#8C9492]">{{ formatTime(message.created_at) }}</span>
             </div>
-          </div>
-        } @empty {
-          <p class="my-auto text-center text-sm text-gray-500">Ainda não há mensagens.</p>
+          }
         }
       </div>
 

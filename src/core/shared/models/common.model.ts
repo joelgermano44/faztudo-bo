@@ -84,3 +84,15 @@ export interface CursorQueryParams {
   limit?: number;
   before?: number;
 }
+
+/** Envelope de paginação por offset (usado nas denúncias). */
+export interface OffsetPage<T> {
+  total: number;
+  items: T[];
+}
+
+/** Parâmetros comuns de paginação por offset. */
+export interface OffsetQueryParams {
+  take?: number;
+  skip?: number;
+}

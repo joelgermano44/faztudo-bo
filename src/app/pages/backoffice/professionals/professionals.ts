@@ -92,6 +92,9 @@ export class Professionals {
   /** Só profissionais com candidatura aprovada aparecem aqui — os restantes vivem em "Candidaturas". */
   private readonly professionals = signal<Professional[]>([]);
 
+  readonly isLoading = signal(true);
+  readonly loadError = signal(false);
+
   readonly isFormModalOpen = signal(false);
   readonly editingProfessional = signal<Professional | null>(null);
 
@@ -136,15 +139,27 @@ export class Professionals {
   }
 
   private loadProfessionals(): void {
+    this.isLoading.set(true);
+    this.loadError.set(false);
     this.professionalService.findAll().subscribe({
-      next: (professionals) =>
+      next: (professionals) => {
+        this.isLoading.set(false);
         this.professionals.set(
           professionals.filter(
             (professional) => professional.application_status === ProfessionalApplicationStatus.APROVADA,
           ),
-        ),
-      error: (err) => console.error('Erro ao carregar profissionais', err),
+        );
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        this.loadError.set(true);
+        console.error('Erro ao carregar profissionais', err);
+      },
     });
+  }
+
+  retryLoad(): void {
+    this.loadProfessionals();
   }
 
   private findProfessionalById(id: number): Professional | null {

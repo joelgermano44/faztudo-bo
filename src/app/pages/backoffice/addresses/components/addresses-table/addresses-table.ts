@@ -1,4 +1,6 @@
 import { Component, computed, effect, input, output, signal } from '@angular/core';
+import { Skeleton } from '../../../../../shared/ui/skeleton/skeleton';
+import { EmptyState } from '../../../../../shared/ui/empty-state/empty-state';
 
 export type AddressStatus = 'Ativa' | 'Inativa';
 
@@ -17,17 +19,22 @@ export interface AddressRow {
 const PAGE_SIZE = 8;
 
 @Component({
-  imports: [],
+  imports: [Skeleton, EmptyState],
   selector: 'app-addresses-table',
   styleUrl: './addresses-table.css',
   templateUrl: './addresses-table.html',
 })
 export class AddressesTable {
   readonly addresses = input<AddressRow[]>([]);
+  readonly isLoading = input(false);
+  readonly loadError = input(false);
 
   readonly view = output<number>();
   readonly edit = output<number>();
   readonly remove = output<number>();
+  readonly retry = output<void>();
+
+  readonly skeletonRows = [0, 1, 2, 3, 4];
 
   readonly page = signal(1);
 

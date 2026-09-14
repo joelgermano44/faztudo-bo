@@ -86,6 +86,9 @@ export class Clients {
   private readonly clients = signal<Client[]>([]);
   private readonly contractsCounts = signal<Map<string, number>>(new Map());
 
+  readonly isLoading = signal(true);
+  readonly loadError = signal(false);
+
   readonly isFormModalOpen = signal(false);
   readonly editingClient = signal<Client | null>(null);
 
@@ -93,9 +96,11 @@ export class Clients {
   readonly viewingClient = signal<Client | null>(null);
   readonly viewingOrders = signal<Order[]>([]);
   readonly ordersLoading = signal(false);
+  readonly ordersError = signal(false);
   readonly viewingRatings = signal<Map<number, Rating>>(new Map());
   readonly viewingConversations = signal<SupportInboxItem[]>([]);
   readonly conversationsLoading = signal(false);
+  readonly conversationsError = signal(false);
 
   readonly deletingClient = signal<Client | null>(null);
   readonly isDeleting = signal(false);
@@ -136,9 +141,18 @@ export class Clients {
   }
 
   private loadClients(): void {
+    this.isLoading.set(true);
+    this.loadError.set(false);
     this.clientService.findAll().subscribe({
-      next: (clients) => this.clients.set(clients),
-      error: (err) => console.error('Erro ao carregar clientes', err),
+      next: (clients) => {
+        this.isLoading.set(false);
+        this.clients.set(clients);
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        this.loadError.set(true);
+        console.error('Erro ao carregar clientes', err);
+      },
     });
 
     this.orderService.findAll().subscribe({
@@ -151,6 +165,10 @@ export class Clients {
       },
       error: (err) => console.error('Erro ao carregar contratos dos clientes', err),
     });
+  }
+
+  retryLoad(): void {
+    this.loadClients();
   }
 
   private findClientById(id: string): Client | null {
@@ -215,6 +233,8 @@ export class Clients {
     this.viewingOrders.set([]);
     this.viewingRatings.set(new Map());
     this.viewingConversations.set([]);
+    this.ordersError.set(false);
+    this.conversationsError.set(false);
     this.isViewDrawerOpen.set(true);
 
     if (!client) {
@@ -230,6 +250,7 @@ export class Clients {
       },
       error: (err) => {
         this.ordersLoading.set(false);
+        this.ordersError.set(true);
         console.error('Erro ao carregar pedidos do cliente', err);
       },
     });
@@ -248,6 +269,7 @@ export class Clients {
       },
       error: (err) => {
         this.conversationsLoading.set(false);
+        this.conversationsError.set(true);
         console.error('Erro ao carregar conversas de suporte', err);
       },
     });

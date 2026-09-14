@@ -1,5 +1,7 @@
 import { Component, computed, effect, input, output, signal } from '@angular/core';
 import { ProfessionalApplicationStatus } from '../../../../../../core/features/professional-applications/models/professional-application.model';
+import { Skeleton } from '../../../../../shared/ui/skeleton/skeleton';
+import { EmptyState } from '../../../../../shared/ui/empty-state/empty-state';
 
 export interface ApplicationRow {
   id: number;
@@ -40,15 +42,20 @@ const STATUS_STYLES: Record<ProfessionalApplicationStatus, StatusStyle> = {
 const PAGE_SIZE = 8;
 
 @Component({
-  imports: [],
+  imports: [Skeleton, EmptyState],
   selector: 'app-professional-applications-table',
   styleUrl: './professional-applications-table.css',
   templateUrl: './professional-applications-table.html',
 })
 export class ProfessionalApplicationsTable {
   readonly applications = input<ApplicationRow[]>([]);
+  readonly isLoading = input(false);
+  readonly loadError = input(false);
 
   readonly view = output<number>();
+  readonly retry = output<void>();
+
+  readonly skeletonRows = [0, 1, 2, 3, 4];
 
   readonly page = signal(1);
 

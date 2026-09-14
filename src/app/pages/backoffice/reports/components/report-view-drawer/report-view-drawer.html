@@ -1,0 +1,92 @@
+<app-drawer [open]="open()" title="Detalhes da denúncia" size="md" (closed)="requestClose()">
+  @if (report(); as report) {
+    <div class="flex flex-col gap-6">
+      <!-- Cabeçalho -->
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <h3 class="text-xl font-bold text-[#062406]">#DEN-{{ report.id }}</h3>
+        @if (statusStyle(); as status) {
+          <span class="w-fit rounded-full px-3 py-1 text-[10px] font-bold uppercase {{ status.badge }}">
+            {{ status.label }}
+          </span>
+        }
+      </div>
+
+      <!-- Motivo -->
+      <div class="flex flex-col gap-1">
+        <span class="text-xs font-semibold uppercase text-[#8C9492]">Motivo</span>
+        <p class="text-sm font-semibold text-[#191C1D]">{{ report.reason }}</p>
+      </div>
+
+      <!-- Descrição -->
+      <div class="flex flex-col gap-1">
+        <span class="text-xs font-semibold uppercase text-[#8C9492]">Descrição</span>
+        <p class="text-sm leading-relaxed text-[#41493D]">{{ report.description }}</p>
+      </div>
+
+      <!-- Info -->
+      <div class="grid grid-cols-2 gap-4 border-t border-[#0B2E130D] pt-5 max-sm:grid-cols-1">
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Pedido</span>
+          <a
+            [routerLink]="['/dashboard/orders', report.order_id]"
+            class="text-sm text-secondary hover:underline"
+          >
+            #CTR-{{ report.order_id }}
+          </a>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Submetida em</span>
+          <span class="text-sm text-[#41493D]">{{ formatDateTime(report.created_at) }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Última atualização</span>
+          <span class="text-sm text-[#41493D]">{{ formatDateTime(report.updated_at) }}</span>
+        </div>
+        @if (report.reviewed_by_admin_id) {
+          <div class="flex flex-col gap-1">
+            <span class="text-xs font-semibold uppercase text-[#8C9492]">Revisto por</span>
+            <span class="text-sm text-[#41493D]">Administrador #{{ report.reviewed_by_admin_id }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Resolução -->
+      @if (report.resolution_note) {
+        <div class="flex flex-col gap-1 border-t border-[#0B2E130D] pt-5">
+          <span class="text-xs font-semibold uppercase text-[#8C9492]">Nota de resolução</span>
+          <p class="text-sm leading-relaxed text-[#41493D]">{{ report.resolution_note }}</p>
+        </div>
+      }
+
+      <!-- Ações -->
+      @if (canReview() || canResolve()) {
+        <div class="flex items-center gap-3 border-t border-[#0B2E130D] pt-5 max-lg:flex-wrap">
+          @if (canReview()) {
+            <button
+              type="button"
+              (click)="review.emit(report.id)"
+              [disabled]="reviewing()"
+              class="cursor-pointer rounded-full border border-[#C0C8C6]/60 px-5 py-2.5 text-sm font-semibold text-[#41493D] transition-all duration-300 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              @if (reviewing()) {
+                A processar...
+              } @else {
+                Colocar em análise
+              }
+            </button>
+          }
+
+          @if (canResolve()) {
+            <button
+              type="button"
+              (click)="resolve.emit(report.id)"
+              class="cursor-pointer rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-[#0B2E13] shadow-xs shadow-black/10 transition-all duration-300 hover:scale-[1.02] hover:bg-primary/80"
+            >
+              Marcar como resolvida
+            </button>
+          }
+        </div>
+      }
+    </div>
+  }
+</app-drawer>

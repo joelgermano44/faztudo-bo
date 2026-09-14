@@ -20,12 +20,12 @@ export class QuickAction {
   actions: QuickActionInterface[] = [
     {
       title: 'Candidaturas\nPendentes',
-      iconSvg: '/icons/dashboard/sidebar/applications.svg',
+      iconSvg: '/icons/dashboard/quick-action/applications.svg',
       commands: ['/dashboard/professional-applications'],
       queryParams: { filter: ProfessionalApplicationStatus.SUBMETIDA },
     },
     {
-      title: 'Pagar\nPrestador',
+      title: 'Repasses\nPendentes',
       iconSvg: '/icons/dashboard/quick-action/pay-professional.svg',
       commands: ['/dashboard/payments'],
       queryParams: { filter: ProfessionalPayoutStatus.PENDING },

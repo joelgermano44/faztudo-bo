@@ -17,18 +17,46 @@
 
   <app-monthly-report></app-monthly-report>
 
-  <ul class="flex w-full gap-6.75 mt-8 max-lg:grid max-lg:grid-cols-2 max-sm:grid-cols-1">
-    @for (item of dashcardItems(); track item.title) {
-      <app-dashcard
-        class="w-full"
-        [indicator]="item.indicator"
-        [icon]="item.icon"
-        [money]="item.money"
-        [title]="item.title"
-        [stat]="item.stat"
-      ></app-dashcard>
-    }
-  </ul>
+  @if (isLoading()) {
+    <ul class="flex w-full gap-6.75 mt-8 max-lg:grid max-lg:grid-cols-2 max-sm:grid-cols-1">
+      @for (row of [0, 1, 2, 3]; track row) {
+        <li
+          class="rounded-xl bg-white flex flex-col shadow-sm shadow-[#00312E0D] min-w-53.75 w-full gap-4 h-41 p-6"
+        >
+          <div class="flex justify-between w-full">
+            <app-skeleton width="48px" height="48px" />
+          </div>
+          <div class="flex flex-col gap-2">
+            <app-skeleton width="70px" height="10px" />
+            <app-skeleton width="90px" height="24px" />
+          </div>
+        </li>
+      }
+    </ul>
+  } @else if (loadError()) {
+    <div class="mt-8">
+      <app-empty-state
+        variant="error"
+        title="Não foi possível carregar o resumo do dashboard"
+        description="Verifique a sua ligação e tente novamente."
+        actionLabel="Tentar novamente"
+        (action)="retryLoad()"
+      ></app-empty-state>
+    </div>
+  } @else {
+    <ul class="flex w-full gap-6.75 mt-8 max-lg:grid max-lg:grid-cols-2 max-sm:grid-cols-1">
+      @for (item of dashcardItems(); track item.title) {
+        <app-dashcard
+          class="w-full"
+          [indicator]="item.indicator"
+          [icon]="item.icon"
+          [money]="item.money"
+          [title]="item.title"
+          [stat]="item.stat"
+        ></app-dashcard>
+      }
+    </ul>
+  }
 
   <div class="flex gap-6 mt-6 h-125 max-lg:flex-col max-lg:h-auto">
     <app-order-flow class="w-full h-full max-lg:h-100" [data]="ordersFlow()"></app-order-flow>

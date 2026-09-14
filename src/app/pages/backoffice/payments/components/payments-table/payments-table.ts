@@ -1,5 +1,7 @@
 import { Component, computed, effect, ElementRef, HostListener, inject, input, output, signal } from '@angular/core';
 import { ProfessionalPayoutStatus } from '../../../../../../core/features/payouts/models/payout.model';
+import { Skeleton } from '../../../../../shared/ui/skeleton/skeleton';
+import { EmptyState } from '../../../../../shared/ui/empty-state/empty-state';
 
 export interface FinancialFlowRow {
   payoutId: number;
@@ -46,7 +48,7 @@ function formatMoney(amount: number): string {
 }
 
 @Component({
-  imports: [],
+  imports: [Skeleton, EmptyState],
   selector: 'app-payments-table',
   styleUrl: './payments-table.css',
   templateUrl: './payments-table.html',
@@ -55,9 +57,14 @@ export class PaymentsTable {
   private readonly elementRef = inject(ElementRef);
 
   readonly rows = input<FinancialFlowRow[]>([]);
+  readonly isLoading = input(false);
+  readonly loadError = input(false);
 
   readonly view = output<number>();
   readonly markPaid = output<number>();
+  readonly retry = output<void>();
+
+  readonly skeletonRows = [0, 1, 2, 3, 4];
 
   readonly page = signal(1);
   readonly openMenuId = signal<number | null>(null);

@@ -64,9 +64,11 @@
         </div>
       </button>
     } @empty {
-      <div class="bg-white rounded-xl border border-gray-100 p-8 text-center text-gray-500">
-        Nenhuma notificação encontrada.
-      </div>
+      <app-empty-state
+        variant="empty"
+        title="Nenhuma notificação encontrada"
+        description=""
+      ></app-empty-state>
     }
   </div>
 </div>

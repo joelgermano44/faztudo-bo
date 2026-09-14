@@ -15,10 +15,12 @@
       [searchTerm]="searchTerm()"
       [hasMore]="conversationsHasMore()"
       [loading]="conversationsLoading()"
+      [error]="conversationsError()"
       (select)="selectConversation($event)"
       (filterChange)="setFilter($event)"
       (searchChange)="onSearch($event)"
       (loadMore)="loadMoreConversations()"
+      (retry)="retryConversations()"
     ></app-conversation-list>
 
     <app-conversation-thread

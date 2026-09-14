@@ -65,6 +65,9 @@ export class Categories {
 
   private readonly categories = signal<CategoryWithServices[]>([]);
 
+  readonly isLoading = signal(true);
+  readonly loadError = signal(false);
+
   readonly isFormModalOpen = signal(false);
   readonly editingCategory = signal<Category | null>(null);
 
@@ -99,10 +102,23 @@ export class Categories {
   }
 
   private loadCategories(): void {
+    this.isLoading.set(true);
+    this.loadError.set(false);
     this.categoryService.findAllWithServices().subscribe({
-      next: (categories) => this.categories.set(categories),
-      error: (err) => console.error('Erro ao carregar categorias', err),
+      next: (categories) => {
+        this.isLoading.set(false);
+        this.categories.set(categories);
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        this.loadError.set(true);
+        console.error('Erro ao carregar categorias', err);
+      },
     });
+  }
+
+  retryLoad(): void {
+    this.loadCategories();
   }
 
   private findCategoryById(id: number): CategoryWithServices | null {

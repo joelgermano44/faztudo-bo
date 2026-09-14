@@ -1,0 +1,125 @@
+<div class="flex flex-col font-raleway">
+  <app-title-header
+    title="Denúncias"
+    description="Reveja e resolva as denúncias submetidas por clientes contra profissionais."
+  ></app-title-header>
+
+  <div
+    class="mt-6 flex items-center flex-wrap gap-4 py-6 px-4 rounded-lg bg-white shadow-sm shadow-[#0B2E130D] justify-between"
+  >
+    <ul class="flex flex-wrap max-w-160 w-full gap-3">
+      @for (filter of filters; track filter) {
+        <li
+          (click)="setFilter(filter)"
+          [class]="
+            (activeFilter() === filter ? 'bg-[#094908] text-white' : 'bg-tertiary') +
+            ' flex gap-2 items-center rounded-3xl w-fit px-4 py-2 border border-[#C2C8BE] hover:bg-[#094908] hover:text-white transition-all duration-300 cursor-pointer'
+          "
+        >
+          {{ filterLabels[filter] }}
+        </li>
+      }
+    </ul>
+
+    <div class="flex items-center gap-3">
+      <div
+        class="flex gap-2 items-center rounded-3xl px-4 py-3 bg-tertiary border border-[#C2C8BE] max-sm:w-full"
+      >
+        <img src="/icons/dashboard/search-v2.svg" alt="" />
+        <input
+          type="text"
+          placeholder="Buscar denúncias..."
+          class="outline-none text-sm"
+          [value]="searchTerm()"
+          (input)="onSearch($any($event.target).value)"
+        />
+      </div>
+    </div>
+  </div>
+
+  <app-reports-table
+    [reports]="filteredReports()"
+    [isLoading]="isLoading()"
+    [loadError]="loadError()"
+    (retry)="retryLoad()"
+    (view)="openViewDrawer($event)"
+  ></app-reports-table>
+</div>
+
+<app-report-view-drawer
+  [open]="isViewDrawerOpen()"
+  [report]="viewingReport()"
+  [reviewing]="reviewing()"
+  (closed)="closeViewDrawer()"
+  (review)="onReview($event)"
+  (resolve)="requestResolve($event)"
+></app-report-view-drawer>
+
+<app-modal
+  [open]="isResolveModalOpen()"
+  title="Resolver denúncia"
+  size="sm"
+  [closeable]="!isResolving()"
+  (closed)="cancelResolve()"
+>
+  <div class="flex flex-col gap-5">
+    <p class="text-sm text-[#41493D]">
+      Indique como a denúncia
+      <strong class="text-[#062406]">#DEN-{{ resolvingReport()?.id }}</strong>
+      foi resolvida. Esta nota fica registada no histórico.
+    </p>
+
+    <div class="flex flex-col gap-2">
+      <label for="resolution-note" class="text-sm font-semibold text-[#001A18]"
+        >Nota de resolução</label
+      >
+      <textarea
+        id="resolution-note"
+        rows="4"
+        placeholder="Descreva a resolução aplicada..."
+        class="w-full resize-none rounded-2xl border border-[#C0C8C6]/40 bg-white px-5 py-3.5 outline-none transition-all duration-300 placeholder:text-[#8C9492] focus:border-secondary"
+        [value]="resolutionNote()"
+        (input)="resolutionNote.set($any($event.target).value)"
+      ></textarea>
+    </div>
+
+    <div class="flex items-center justify-end gap-3">
+      <button
+        type="button"
+        (click)="cancelResolve()"
+        [disabled]="isResolving()"
+        class="cursor-pointer rounded-full px-6 py-3 text-sm font-semibold text-[#41493D] transition-all duration-300 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        Cancelar
+      </button>
+
+      <button
+        type="button"
+        (click)="confirmResolve()"
+        [disabled]="isResolving() || !resolutionNote().trim()"
+        class="flex cursor-pointer items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-[#0B2E13] shadow-xs shadow-black/10 transition-all duration-300 hover:scale-[1.02] hover:bg-primary/80 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+      >
+        @if (isResolving()) {
+          <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+            ></path>
+          </svg>
+          A resolver...
+        } @else {
+          Marcar como resolvida
+        }
+      </button>
+    </div>
+  </div>
+</app-modal>

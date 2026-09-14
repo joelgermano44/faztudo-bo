@@ -1,4 +1,6 @@
 import { Component, computed, effect, input, output, signal } from '@angular/core';
+import { Skeleton } from '../../../../../shared/ui/skeleton/skeleton';
+import { EmptyState } from '../../../../../shared/ui/empty-state/empty-state';
 
 export type AdminStatus = 'Ativo' | 'Inativo';
 
@@ -26,16 +28,21 @@ const STATUS_STYLES: Record<AdminStatus, StatusStyle> = {
 const PAGE_SIZE = 8;
 
 @Component({
-  imports: [],
+  imports: [Skeleton, EmptyState],
   selector: 'app-administrators-table',
   styleUrl: './administrators-table.css',
   templateUrl: './administrators-table.html',
 })
 export class AdministratorsTable {
   readonly admins = input<AdminRow[]>([]);
+  readonly isLoading = input(false);
+  readonly loadError = input(false);
 
   readonly edit = output<number>();
   readonly view = output<number>();
+  readonly retry = output<void>();
+
+  readonly skeletonRows = [0, 1, 2, 3, 4];
 
   readonly page = signal(1);
 

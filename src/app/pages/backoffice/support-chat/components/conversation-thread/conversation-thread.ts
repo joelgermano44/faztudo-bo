@@ -1,5 +1,7 @@
 import { Component, computed, ElementRef, HostListener, inject, input, output, signal } from '@angular/core';
 import { ImageViewer } from '../../../../../shared/ui/image-viewer/image-viewer';
+import { Skeleton } from '../../../../../shared/ui/skeleton/skeleton';
+import { EmptyState } from '../../../../../shared/ui/empty-state/empty-state';
 import { API_BASE_URL } from '../../../../../../core/shared/http/api-config';
 import { buildAvatarUrl, buildMediaUrl } from '../../../../../../core/shared/util/media-url';
 import {
@@ -21,7 +23,7 @@ const EMOJIS = [
 ];
 
 @Component({
-  imports: [ImageViewer],
+  imports: [ImageViewer, Skeleton, EmptyState],
   selector: 'app-conversation-thread',
   styleUrl: './conversation-thread.css',
   templateUrl: './conversation-thread.html',

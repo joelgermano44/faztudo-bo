@@ -1,6 +1,8 @@
 import { Component, computed, effect, input, output, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { OrderStatus } from '../../../../../../core/features/orders/models/order.model';
+import { Skeleton } from '../../../../../shared/ui/skeleton/skeleton';
+import { EmptyState } from '../../../../../shared/ui/empty-state/empty-state';
 
 export type OrderDisplayStatus = 'Ativo' | 'Pendente' | 'Finalizado' | 'Cancelado';
 
@@ -49,15 +51,20 @@ const ORDER_STATUS_STYLES: Record<OrderDisplayStatus, OrderStatusStyle> = {
 const PAGE_SIZE = 8;
 
 @Component({
-  imports: [RouterLink],
+  imports: [RouterLink, Skeleton, EmptyState],
   selector: 'app-orders-table',
   styleUrl: './orders-table.css',
   templateUrl: './orders-table.html',
 })
 export class OrdersTable {
   readonly orders = input<OrderRow[]>([]);
+  readonly isLoading = input(false);
+  readonly loadError = input(false);
 
   readonly reject = output<number>();
+  readonly retry = output<void>();
+
+  readonly skeletonRows = [0, 1, 2, 3, 4];
 
   readonly page = signal(1);
 

@@ -29,7 +29,11 @@
         </div>
       </div>
     } @empty {
-      <p class="text-sm text-[#727970]">Sem atividade recente.</p>
+      <app-empty-state
+        variant="empty"
+        title="Sem atividade recente"
+        description="As atividades administrativas mais recentes vão aparecer aqui."
+      ></app-empty-state>
     }
   </div>
 </div>

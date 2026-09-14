@@ -65,6 +65,9 @@ export class ProfessionalApplications {
 
   private readonly applications = signal<ProfessionalApplication[]>([]);
 
+  readonly isLoading = signal(true);
+  readonly loadError = signal(false);
+
   readonly isViewDrawerOpen = signal(false);
   readonly viewingApplication = signal<ProfessionalApplication | null>(null);
   readonly viewingHistory = signal<ProfessionalApplicationStatusHistory[]>([]);
@@ -115,10 +118,23 @@ export class ProfessionalApplications {
   }
 
   private loadApplications(): void {
+    this.isLoading.set(true);
+    this.loadError.set(false);
     this.applicationService.findAll().subscribe({
-      next: (applications) => this.applications.set(applications),
-      error: (err) => console.error('Erro ao carregar candidaturas', err),
+      next: (applications) => {
+        this.isLoading.set(false);
+        this.applications.set(applications);
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        this.loadError.set(true);
+        console.error('Erro ao carregar candidaturas', err);
+      },
     });
+  }
+
+  retryLoad(): void {
+    this.loadApplications();
   }
 
   private findApplicationById(id: number): ProfessionalApplication | null {

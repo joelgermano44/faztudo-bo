@@ -1,5 +1,7 @@
 import { Component, computed, effect, input, output, signal } from '@angular/core';
 import { ProfessionalAvailabilityStatus } from '../../../../../../core/features/professionals/models/professional.model';
+import { Skeleton } from '../../../../../shared/ui/skeleton/skeleton';
+import { EmptyState } from '../../../../../shared/ui/empty-state/empty-state';
 
 export interface ProfessionalRow {
   id: number;
@@ -34,18 +36,23 @@ const AVAILABILITY_STYLES: Record<ProfessionalAvailabilityStatus, AvailabilitySt
 const PAGE_SIZE = 8;
 
 @Component({
-  imports: [],
+  imports: [Skeleton, EmptyState],
   selector: 'app-professionals-table',
   styleUrl: './professionals-table.css',
   templateUrl: './professionals-table.html',
 })
 export class ProfessionalsTable {
   readonly professionals = input<ProfessionalRow[]>([]);
+  readonly isLoading = input(false);
+  readonly loadError = input(false);
 
   readonly view = output<number>();
   readonly edit = output<number>();
   readonly toggleAvailability = output<number>();
   readonly remove = output<number>();
+  readonly retry = output<void>();
+
+  readonly skeletonRows = [0, 1, 2, 3, 4];
 
   readonly page = signal(1);
 

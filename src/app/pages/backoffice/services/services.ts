@@ -6,6 +6,8 @@ import { ServiceCard, ServiceCardStatus } from './components/service-card/servic
 import { ServiceFormModal } from './components/service-form-modal/service-form-modal';
 import { ServiceViewDrawer } from './components/service-view-drawer/service-view-drawer';
 import { Modal } from '../../../shared/ui/modal/modal';
+import { Skeleton } from '../../../shared/ui/skeleton/skeleton';
+import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { ServiceCatalogService } from '../../../../core/features/services/services/service.service';
 import { Service } from '../../../../core/features/services/models/service.model';
 import { API_BASE_URL } from '../../../../core/shared/http/api-config';
@@ -36,7 +38,7 @@ function toServiceRow(service: Service, baseUrl: string): ServiceRow {
 }
 
 @Component({
-  imports: [TitleHeader, ServiceCard, ServiceFormModal, ServiceViewDrawer, Modal],
+  imports: [TitleHeader, ServiceCard, ServiceFormModal, ServiceViewDrawer, Modal, Skeleton, EmptyState],
   selector: 'app-services',
   styleUrl: './services.css',
   templateUrl: './services.html',
@@ -57,6 +59,10 @@ export class Services {
   readonly searchTerm = signal('');
 
   private readonly services = signal<Service[]>([]);
+
+  readonly isLoading = signal(true);
+  readonly loadError = signal(false);
+  readonly skeletonCards = [0, 1, 2, 3, 4];
 
   readonly isFormModalOpen = signal(false);
   readonly editingService = signal<Service | null>(null);
@@ -85,12 +91,19 @@ export class Services {
       .filter((service) => !term || service.name.toLowerCase().includes(term));
   });
 
+  /** Id vindo de `?serviceId=` (ex.: link a partir do drawer de um profissional) — abre o drawer ao carregar. */
+  private pendingServiceId: number | null = null;
+
   constructor() {
-    this.loadServices();
     const query = this.route.snapshot.queryParamMap.get('q');
     if (query) {
       this.searchTerm.set(query);
     }
+    const serviceId = this.route.snapshot.queryParamMap.get('serviceId');
+    if (serviceId) {
+      this.pendingServiceId = Number(serviceId);
+    }
+    this.loadServices();
   }
 
   onSearch(term: string): void {
@@ -98,10 +111,29 @@ export class Services {
   }
 
   private loadServices(): void {
+    this.isLoading.set(true);
+    this.loadError.set(false);
     this.serviceCatalogService.findAllAsAdmin().subscribe({
-      next: (services) => this.services.set(services),
-      error: (err) => console.error('Erro ao carregar serviços', err),
+      next: (services) => {
+        this.isLoading.set(false);
+        this.services.set(services);
+
+        if (this.pendingServiceId !== null) {
+          const id = this.pendingServiceId;
+          this.pendingServiceId = null;
+          this.openViewDrawer(id);
+        }
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        this.loadError.set(true);
+        console.error('Erro ao carregar serviços', err);
+      },
     });
+  }
+
+  retryLoad(): void {
+    this.loadServices();
   }
 
   private findServiceById(id: number): Service | null {

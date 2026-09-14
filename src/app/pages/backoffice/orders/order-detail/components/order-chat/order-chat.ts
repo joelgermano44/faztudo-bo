@@ -1,11 +1,12 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { ImageViewer } from '../../../../../../shared/ui/image-viewer/image-viewer';
+import { Skeleton } from '../../../../../../shared/ui/skeleton/skeleton';
 import { API_BASE_URL } from '../../../../../../../core/shared/http/api-config';
 import { buildMediaUrl } from '../../../../../../../core/shared/util/media-url';
 import { OrderChatMessage } from '../../../../../../../core/features/orders/models/order.model';
 
 @Component({
-  imports: [ImageViewer],
+  imports: [ImageViewer, Skeleton],
   selector: 'app-order-chat',
   styleUrl: './order-chat.css',
   templateUrl: './order-chat.html',
@@ -29,7 +30,13 @@ export class OrderChat {
   readonly lightboxImages = signal<string[]>([]);
   readonly lightboxIndex = signal(0);
 
-  readonly isEmpty = computed(() => this.hasConversation() && this.messages().length === 0);
+  readonly isEmpty = computed(
+    () => this.hasConversation() && this.messages().length === 0 && !this.loading(),
+  );
+
+  readonly isInitialLoading = computed(
+    () => this.hasConversation() && this.loading() && this.messages().length === 0,
+  );
 
   avatarFor(message: OrderChatMessage): string | null {
     return message.sender_type === 'client' ? this.clientAvatar() : this.professionalAvatar();

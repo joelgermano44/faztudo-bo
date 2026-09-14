@@ -73,6 +73,9 @@ export class Administrators {
 
   private readonly admins = signal<Admin[]>([]);
 
+  readonly isLoading = signal(true);
+  readonly loadError = signal(false);
+
   readonly isFormModalOpen = signal(false);
   readonly editingAdmin = signal<Admin | null>(null);
 
@@ -114,10 +117,23 @@ export class Administrators {
   }
 
   private loadAdmins(): void {
+    this.isLoading.set(true);
+    this.loadError.set(false);
     this.adminService.findAll().subscribe({
-      next: (admins) => this.admins.set(admins),
-      error: (err) => console.error('Erro ao carregar administradores', err),
+      next: (admins) => {
+        this.isLoading.set(false);
+        this.admins.set(admins);
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        this.loadError.set(true);
+        console.error('Erro ao carregar administradores', err);
+      },
     });
+  }
+
+  retryLoad(): void {
+    this.loadAdmins();
   }
 
   private findAdminById(id: number): Admin | null {

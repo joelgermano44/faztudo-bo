@@ -103,6 +103,9 @@
 
   <app-advertisements-table
     [advertisements]="filteredAdvertisements()"
+    [isLoading]="isLoading()"
+    [loadError]="loadError()"
+    (retry)="retryLoad()"
     (view)="openViewDrawer($event)"
     (edit)="openEditModal($event)"
     (toggleActive)="toggleActive($event)"

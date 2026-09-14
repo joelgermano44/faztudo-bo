@@ -103,18 +103,97 @@
 
       <!-- Coluna lateral -->
       <div class="flex flex-col gap-6">
-        <app-order-financial-summary
-          [baseAmount]="currentPayout ? formatMoney(currentPayout.amount) : '—'"
-          [commissionPercent]="currentPayout?.commission_percent ?? null"
-          [commissionAmount]="
-            currentPayout?.commission_amount ? formatMoney(currentPayout!.commission_amount!) : '—'
-          "
-          [totalAmount]="currentPayment ? formatMoney(currentPayment.amount) : '—'"
-          [paymentStatusLabel]="currentPayment ? paymentStatusLabel(currentPayment.status) : null"
-          [paymentReference]="currentPayment?.reference ?? null"
-        ></app-order-financial-summary>
+        @if (paymentLoading() || payoutLoading()) {
+          <div class="flex flex-col gap-3 rounded-xl border border-[#0000001A] bg-white p-5">
+            <app-skeleton width="50%" height="12px" />
+            <app-skeleton width="70%" height="20px" />
+            <app-skeleton width="40%" height="12px" />
+          </div>
+        } @else if (paymentFailed() || payoutFailed()) {
+          <div class="rounded-xl border border-[#0000001A] bg-white p-2">
+            <app-empty-state
+              variant="error"
+              title="Não foi possível carregar os dados financeiros"
+              description="Verifique a sua ligação e tente novamente."
+              actionLabel="Tentar novamente"
+              (action)="paymentFailed() ? retryPayment() : retryPayout()"
+            ></app-empty-state>
+          </div>
+        } @else {
+          <app-order-financial-summary
+            [baseAmount]="currentPayout ? formatMoney(currentPayout.amount) : '—'"
+            [commissionPercent]="currentPayout?.commission_percent ?? null"
+            [commissionAmount]="
+              currentPayout?.commission_amount ? formatMoney(currentPayout!.commission_amount!) : '—'
+            "
+            [totalAmount]="currentPayment ? formatMoney(currentPayment.amount) : '—'"
+            [paymentStatusLabel]="currentPayment ? paymentStatusLabel(currentPayment.status) : null"
+            [paymentReference]="currentPayment?.reference ?? null"
+          ></app-order-financial-summary>
+        }
 
-        <app-contract-timeline [items]="timelineEntries()"></app-contract-timeline>
+        @if (timelineLoading()) {
+          <div class="flex flex-col gap-3 rounded-xl border border-[#0000001A] bg-white p-5">
+            <app-skeleton width="40%" height="12px" />
+            <app-skeleton width="90%" height="12px" />
+            <app-skeleton width="80%" height="12px" />
+          </div>
+        } @else if (timelineFailed()) {
+          <div class="rounded-xl border border-[#0000001A] bg-white p-2">
+            <app-empty-state
+              variant="error"
+              title="Não foi possível carregar o histórico do contrato"
+              description="Verifique a sua ligação e tente novamente."
+              actionLabel="Tentar novamente"
+              (action)="retryTimeline()"
+            ></app-empty-state>
+          </div>
+        } @else {
+          <app-contract-timeline [items]="timelineEntries()"></app-contract-timeline>
+        }
+
+        @if (reportLoading()) {
+          <div class="flex flex-col gap-3 rounded-xl border border-[#0000001A] bg-white p-5">
+            <app-skeleton width="40%" height="12px" />
+            <app-skeleton width="90%" height="12px" />
+          </div>
+        } @else if (reportFailed()) {
+          <div class="rounded-xl border border-[#0000001A] bg-white p-2">
+            <app-empty-state
+              variant="error"
+              title="Não foi possível verificar denúncias"
+              description="Verifique a sua ligação e tente novamente."
+              actionLabel="Tentar novamente"
+              (action)="retryReport()"
+            ></app-empty-state>
+          </div>
+        } @else if (report(); as reportItem) {
+          <div class="flex flex-col gap-3 rounded-xl border border-red-100 bg-red-50/40 p-5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="flex items-center gap-1.5 text-xs font-semibold uppercase text-red-700">
+                <img src="/icons/orders/flag.svg" alt="" width="14" height="14" />
+                Denúncia associada
+              </span>
+              @let reportStatus = reportStatusStyle(reportItem.status);
+              <span
+                class="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase {{ reportStatus.badge }}"
+              >
+                {{ reportStatus.label }}
+              </span>
+            </div>
+            <p class="text-sm font-semibold text-[#191C1D]">{{ reportItem.reason }}</p>
+            <p class="text-xs leading-relaxed text-[#41493D] line-clamp-2">
+              {{ reportItem.description }}
+            </p>
+            <a
+              [routerLink]="['/dashboard/reports']"
+              [queryParams]="{ reportId: reportItem.id }"
+              class="w-fit text-xs font-semibold text-secondary hover:underline"
+            >
+              Ver denúncia completa →
+            </a>
+          </div>
+        }
       </div>
     </div>
   </div>

@@ -35,6 +35,9 @@
 
   <app-orders-table
     [orders]="filteredOrders()"
+    [isLoading]="isLoading()"
+    [loadError]="loadError()"
+    (retry)="retryLoad()"
     (reject)="requestReject($event)"
   ></app-orders-table>
 </div>

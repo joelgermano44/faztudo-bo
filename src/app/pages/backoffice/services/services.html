@@ -109,26 +109,49 @@
   <div
     class="grid gap-6 mt-8 h-40 min-[1700px]:grid-cols-5 min-[1446px]:max-[1700px]:grid-cols-4 min-[1150px]:max-[1446px]:grid-cols-3 min-[640px]:max-[1150px]:grid-cols-2 max-[640px]:grid-cols-1"
   >
-    @for (service of filteredServices(); track service.id) {
-      <app-service-card
-        class="h-full"
-        [id]="service.id"
-        [name]="service.name"
-        [description]="service.description"
-        [image]="service.image"
-        [gallery]="service.gallery"
-        [category]="service.category"
-        [status]="service.status"
-        (edit)="openEditModal($event)"
-        (view)="openViewDrawer($event)"
-        (remove)="requestDelete($event)"
-      ></app-service-card>
-    } @empty {
-      <div
-        class="col-span-full bg-white rounded-xl border border-gray-100 p-8 text-center text-gray-500"
-      >
-        Nenhum serviço encontrado.
+    @if (isLoading()) {
+      @for (i of skeletonCards; track i) {
+        <div class="rounded-3xl border border-[#C2C8BE33] bg-white overflow-hidden flex flex-col gap-3 p-4 h-full">
+          <app-skeleton height="120px" />
+          <app-skeleton width="60%" height="14px" />
+          <app-skeleton width="90%" height="12px" />
+          <app-skeleton width="40%" height="12px" />
+        </div>
+      }
+    } @else if (loadError()) {
+      <div class="col-span-full">
+        <app-empty-state
+          variant="error"
+          title="Não foi possível carregar os serviços"
+          description="Verifique a sua ligação e tente novamente."
+          actionLabel="Tentar novamente"
+          (action)="retryLoad()"
+        ></app-empty-state>
       </div>
+    } @else {
+      @for (service of filteredServices(); track service.id) {
+        <app-service-card
+          class="h-full"
+          [id]="service.id"
+          [name]="service.name"
+          [description]="service.description"
+          [image]="service.image"
+          [gallery]="service.gallery"
+          [category]="service.category"
+          [status]="service.status"
+          (edit)="openEditModal($event)"
+          (view)="openViewDrawer($event)"
+          (remove)="requestDelete($event)"
+        ></app-service-card>
+      } @empty {
+        <div class="col-span-full">
+          <app-empty-state
+            variant="empty"
+            title="Nenhum serviço encontrado"
+            description="Ainda não há serviços registados com estes filtros."
+          ></app-empty-state>
+        </div>
+      }
     }
   </div>
 </div>

@@ -1,4 +1,6 @@
 import { Component, computed, effect, input, output, signal } from '@angular/core';
+import { Skeleton } from '../../../../../shared/ui/skeleton/skeleton';
+import { EmptyState } from '../../../../../shared/ui/empty-state/empty-state';
 
 export type ClientStatus = 'Ativo' | 'Inativo';
 
@@ -27,17 +29,22 @@ const STATUS_STYLES: Record<ClientStatus, StatusStyle> = {
 const PAGE_SIZE = 8;
 
 @Component({
-  imports: [],
+  imports: [Skeleton, EmptyState],
   selector: 'app-clients-table',
   styleUrl: './clients-table.css',
   templateUrl: './clients-table.html',
 })
 export class ClientsTable {
   readonly clients = input<ClientRow[]>([]);
+  readonly isLoading = input(false);
+  readonly loadError = input(false);
 
   readonly view = output<string>();
   readonly edit = output<string>();
   readonly remove = output<string>();
+  readonly retry = output<void>();
+
+  readonly skeletonRows = [0, 1, 2, 3, 4];
 
   readonly page = signal(1);
 

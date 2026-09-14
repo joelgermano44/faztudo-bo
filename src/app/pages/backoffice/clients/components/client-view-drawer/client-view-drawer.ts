@@ -2,6 +2,8 @@ import { Component, computed, inject, input, output, signal } from '@angular/cor
 import { RouterLink } from '@angular/router';
 import { Drawer } from '../../../../../shared/ui/drawer/drawer';
 import { ImageViewer } from '../../../../../shared/ui/image-viewer/image-viewer';
+import { Skeleton } from '../../../../../shared/ui/skeleton/skeleton';
+import { EmptyState } from '../../../../../shared/ui/empty-state/empty-state';
 import { API_BASE_URL } from '../../../../../../core/shared/http/api-config';
 import { buildAvatarUrl } from '../../../../../../core/shared/util/media-url';
 import { Client } from '../../../../../../core/features/users-clients/models/client.model';
@@ -37,7 +39,7 @@ function formatMoney(amount: number): string {
 }
 
 @Component({
-  imports: [Drawer, ImageViewer, RouterLink],
+  imports: [Drawer, ImageViewer, RouterLink, Skeleton, EmptyState],
   selector: 'app-client-view-drawer',
   styleUrl: './client-view-drawer.css',
   templateUrl: './client-view-drawer.html',
@@ -50,10 +52,12 @@ export class ClientViewDrawer {
 
   readonly orders = input<Order[]>([]);
   readonly ordersLoading = input(false);
+  readonly ordersError = input(false);
   readonly ratings = input<Map<number, Rating>>(new Map());
 
   readonly conversations = input<SupportInboxItem[]>([]);
   readonly conversationsLoading = input(false);
+  readonly conversationsError = input(false);
 
   readonly closed = output<void>();
   readonly edit = output<string>();

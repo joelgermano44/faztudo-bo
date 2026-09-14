@@ -130,6 +130,9 @@ export class Advertisements {
   readonly isDeleting = signal(false);
   readonly isDeleteConfirmOpen = computed(() => this.deletingAdvertisement() !== null);
 
+  readonly isLoading = signal(true);
+  readonly loadError = signal(false);
+
   readonly filteredAdvertisements = computed<AdvertisementRow[]>(() => {
     const filter = this.activeFilter();
     const term = this.searchTerm().trim().toLowerCase();
@@ -161,10 +164,23 @@ export class Advertisements {
   }
 
   private loadAdvertisements(): void {
+    this.isLoading.set(true);
+    this.loadError.set(false);
     this.advertisementService.findAll().subscribe({
-      next: (advertisements) => this.advertisements.set(advertisements),
-      error: (err) => console.error('Erro ao carregar campanhas', err),
+      next: (advertisements) => {
+        this.isLoading.set(false);
+        this.advertisements.set(advertisements);
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        this.loadError.set(true);
+        console.error('Erro ao carregar campanhas', err);
+      },
     });
+  }
+
+  retryLoad(): void {
+    this.loadAdvertisements();
   }
 
   private findAdvertisementById(id: number): Advertisement | null {

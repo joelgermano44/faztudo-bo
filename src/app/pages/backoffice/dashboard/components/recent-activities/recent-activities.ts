@@ -3,11 +3,12 @@ import { RouterLink } from '@angular/router';
 import { NotificationService } from '../../../../../../core/features/notifications/services/notification.service';
 import { AdminNotification } from '../../../../../../core/features/notifications/models/notification.model';
 import { formatNotificationTimestamp } from '../../../../../../core/features/notifications/notification.util';
+import { EmptyState } from '../../../../../shared/ui/empty-state/empty-state';
 
 const MAX_ACTIVITIES = 6;
 
 @Component({
-  imports: [RouterLink],
+  imports: [RouterLink, EmptyState],
   selector: 'app-recent-activities',
   styleUrl: './recent-activities.css',
   templateUrl: './recent-activities.html',

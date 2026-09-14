@@ -12,6 +12,8 @@ import { PaymentSummary } from "./components/payment-summary/payment-summary";
 import { ProfessionalStatus } from "./components/professional-status/professional-status";
 import { QuickAction } from "./components/quick-action/quick-action";
 import { RecentActivities } from "./components/recent-activities/recent-activities";
+import { Skeleton } from '../../../shared/ui/skeleton/skeleton';
+import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 
 interface DashcardItem {
   icon: string;
@@ -22,7 +24,7 @@ interface DashcardItem {
 }
 
 @Component({
-  imports: [TitleHeader, Dashcard, MonthlyReport, OrderFlow, PaymentSummary, ProfessionalStatus, QuickAction, RecentActivities],
+  imports: [TitleHeader, Dashcard, MonthlyReport, OrderFlow, PaymentSummary, ProfessionalStatus, QuickAction, RecentActivities, Skeleton, EmptyState],
   selector: 'app-dashboard',
   styleUrl: './dashboard.css',
   templateUrl: './dashboard.html',
@@ -67,9 +69,25 @@ export class Dashboard {
     },
   ]);
 
+  readonly isLoading = signal(true);
+  readonly loadError = signal(false);
+
   constructor() {
+    this.loadDashboard();
+
+    this.orderService.findAll().subscribe({
+      next: (orders) => this.ordersFlow.set(this.buildOrdersFlow(orders)),
+      error: (err) => console.error('Erro ao carregar fluxo de pedidos', err),
+    });
+  }
+
+  private loadDashboard(): void {
+    this.isLoading.set(true);
+    this.loadError.set(false);
+
     this.dashboardService.getDashboard().subscribe({
       next: (dashboard) => {
+        this.isLoading.set(false);
         this.dashcardItems.update((items) => [
           {
             ...items[0],
@@ -83,13 +101,16 @@ export class Dashboard {
           { ...items[3], indicator: dashboard.totalProfessionals.toString() },
         ]);
       },
-      error: (err) => console.error('Erro ao carregar dashboard', err),
+      error: (err) => {
+        this.isLoading.set(false);
+        this.loadError.set(true);
+        console.error('Erro ao carregar dashboard', err);
+      },
     });
+  }
 
-    this.orderService.findAll().subscribe({
-      next: (orders) => this.ordersFlow.set(this.buildOrdersFlow(orders)),
-      error: (err) => console.error('Erro ao carregar fluxo de pedidos', err),
-    });
+  retryLoad(): void {
+    this.loadDashboard();
   }
 
   /**

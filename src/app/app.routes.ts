@@ -7,6 +7,7 @@ import { Login } from './pages/login/login';
 import { BackOffice } from './pages/layout/backoffice/backoffice';
 import { Dashboard } from './pages/backoffice/dashboard/dashboard';
 import { Orders } from './pages/backoffice/orders/orders';
+import { Reports } from './pages/backoffice/reports/reports';
 import { OrderDetail } from './pages/backoffice/orders/order-detail/order-detail';
 import { Administrators } from './pages/backoffice/administrators/administrators';
 import { Notifications } from './pages/backoffice/notifications/notifications';
@@ -54,6 +55,10 @@ export const routes: Routes = [
       {
         path: 'orders/:id',
         component: OrderDetail,
+      },
+      {
+        path: 'reports',
+        component: Reports,
       },
       {
         path: 'administrators',

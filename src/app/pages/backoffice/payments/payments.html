@@ -234,6 +234,9 @@
 
   <app-payments-table
     [rows]="filteredRows()"
+    [isLoading]="isLoading()"
+    [loadError]="loadError()"
+    (retry)="retryLoad()"
     (view)="openViewDrawer($event)"
     (markPaid)="markPaid($event)"
   ></app-payments-table>

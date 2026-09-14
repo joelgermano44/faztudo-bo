@@ -137,7 +137,12 @@ export class ApplicationViewDrawer {
     });
   }
 
-  statusLabel(status: ProfessionalApplicationStatus): string {
-    return STATUS_STYLES[status].label;
+  /**
+   * O histórico devolvido pela API tem entradas iniciais com `status: ""`
+   * (criação da candidatura, sem transição real) — não é um valor do enum,
+   * por isso não pode indexar `STATUS_STYLES` diretamente.
+   */
+  statusLabel(status: ProfessionalApplicationStatus | ''): string {
+    return STATUS_STYLES[status as ProfessionalApplicationStatus]?.label ?? 'Candidatura criada';
   }
 }

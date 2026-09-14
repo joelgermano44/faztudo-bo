@@ -61,6 +61,12 @@ export class Sidebar {
           activeIcon: '/icons/dashboard/sidebar/active/contract.svg',
         },
         {
+          label: 'Denúncias',
+          route: '/dashboard/reports',
+          icon: '/icons/dashboard/sidebar/reports.svg',
+          activeIcon: '/icons/dashboard/sidebar/active/reports.svg',
+        },
+        {
           label: 'Pagamentos',
           route: '/dashboard/payments',
           icon: '/icons/dashboard/sidebar/payments.svg',

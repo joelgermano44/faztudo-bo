@@ -93,9 +93,29 @@
         >
 
         @if (ordersLoading()) {
-          <span class="text-sm text-[#8C9492]">A carregar...</span>
+          <ul class="flex flex-col gap-2">
+            @for (row of [1, 2]; track row) {
+              <li class="flex items-center justify-between gap-3 rounded-lg border border-[#0000001A] p-3">
+                <div class="min-w-0 flex-1 flex flex-col gap-1.5">
+                  <app-skeleton width="60%" height="12px" />
+                  <app-skeleton width="40%" height="10px" />
+                </div>
+                <app-skeleton width="70px" height="18px" />
+              </li>
+            }
+          </ul>
+        } @else if (ordersError()) {
+          <app-empty-state
+            variant="error"
+            title="Não foi possível carregar os pedidos"
+            description="Feche e reabra o painel para tentar novamente."
+          ></app-empty-state>
         } @else if (orders().length === 0) {
-          <p class="text-sm text-gray-500">Este cliente ainda não fez nenhum pedido.</p>
+          <app-empty-state
+            variant="empty"
+            title="Este cliente ainda não fez nenhum pedido."
+            description=""
+          ></app-empty-state>
         } @else {
           <ul class="flex flex-col gap-2">
             @for (order of orders(); track order.id) {
@@ -150,9 +170,29 @@
         </span>
 
         @if (conversationsLoading()) {
-          <span class="text-sm text-[#8C9492]">A carregar...</span>
+          <ul class="flex flex-col gap-2">
+            @for (row of [1, 2]; track row) {
+              <li class="flex items-center gap-3 rounded-lg border border-[#0000001A] p-3">
+                <app-skeleton width="32px" height="32px" />
+                <div class="min-w-0 flex-1 flex flex-col gap-1.5">
+                  <app-skeleton width="55%" height="12px" />
+                  <app-skeleton width="80%" height="10px" />
+                </div>
+              </li>
+            }
+          </ul>
+        } @else if (conversationsError()) {
+          <app-empty-state
+            variant="error"
+            title="Não foi possível carregar as conversas"
+            description="Feche e reabra o painel para tentar novamente."
+          ></app-empty-state>
         } @else if (conversations().length === 0) {
-          <p class="text-sm text-gray-500">Sem conversas de suporte registadas.</p>
+          <app-empty-state
+            variant="empty"
+            title="Sem conversas de suporte registadas."
+            description=""
+          ></app-empty-state>
         } @else {
           <ul class="flex flex-col gap-2">
             @for (conversation of conversations(); track conversation.id) {

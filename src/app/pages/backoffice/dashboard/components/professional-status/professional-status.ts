@@ -1,6 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { ProfessionalAvailabilityStatus } from '../../../../../../core/features/professionals/models/professional.model';
 import { ProfessionalService } from '../../../../../../core/features/professionals/services/professional.service';
+import { Skeleton } from '../../../../../shared/ui/skeleton/skeleton';
+import { EmptyState } from '../../../../../shared/ui/empty-state/empty-state';
 
 interface ProfessionalStatusInterface {
   label: string;
@@ -10,7 +12,7 @@ interface ProfessionalStatusInterface {
 }
 
 @Component({
-  imports: [],
+  imports: [Skeleton, EmptyState],
   selector: 'app-professional-status',
   styleUrl: './professional-status.css',
   templateUrl: './professional-status.html',
@@ -35,9 +37,21 @@ export class ProfessionalStatus {
     },
   ]);
 
+  readonly isLoading = signal(true);
+  readonly loadError = signal(false);
+
   constructor() {
+    this.loadStatus();
+  }
+
+  private loadStatus(): void {
+    this.isLoading.set(true);
+    this.loadError.set(false);
+
     this.professionalService.findAll().subscribe({
       next: (professionals) => {
+        this.isLoading.set(false);
+
         const available = professionals.filter(
           (professional) => professional.availability_status === ProfessionalAvailabilityStatus.AVAILABLE,
         ).length;
@@ -57,7 +71,15 @@ export class ProfessionalStatus {
           },
         ]);
       },
-      error: (err) => console.error('Erro ao carregar profissionais', err),
+      error: (err) => {
+        this.isLoading.set(false);
+        this.loadError.set(true);
+        console.error('Erro ao carregar profissionais', err);
+      },
     });
+  }
+
+  retryLoad(): void {
+    this.loadStatus();
   }
 }

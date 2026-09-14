@@ -88,6 +88,9 @@ export class Payments {
   private readonly payments = signal<Payment[]>([]);
   private readonly ordersById = signal<Map<number, Order>>(new Map());
 
+  readonly isLoading = signal(true);
+  readonly loadError = signal(false);
+
   readonly isViewDrawerOpen = signal(false);
   readonly viewingPayoutId = signal<number | null>(null);
   readonly viewingHistory = signal<PayoutStatusHistoryItem[]>([]);
@@ -242,18 +245,29 @@ export class Payments {
   }
 
   private loadData(): void {
+    this.isLoading.set(true);
+    this.loadError.set(false);
     forkJoin({
       payouts: this.payoutService.findAll(),
       payments: this.paymentService.findAll(),
       orders: this.orderService.findAll(),
     }).subscribe({
       next: ({ payouts, payments, orders }) => {
+        this.isLoading.set(false);
         this.payouts.set(payouts);
         this.payments.set(payments);
         this.ordersById.set(new Map(orders.map((order) => [order.id, order])));
       },
-      error: (err) => console.error('Erro ao carregar fluxo financeiro', err),
+      error: (err) => {
+        this.isLoading.set(false);
+        this.loadError.set(true);
+        console.error('Erro ao carregar fluxo financeiro', err);
+      },
     });
+  }
+
+  retryLoad(): void {
+    this.loadData();
   }
 
   toggleStatusMenu(): void {

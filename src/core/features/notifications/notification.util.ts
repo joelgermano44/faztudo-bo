@@ -19,6 +19,7 @@ const NOTIFICATION_ICON: Record<string, string> = {
   [NotificationEventType.PROFESSIONAL_APPLICATION_SUBMITTED]: '/icons/orders/team.svg',
   [NotificationEventType.ORDER_STATUS_CHANGED]: '/icons/orders/history.svg',
   [NotificationEventType.ORDER_PROFESSIONAL_REQUESTED]: '/icons/orders/team.svg',
+  [NotificationEventType.REPORT_SUBMITTED]: '/icons/orders/flag.svg',
 };
 const DEFAULT_NOTIFICATION_ICON = '/icons/dashboard/notification.svg';
 
@@ -56,6 +57,13 @@ export function notificationTarget(notification: AdminNotification): Notificatio
       return {
         commands: ['/dashboard/professional-applications'],
         queryParams: professionalId ? { q: professionalId } : undefined,
+      };
+    }
+    case NotificationEventType.REPORT_SUBMITTED: {
+      const reportId = extractId(notification.payload, 'reportId', 'report_id');
+      return {
+        commands: ['/dashboard/reports'],
+        queryParams: reportId ? { reportId } : undefined,
       };
     }
     case NotificationEventType.ORDER_STATUS_CHANGED:

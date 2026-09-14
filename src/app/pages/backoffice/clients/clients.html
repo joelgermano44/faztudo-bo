@@ -106,6 +106,9 @@
 
   <app-clients-table
     [clients]="filteredClients()"
+    [isLoading]="isLoading()"
+    [loadError]="loadError()"
+    (retry)="retryLoad()"
     (view)="openViewDrawer($event)"
     (edit)="openEditModal($event)"
     (remove)="requestDelete($event)"
@@ -124,9 +127,11 @@
   [client]="viewingClient()"
   [orders]="viewingOrders()"
   [ordersLoading]="ordersLoading()"
+  [ordersError]="ordersError()"
   [ratings]="viewingRatings()"
   [conversations]="viewingConversations()"
   [conversationsLoading]="conversationsLoading()"
+  [conversationsError]="conversationsError()"
   (closed)="closeViewDrawer()"
   (edit)="openEditModal($event)"
   (remove)="requestDelete($event)"

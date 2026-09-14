@@ -13,8 +13,37 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-50 text-sm">
+        @if (isLoading()) {
+          @for (row of skeletonRows; track row) {
+            <tr>
+              <td colspan="5" class="py-4 px-6 max-2xl:px-3">
+                <div class="flex items-center gap-6">
+                  <app-skeleton width="180px" height="14px" />
+                  <app-skeleton width="120px" height="14px" />
+                  <app-skeleton width="60px" height="14px" />
+                  <app-skeleton width="70px" height="20px" />
+                </div>
+              </td>
+            </tr>
+          }
+        } @else if (loadError()) {
+          <tr>
+            <td colspan="5">
+              <app-empty-state
+                variant="error"
+                title="Não foi possível carregar as campanhas"
+                description="Verifique a sua ligação e tente novamente."
+                actionLabel="Tentar novamente"
+                (action)="retry.emit()"
+              ></app-empty-state>
+            </td>
+          </tr>
+        } @else {
         @for (advertisement of pagedAdvertisements(); track advertisement.id) {
-          <tr class="hover:bg-gray-50/50 transition-colors">
+          <tr
+            (click)="view.emit(advertisement.id)"
+            class="hover:bg-gray-50/50 transition-colors cursor-pointer"
+          >
             <td class="py-4 px-6 max-2xl:px-3">
               <div class="flex items-center gap-3">
                 <img
@@ -40,6 +69,7 @@
                 [href]="advertisement.link"
                 target="_blank"
                 rel="noopener"
+                (click)="$event.stopPropagation()"
                 class="underline hover:text-secondary transition-colors truncate max-w-40 inline-block align-bottom"
               >
                 {{ advertisement.link }}
@@ -61,7 +91,7 @@
             </td>
 
             <td class="py-4 px-6 max-2xl:px-3 text-right whitespace-nowrap">
-              <div class="flex items-center justify-end gap-1">
+              <div class="flex items-center justify-end gap-1" (click)="$event.stopPropagation()">
                 <button
                   type="button"
                   (click)="view.emit(advertisement.id)"
@@ -116,15 +146,21 @@
           </tr>
         } @empty {
           <tr>
-            <td colspan="5" class="py-8 px-6 max-2xl:px-3 text-center text-gray-500">
-              Nenhuma campanha encontrada
+            <td colspan="5">
+              <app-empty-state
+                variant="empty"
+                title="Nenhuma campanha encontrada"
+                description="Ainda não há campanhas publicitárias registadas com estes filtros."
+              ></app-empty-state>
             </td>
           </tr>
+        }
         }
       </tbody>
     </table>
   </div>
 
+  @if (!isLoading() && !loadError()) {
   <div
     class="flex items-center justify-between px-6 max-2xl:px-3 py-4 border-t border-gray-100 text-sm text-gray-500 max-sm:flex-col max-sm:items-start max-sm:gap-3"
   >
@@ -178,4 +214,5 @@
       </button>
     </div>
   </div>
+  }
 </div>

@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { TitleHeader } from '../../layout/backoffice/components/title-header/title-header';
+import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { NotificationService } from '../../../../core/features/notifications/services/notification.service';
 import {
   AdminNotification,
@@ -15,7 +16,7 @@ import {
 type NotificationFilter = 'Todas' | 'Não lidas' | 'Profissionais';
 
 @Component({
-  imports: [TitleHeader],
+  imports: [TitleHeader, EmptyState],
   selector: 'app-notifications',
   styleUrl: './notifications.css',
   templateUrl: './notifications.html',

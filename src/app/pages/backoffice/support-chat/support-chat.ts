@@ -29,6 +29,7 @@ export class SupportChat {
   readonly conversationsNextCursor = signal<number | null>(null);
   readonly conversationsHasMore = signal(false);
   readonly conversationsLoading = signal(false);
+  readonly conversationsError = signal(false);
 
   readonly activeFilter = signal<ConversationFilter>('Todas');
   readonly searchTerm = signal('');
@@ -73,6 +74,7 @@ export class SupportChat {
 
   private loadConversations(before?: number, autoSelectFirst = false): void {
     this.conversationsLoading.set(true);
+    this.conversationsError.set(false);
     const query: { search?: string; before?: number } = {};
     if (this.searchTerm()) {
       query.search = this.searchTerm();
@@ -95,9 +97,14 @@ export class SupportChat {
         },
         error: (err) => {
           this.conversationsLoading.set(false);
+          this.conversationsError.set(true);
           console.error('Erro ao carregar conversas', err);
         },
       });
+  }
+
+  retryConversations(): void {
+    this.loadConversations();
   }
 
   loadMoreConversations(): void {

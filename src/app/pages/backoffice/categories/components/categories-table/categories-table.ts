@@ -1,4 +1,6 @@
 import { Component, computed, effect, input, output, signal } from '@angular/core';
+import { Skeleton } from '../../../../../shared/ui/skeleton/skeleton';
+import { EmptyState } from '../../../../../shared/ui/empty-state/empty-state';
 
 export type CategoryStatus = 'Ativa' | 'Inativa';
 
@@ -13,17 +15,22 @@ export interface CategoryRow {
 const PAGE_SIZE = 8;
 
 @Component({
-  imports: [],
+  imports: [Skeleton, EmptyState],
   selector: 'app-categories-table',
   styleUrl: './categories-table.css',
   templateUrl: './categories-table.html',
 })
 export class CategoriesTable {
   readonly categories = input<CategoryRow[]>([]);
+  readonly isLoading = input(false);
+  readonly loadError = input(false);
 
   readonly view = output<number>();
   readonly edit = output<number>();
   readonly remove = output<number>();
+  readonly retry = output<void>();
+
+  readonly skeletonRows = [0, 1, 2, 3, 4];
 
   readonly page = signal(1);
 

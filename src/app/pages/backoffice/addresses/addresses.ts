@@ -85,6 +85,9 @@ export class Addresses {
   private readonly addresses = signal<Address[]>([]);
   private readonly usageByAddressId = signal<Map<number, UsageCounts>>(new Map());
 
+  readonly isLoading = signal(true);
+  readonly loadError = signal(false);
+
   readonly isFormModalOpen = signal(false);
   readonly editingAddress = signal<Address | null>(null);
 
@@ -135,9 +138,18 @@ export class Addresses {
   }
 
   private loadAddresses(): void {
+    this.isLoading.set(true);
+    this.loadError.set(false);
     this.addressService.findAll().subscribe({
-      next: (addresses) => this.addresses.set(addresses),
-      error: (err) => console.error('Erro ao carregar moradas', err),
+      next: (addresses) => {
+        this.isLoading.set(false);
+        this.addresses.set(addresses);
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        this.loadError.set(true);
+        console.error('Erro ao carregar moradas', err);
+      },
     });
 
     forkJoin({
@@ -165,6 +177,10 @@ export class Addresses {
       },
       error: (err) => console.error('Erro ao carregar vínculos das moradas', err),
     });
+  }
+
+  retryLoad(): void {
+    this.loadAddresses();
   }
 
   private findAddressById(id: number): Address | null {

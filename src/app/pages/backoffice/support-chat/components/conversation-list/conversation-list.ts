@@ -5,13 +5,15 @@ import {
   SupportInboxItem,
   SupportPartyType,
 } from '../../../../../../core/features/support-chat/models/support-chat.model';
+import { Skeleton } from '../../../../../shared/ui/skeleton/skeleton';
+import { EmptyState } from '../../../../../shared/ui/empty-state/empty-state';
 
 export type ConversationFilter = 'Todas' | 'Clientes' | 'Prestadores' | 'Não lidas';
 
 const WEEKDAY_NAMES = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
 @Component({
-  imports: [],
+  imports: [Skeleton, EmptyState],
   selector: 'app-conversation-list',
   styleUrl: './conversation-list.css',
   templateUrl: './conversation-list.html',
@@ -25,6 +27,7 @@ export class ConversationList {
   readonly searchTerm = input('');
   readonly hasMore = input(false);
   readonly loading = input(false);
+  readonly error = input(false);
 
   readonly filters: ConversationFilter[] = ['Todas', 'Clientes', 'Prestadores', 'Não lidas'];
 
@@ -32,6 +35,7 @@ export class ConversationList {
   readonly filterChange = output<ConversationFilter>();
   readonly searchChange = output<string>();
   readonly loadMore = output<void>();
+  readonly retry = output<void>();
 
   filterButtonClass(filter: ConversationFilter): string {
     return this.activeFilter() === filter
